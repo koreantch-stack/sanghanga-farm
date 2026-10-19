@@ -1815,7 +1815,7 @@ document.getElementById('story').addEventListener('click',e=>{if(e.target.closes
 // 이름 규칙: 2~8글자, 자음·모음만 따로 쓴 글자(ㄱ, ㅏ 등)는 안 됨
 function nameErr(v){if([...v].length<2)return'이름은 두 글자 이상 적어 주세요.';if(/[\u3131-\u318E\u1100-\u11FF\uA960-\uA97F\uD7B0-\uD7FF]/.test(v))return'ㄱ, ㅏ처럼 자음이나 모음만 따로 쓴 글자는 쓸 수 없어요.';if(/^\s|\s$/.test(v))return'앞뒤 빈칸은 뺄게요.';return''}
 function nameAsk(after){const w=document.getElementById('namewin'),inp=document.getElementById('nm-in');w.hidden=false;inp.value=G.name||'';setTimeout(()=>inp.focus(),50);
- const go=()=>{const v=inp.value.replace(/[<>]/g,'').trim().slice(0,8);{const e=nameErr(v);if(e){document.getElementById('nm-err').textContent=e;return}}G.name=v;w.hidden=true;document.getElementById('nm-err').textContent='';sfx('act');saveGame();if(after)after();if(!STAT.welcomed){STAT.welcomed=1;setTimeout(welcomeShow,350)}};
+ const go=()=>{const v=inp.value.replace(/[<>]/g,'').trim().slice(0,8);{const e=nameErr(v);if(e){document.getElementById('nm-err').textContent=e;return}}G.name=v;w.hidden=true;document.getElementById('nm-err').textContent='';sfx('act');saveGame();if(after)after();if(!STAT.welcomed){STAT.welcomed=1;whenFree(welcomeShow)}};
  document.getElementById('nm-ok').onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go()}}
 window.afterIntro=()=>{if(!STAT.storySeen){storyStart(()=>{})}else if(!G.name)nameAsk(()=>{});else if(nameErr(G.name)){nameAsk(()=>{});document.getElementById('nm-err').textContent='이름 규칙이 바뀌었어요. 2글자 이상, 자음·모음만 쓴 글자 없이 다시 지어 주세요.'}else{if(!STAT.welcomed)STAT.welcomed=1;setTimeout(()=>ntAuto(),300)}};
 // ---- 처음 온 사람 안내
@@ -1864,7 +1864,7 @@ const NOTICES=[{id:'2026-10-20a',date:'2026-10-20',title:'베타 테스트 안�
 - 손님방 사례금을 시세에 맞게 올렸어요.`}];
 const todayKey=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()};
 let ntSel=null;
-function ntAuto(){if(!NOTICES.length)return;let h=null;try{h=localStorage.getItem('shg-nt-hide')}catch(_){}if(h===todayKey())return;ntShow()}
+function ntAuto(){if(!NOTICES.length)return;if(uiBusy()){whenFree(ntAuto);return}let h=null;try{h=localStorage.getItem('shg-nt-hide')}catch(_){}if(h===todayKey())return;ntShow()}
 function ntShow(){document.getElementById('ntwin').hidden=false;ntSel=null;ntDraw()}
 function ntRead(){try{return JSON.parse(localStorage.getItem('shg-nt-read')||'[]')}catch(_){return[]}}
 function ntDraw(){const el=document.getElementById('nt-body'),rd=ntRead();
