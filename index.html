@@ -1,16 +1,17 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#3d5a26"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="color-scheme" content="only light"><meta name="theme-color" content="#3d5a26"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="상한가 농장">
 <link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
 <style>html,body{margin:0;height:100%;background:#3d5a26;overscroll-behavior:none}</style>
 </head><body>
 <title>상한가 농장</title>
+<meta name="color-scheme" content="only light">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@500;600&display=swap">
 <style>
 /* 한 화면 게임: 캔버스 전체 + 위쪽 얇은 상태 띠 + 오른쪽 아래 확대 단추. 일부러 한 가지 색감만 씀 */
-:root{color-scheme:dark;--field:#3d5a26;--bar:rgba(43,33,22,.82);--ink:#fbf3e3;--gold:#f2c14e;--wood:#8a5a2b;--f-d:"Do Hyeon","IBM Plex Sans KR",system-ui,sans-serif;--f-b:"IBM Plex Sans KR","Apple SD Gothic Neo",system-ui,sans-serif}
+:root{color-scheme:only light;--field:#3d5a26;--bar:rgba(43,33,22,.82);--ink:#fbf3e3;--gold:#f2c14e;--wood:#8a5a2b;--f-d:"Do Hyeon","IBM Plex Sans KR",system-ui,sans-serif;--f-b:"IBM Plex Sans KR","Apple SD Gothic Neo",system-ui,sans-serif}
 html,body{height:100%}
 body{background:var(--field);color:var(--ink);font-family:var(--f-b);overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
 #c{position:fixed;inset:0;width:100%;height:100%;display:block;cursor:pointer}
@@ -324,6 +325,12 @@ body.decoing .zoom{bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 .om-box b{font:400 20px var(--f-d)}
 .mini-b{border:2px solid #a07a4a;border-radius:8px;background:#f3e2bf;font:400 13px var(--f-d);color:#4a3320;padding:2px 8px;cursor:pointer;white-space:nowrap;margin-left:auto}.mini-b+.mini-b{margin-left:0}
 .al-box input:not([type=checkbox]),.al-box textarea,.bag-win input:not([type=checkbox]):not([type=range]),.mk-win input:not([type=checkbox]):not([type=range]),.bag-win textarea{color:#3a2a1a;caret-color:#3a2a1a;-webkit-text-fill-color:#3a2a1a}.al-box input::placeholder,.bag-win input::placeholder{color:#b9a585;-webkit-text-fill-color:#b9a585}
+.wc-box{width:min(380px,100%)}.wc-box p{line-height:1.6;margin:4px 0}.wc-box em{font-style:normal;color:#3d7a2e;font-weight:700}
+.nt-box{width:min(560px,100%);max-height:86vh;text-align:left}.nt-top{display:flex;align-items:center;gap:8px}.nt-top b{flex:1;text-align:center}.nt-top #nt-back{border:0;background:#efe3cc;border-radius:10px;padding:4px 10px;font:700 13px var(--f-b);color:#6b4e30;cursor:pointer}
+#nt-body{overflow-y:auto;min-height:120px;max-height:62vh;background:#fffaf0;border-radius:10px;padding:8px 12px}.nt-list{list-style:none;margin:0;padding:0}.nt-list li+li{border-top:1px solid #eee0c4}
+.nt-list button{width:100%;text-align:left;border:0;background:none;padding:10px 4px;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:2px 8px;color:#3a2a1a}.nt-list b{font:700 15px var(--f-b)}.nt-list i{font-style:normal;background:#c0392b;color:#fff;border-radius:8px;font:700 11px var(--f-b);padding:2px 6px;align-self:center}.nt-list small{grid-column:1/-1;color:#9a8466}
+.nt-h{margin:4px 0 0;font:700 17px var(--f-b)}.nt-d{color:#9a8466}.nt-c h4{margin:12px 0 4px;font:700 14px var(--f-b);color:#3d7a2e}.nt-c p.li{margin:3px 0 3px 12px;position:relative;font-size:14px;line-height:1.55}.nt-c p.li::before{content:'·';position:absolute;left:-10px}
+.nt-foot{display:flex;align-items:center;justify-content:space-between;gap:8px}.nt-foot label{font:600 13px var(--f-b);color:#6b4e30;display:flex;align-items:center;gap:6px}.nt-foot button{border:0;background:#5f8f3a;color:#fff;border-radius:10px;padding:8px 18px;font:700 14px var(--f-b);cursor:pointer}
 .mg-h{grid-column:1/-1;display:flex;align-items:baseline;gap:8px;margin:6px 2px -2px;border-bottom:1.5px solid #eee6d4;padding-bottom:4px}.mg-h b{font:700 15px var(--f-b);color:var(--gr)}.mg-h small{color:var(--mu);font-size:12px}.u-m .au.wk{background:#f6c85f;color:#5a3a12}
 .mbar{gap:6px}.mbar button{margin-left:4px}.mbar #mbar-go{background:var(--gr);color:#fff}.mbar #mbar-go:disabled{opacity:.5}
 .pl-gh{display:flex;gap:6px;align-items:center;justify-content:space-between;background:#eaf3f6;border-radius:10px;padding:5px 8px;margin:4px 0;font:600 12px var(--f-b);color:#355a66}.pl-ghset{display:inline-flex;align-items:center;gap:6px}.pl-ghset button{width:26px;height:26px;padding:0!important}.pl-gh em{font-style:normal;color:#b5522e}.pl-gh button{border:1.5px solid #6f9aa6;border-radius:9px;background:#fff;font:700 12px var(--f-b);color:#2f5560;padding:3px 8px;cursor:pointer}
@@ -616,7 +623,9 @@ body:has(.bag-win:not([hidden])) #qslots,body:has(.mk-win:not([hidden])) #qslots
 <div class="u-pop" id="cropwin" hidden><div class="u-pbox" id="cw-box"></div></div><div class="u-pop" id="helpwin" hidden style="z-index:40"><div class="u-pbox" id="hw-box" style="width:min(640px,100%)"></div></div>
 <section class="bag-win" id="admwin" hidden role="dialog" aria-label="관리자"><div class="bag-box"><div class="bag-head"><b>관리자 편집기</b><span>비밀</span><button type="button" class="mk-x bx" id="adm-x" aria-label="닫기" style="margin-left:auto">×</button></div><div class="hs-page" id="adm-page"></div></div></section>
 <section class="bag-win" id="statwin" hidden role="dialog" aria-label="상태"><div class="bag-box box2"><div class="bag-head"><b>상태</b><div class="bag-tabs" id="st-tabs" role="tablist"></div><button type="button" class="mk-x bx" id="stat-x" aria-label="닫기" style="margin-left:auto">×</button></div><div class="hs-page" id="stat-page"></div></div></section>
-<div id="sleepfx" hidden><b></b></div><div class="alert" id="om" hidden><div class="al-box om-box"><b></b><div class="om-row"></div></div></div><div class="lvup" id="lvup" hidden></div><div class="rot-tip" id="rot-tip" hidden><b class="ph"></b>폰을 가로로 돌리면 더 넓게 보여요<button type="button" id="rot-x">알겠어요</button></div><div id="marks"></div><div class="alert" id="alert" hidden role="alertdialog" aria-labelledby="al-t"><div class="al-box"><b id="al-t"></b><p id="al-m"></p><div class="al-row"><button type="button" id="al-no" class="no" hidden>그만두기</button><button type="button" id="al-ok">확인</button></div></div></div><div class="qbar" id="qbar" hidden><span id="qbar-t"></span><button type="button" id="qbar-x">모두 취소</button></div><div class="bbar" id="lbar" hidden style="bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:6"><span id="lbar-t"></span><button type="button" id="lbar-x">완료</button></div><div class="bbar mbar" id="mbar" hidden style="bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:6"><span id="mbar-t"></span><button type="button" id="mbar-all">모두</button><button type="button" id="mbar-go">시작</button><button type="button" id="mbar-x">그만두기</button></div><div class="bbar" id="bbar" hidden><span id="bbar-t"></span><button type="button" id="bbar-x">끝</button></div><div id="toast" role="status"></div>
+<div id="sleepfx" hidden><b></b></div><div class="alert" id="om" hidden><div class="al-box om-box"><b></b><div class="om-row"></div></div></div><div class="lvup" id="lvup" hidden></div><div class="rot-tip" id="rot-tip" hidden><b class="ph"></b>폰을 가로로 돌리면 더 넓게 보여요<button type="button" id="rot-x">알겠어요</button></div><div id="marks"></div><div class="alert" id="alert" hidden role="alertdialog" aria-labelledby="al-t"><div class="al-box"><b id="al-t"></b><p id="al-m"></p><div class="al-row"><button type="button" id="al-no" class="no" hidden>그만두기</button><button type="button" id="al-ok">확인</button></div></div></div><div class="alert" id="wcwin" hidden style="z-index:61"><div class="al-box wc-box"><b><span id="wc-name"></span>, 어서 와요</b><p>먼저 <em>집</em>을 눌러 <em>할머니 서랍</em>을 열어 보세요. 서랍 속 <em>길잡이</em>를 하나씩 따라 하면 농사짓는 법을 배우고, 단계마다 <em>정착 지원금</em>과 <em>경험치</em>도 받아요.</p><div class="al-row"><button type="button" id="wc-later" class="no">나중에</button><button type="button" id="wc-go">서랍 열어 보기</button></div></div></div>
+<div class="alert" id="ntwin" hidden style="z-index:59"><div class="al-box nt-box"><div class="nt-top"><button type="button" id="nt-back" hidden>‹ 목록</button><b>공지사항</b></div><div id="nt-body"></div><div class="nt-foot"><label><input type="checkbox" id="nt-hide"> 오늘 하루 안 보기</label><button type="button" id="nt-x">닫기</button></div></div></div>
+<div class="qbar" id="qbar" hidden><span id="qbar-t"></span><button type="button" id="qbar-x">모두 취소</button></div><div class="bbar" id="lbar" hidden style="bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:6"><span id="lbar-t"></span><button type="button" id="lbar-x">완료</button></div><div class="bbar mbar" id="mbar" hidden style="bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:6"><span id="mbar-t"></span><button type="button" id="mbar-all">모두</button><button type="button" id="mbar-go">시작</button><button type="button" id="mbar-x">그만두기</button></div><div class="bbar" id="bbar" hidden><span id="bbar-t"></span><button type="button" id="bbar-x">끝</button></div><div id="toast" role="status"></div>
 <script id="cfg">const USER=true;</script>
 <script>
 const SFX={"water_fill": "a/26b4ac888ab6.mp3", "trade": "a/40f6511538b3.mp3", "water": "a/2ff203c54c4a.mp3", "sow": "a/dc95d5f6c7cd.mp3", "menu": "a/e4f85d164fef.mp3", "open": "a/f47c69fa85cb.mp3", "act": "a/0dff2a3a2d95.mp3", "hoe": "a/650b360b721e.mp3", "fert": "a/02bf8d80c420.mp3"};let sfxVol=()=>typeof SET==='object'?SET.sfx/100:.7;function sfx(k){const v=sfxVol();if(!v||!SFX[k])return;try{const a=new Audio(SFX[k]);a.volume=v;a.play().catch(()=>{})}catch(_){}}
@@ -626,7 +635,7 @@ keys.forEach(k=>{const im=new Image();im.onload=()=>{++loaded;window.__intro.p=l
 let N=12;const TW=128,TH=64;
 const cv=document.getElementById('c'),cx=cv.getContext('2d');
 let W=0,H=0,DPR=1,zoom=0.9,cam={x:0,y:0};
-function resize(){DPR=Math.min(2,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR}
+function resize(){W=innerWidth;H=innerHeight;DPR=Math.max(1,Math.min(2,window.devicePixelRatio||1,Math.sqrt(1.7e6/(W*H))));cv.width=W*DPR;cv.height=H*DPR}
 addEventListener('resize',resize);resize();
 const T=(i,j)=>({x:(i-j)*TW/2,y:(i+j)*TH/2});
 const BLD=[['house',0,0,5,5],['storage',6,0,2,2],['shipbox',8,0,1,1],['tap',8,1,1,1],['compost',6,3,2,2]];
@@ -1172,6 +1181,7 @@ function setDraw(){const tg=(k,l,d)=>`<div class="set-r"><span>${l}${d?`<small>$
  const seg=(k,l,opts,d)=>`<div class="set-r"><span>${l}${d?`<small>${d}</small>`:''}</span><div class="set-seg">${opts.map(([v,t])=>`<button type="button" id="sg-${k}-${v}" data-k="${k}" data-v="${v}" aria-pressed="${SET[k]==v}">${t}</button>`).join('')}</div></div>`;
  const rng=(k,l)=>`<div class="set-r"><span>${l}<small>${k==='sfx'?'밭일, 사고팔기, 메뉴 소리':'농장 노래 · 0이면 꺼져요'}</small></span><input type="range" min="0" max="100" step="5" id="rg-${k}" data-k="${k}" value="${SET[k]}" aria-label="${l}"></div>`;
  document.getElementById('set-page').innerHTML=`
+ <div class="set-g"><h4>소식</h4><div class="set-r"><span>공지사항<small>업데이트 소식</small></span><button type="button" class="set-btn" id="set-nt">보기</button></div></div>
  <div class="set-g"><h4>소리</h4>${rng('sfx','효과음')}${rng('bgm','배경 음악')}</div>
  <div class="set-g"><h4>화면</h4>${tg('pop','거둘 때 숫자 띄우기','개수와 경험치가 주인공 위에 떠요')}${tg('news','시세 뉴스 띠','새 뉴스가 나오면 위에 흘러가요')}${tg('wxfx','날씨 효과','비와 눈이 내리는 그림')}</div>
  <div class="set-g"><h4>확인창</h4>${tg('askBuy','상점에서 살 때 한 번 더 묻기')}<div class="set-r"><span>가방·창고 늘리기, 갈아엎기<small>되돌릴 수 없는 일이라 늘 물어봐요</small></span></div></div>
@@ -1187,6 +1197,7 @@ document.getElementById('set-page').onclick=e=>{const b=e.target.closest('button
  else if(b.id==='set-test'){confirmBox('시험용 상태로 시작할까요?','Lv99, 돈 900억으로 처음부터 시작해요. 지금까지 한 일은 모두 없어져요.',()=>{noSave=true;try{localStorage.removeItem(SAVEKEY);localStorage.removeItem('shg-newbie')}catch(_){}location.reload()},'시작',true);return}
  else if(b.id==='set-money'){money=90000000000;hudDraw();toast('돈을 900억으로 채웠어요')}
  else if(b.id==='set-hp'){G.hp=maxHp();hudDraw();toast('체력을 가득 채웠어요')}
+ else if(b.id==='set-nt'){ntShow()}
  else if(b.id==='set-reset'){confirmBox('처음부터 다시 할까요?','레벨 1, 돈 3만 원부터 새로 시작해요. 지금까지 한 일이 모두 없어지고 설정만 남아요.',()=>{noSave=true;try{localStorage.removeItem(SAVEKEY);localStorage.setItem('shg-newbie','1')}catch(_){}location.reload()},'다시 하기',true);return}
  else return;setSave();setDraw()};
 document.getElementById('set-page').oninput=e=>{const r=e.target.closest('input[type=range]');if(!r)return;SET[r.dataset.k]=+r.value;setSave();if(r.dataset.k==='bgm')bgmVol()};document.getElementById('set-page').onchange=e=>{if(e.target.dataset&&e.target.dataset.k==='sfx')sfx('menu')};
@@ -1749,9 +1760,53 @@ function storyNext2(){if(stI<STORY.length-1){stI++;stL=0;storyShow(1);sfx('menu'
 function storyEnd(){const el=document.getElementById('story');el.style.opacity=0;setTimeout(()=>{el.hidden=true;el.style.opacity=''},400);STAT.storySeen=1;if(!G.name)nameAsk(()=>{});const f=stDone;stDone=null;if(f)f()}
 document.getElementById('story').addEventListener('click',e=>{if(e.target.closest('#st-skip')){if(!G.name){nameAsk(()=>storyEnd())}else storyEnd();return}if(!document.getElementById('namewin').hidden)return;storyNext()});
 function nameAsk(after){const w=document.getElementById('namewin'),inp=document.getElementById('nm-in');w.hidden=false;inp.value=G.name||'';setTimeout(()=>inp.focus(),50);
- const go=()=>{const v=inp.value.replace(/[<>]/g,'').trim().slice(0,8);if(!v){document.getElementById('nm-err').textContent='이름을 한 글자 이상 적어 주세요.';return}G.name=v;w.hidden=true;document.getElementById('nm-err').textContent='';sfx('act');saveGame();if(after)after()};
+ const go=()=>{const v=inp.value.replace(/[<>]/g,'').trim().slice(0,8);if(!v){document.getElementById('nm-err').textContent='이름을 한 글자 이상 적어 주세요.';return}G.name=v;w.hidden=true;document.getElementById('nm-err').textContent='';sfx('act');saveGame();if(after)after();if(!STAT.welcomed){STAT.welcomed=1;setTimeout(welcomeShow,350)}};
  document.getElementById('nm-ok').onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go()}}
-window.afterIntro=()=>{if(!STAT.storySeen){storyStart(()=>{})}else if(!G.name)nameAsk(()=>{})};
+window.afterIntro=()=>{if(!STAT.storySeen){storyStart(()=>{})}else if(!G.name)nameAsk(()=>{});else{if(!STAT.welcomed)STAT.welcomed=1;setTimeout(()=>ntAuto(),300)}};
+// ---- 처음 온 사람 안내
+function welcomeShow(){const w=document.getElementById('wcwin');w.hidden=false;document.getElementById('wc-name').textContent=G.name||'';
+ document.getElementById('wc-go').onclick=()=>{w.hidden=true;sfx('open');nbMode='drawer';nbTab='guide';nbShow(true)};document.getElementById('wc-later').onclick=()=>{w.hidden=true;ntAuto()}}
+// ---- 공지사항: 접속하면 뜸, 오늘 하루 안 보기
+const NOTICES=[{id:'2026-10-19',date:'2026-10-19',title:'10월 19일 업데이트 안내',body:`농장 풍경
+- 농장 둘레가 풀밭과 흙이 자연스럽게 섞인 바닥으로 바뀌고, 바깥은 나무가 둘러싼 숲이 됐어요.
+- 농장 가장자리에 낮은 나무 울타리를 둘렀어요.
+새 창 디자인
+- 시설, 차고, 집, 가방, 시세, 설치 창도 심기 창과 같은 모양(왼쪽 목록, 오른쪽 자세한 정보)으로 바꿨어요.
+- 상태창이 새로 생겼어요. 가운데에 주인공이 서 있고 양옆에 칸이 있어요.
+- 능력치 탭: 농기구 6개가 양옆에 놓이고, 누르면 지금 효과와 다음 단계, 강화하러 가기 버튼이 나와요.
+- 옷·장신구 탭: 모자, 상의, 신발, 장갑, 목걸이, 반지 칸이 있어요. (아직 구현되지 않았습니다)
+주식(시세)
+- 작물마다 종목 성격이 붙었어요. 우량주, 보통주, 테마주, 고위험.
+- 뉴스 중 일부는 헛소문이에요. 다음 날 "헛소문이었어요"가 뜨고 값이 반대로 조금 돌아가요.
+- 진짜 뉴스는 하루로 끝나지 않고 이틀 더 여파가 남아요.
+편의
+- 화면 위에 음식 빠른 칸 5개가 생겼어요. +로 넣고 −로 빼고, 누르면 바로 먹어요. 접었다 펼 수 있어요.
+- 손님방 부탁을 누르면 도움말이 떠요. 어디서 무엇으로 만드는지, 몇 개가 필요한지 나오고 바로 가기 버튼이 있어요.
+- 집 안 방(부엌, 손님방 등)에 "← 집으로" 버튼이 생겼어요.
+- 부엌 레시피가 12개로 늘었고, 레벨이 모자란 레시피도 잠긴 채로 보여요.
+- 가공 시설에서도 레벨이 모자란 가공품이 "Lv○부터"로 잠긴 채 보여요.
+온실
+- 온실 그림을 새로 바꿨어요. 크기는 2×4칸이고 돌려서 가로·세로로 놓을 수 있어요.
+- 온실을 여러 채 지을 수 있어요. (50만 원, Lv10)
+- 온실과 밭은 따로예요. 꾸미기에서 온실 안에 밭을 2개까지 넣고 뺄 수 있어요.
+- 온실 안에서는 철과 상관없이 심을 수 있고, 딸기·파프리카·멜론은 온실에서만 자라요.
+- 기본 온실: 한겨울에도 10도 아래로 안 내려가요.
+- 난방기(Lv14, 120만 원): 한겨울에도 20도 아래로 안 내려가요. 여름에 식혀 주지는 않아요.
+- 온도조절기(Lv20, 300만 원): 원하는 온도(5~35도)로 정해 두면 늘 그 온도로 맞춰요.
+밸런스
+- 퀘스트 돈 보상을 크게 올렸어요. 할머니 길잡이는 정착 지원금처럼 넉넉하게 줘요.
+- 손님방 사례금을 시세에 맞게 올렸어요.`}];
+const todayKey=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()};
+let ntSel=null;
+function ntAuto(){if(!NOTICES.length)return;let h=null;try{h=localStorage.getItem('shg-nt-hide')}catch(_){}if(h===todayKey())return;ntShow()}
+function ntShow(){document.getElementById('ntwin').hidden=false;ntSel=null;ntDraw()}
+function ntRead(){try{return JSON.parse(localStorage.getItem('shg-nt-read')||'[]')}catch(_){return[]}}
+function ntDraw(){const el=document.getElementById('nt-body'),rd=ntRead();
+ if(ntSel==null){el.innerHTML=`<ul class="nt-list">${NOTICES.map((n,i)=>`<li><button type="button" data-i="${i}"><b>${n.title}</b>${rd.includes(n.id)?'':'<i>새 글</i>'}<small>${n.date}</small></button></li>`).join('')}</ul>`;
+  el.querySelectorAll('.nt-list button').forEach(b=>b.onclick=()=>{ntSel=+b.dataset.i;const r=ntRead();if(!r.includes(NOTICES[ntSel].id)){r.push(NOTICES[ntSel].id);try{localStorage.setItem('shg-nt-read',JSON.stringify(r))}catch(_){}}sfx('menu');ntDraw()});document.getElementById('nt-back').hidden=true;return}
+ const n=NOTICES[ntSel];el.innerHTML=`<h3 class="nt-h">${n.title}</h3><small class="nt-d">${n.date}</small><div class="nt-c">${n.body.split('\n').map(l=>l.startsWith('- ')?`<p class="li">${l.slice(2)}</p>`:`<h4>${l}</h4>`).join('')}</div>`;document.getElementById('nt-back').hidden=false}
+document.getElementById('nt-back').onclick=()=>{ntSel=null;sfx('menu');ntDraw()};
+document.getElementById('nt-x').onclick=()=>{if(document.getElementById('nt-hide').checked){try{localStorage.setItem('shg-nt-hide',todayKey())}catch(_){}}document.getElementById('ntwin').hidden=true};
 // ---- 상태창: 위쪽 레벨을 누르면
 function statOpen(){const w=document.getElementById('statwin');w.hidden=false;tapGuard('statwin');closeSheet();hudH();sfx('open');statDraw()}
 let statTab='info',swSel=0,swTool=0;
@@ -1818,7 +1873,7 @@ function admDraw(){const pg=document.getElementById('adm-page');
  on('ad-day',()=>{G.dayT=SET.day-.01});
  on('ad-hp',()=>{G.hp=maxHp()})}
 document.getElementById('adm-x').onclick=()=>{document.getElementById('admwin').hidden=true};
-{const d=document.querySelector('.hud .hb.date');if(d)d.addEventListener('click',e=>{if(e.target.id==='h-weather')return;const now=Date.now();admTaps=admTaps.filter(t=>now-t<2000);admTaps.push(now);if(admTaps.length>=5){admTaps=[];admOpen()}})}
+{const d=document.querySelector('.hud .hb.date');if(d)d.addEventListener('click',e=>{if(USER&&!window.SHG_ADMIN)return;if(e.target.id==='h-weather')return;const now=Date.now();admTaps=admTaps.filter(t=>now-t<2000);admTaps.push(now);if(admTaps.length>=5){admTaps=[];admOpen()}})}
 // ---- 손님방: 건넬 수 있는 부탁이 있나
 const reqReady=()=>typeof REQS!=='undefined'?REQS.find(r=>(STO[r.c]||0)>=r.n):null;
 // ===== 새 창 디자인 공통 조각 =====
@@ -2082,7 +2137,7 @@ const toolVal=(f,t)=>{const r=TOOLS.find(x=>x[0]===f);return r[6][t]};
 function startAct(name,loops,done,spd=1){hero.act={name,loops,frame:0,t:0,done,spd}}
 let hudT=0;let last=0,sheetTick=0;
 function autoZoom(){const s=Math.min(innerWidth,innerHeight);zoom=Math.max(.6,Math.min(1.2,s/620))}
-function start(){setTimeout(()=>{if(!REQS.length){reqGen();reqGen()}},500);if(!localStorage.getItem||true){const m=G.month;WX={w:'sun',t:MTEMP[m-1]+2}}invFill();autoZoom();try{if(!sessionStorage.getItem('rot-ok')&&innerHeight>innerWidth*1.1&&innerWidth<600)document.getElementById('rot-tip').hidden=false}catch(_){}document.getElementById('rot-x').onclick=()=>{document.getElementById('rot-tip').hidden=true;try{sessionStorage.setItem('rot-ok','1')}catch(_){}};let nb=false;try{nb=(USER||localStorage.getItem('shg-newbie')==='1')&&!localStorage.getItem(SAVEKEY)}catch(_){}if(nb){G.lv=1;G.xp=0;G.hp=100;money=30000;bagLv=0;stoLv=0}let hadSave=false;try{hadSave=!!localStorage.getItem(SAVEKEY)}catch(_){}loadGame();ghMigrate();if(hadSave&&LASTTS)offlineRun((Date.now()-LASTTS)/1000);if(!hadSave&&!OBS.length)initObs();rebuildBlocked();hudDraw();const c=T(hero.i,hero.j);cam.x=c.x;cam.y=c.y+80;requestAnimationFrame(loop);qsDraw()}
+function start(){setTimeout(()=>{if(!REQS.length){reqGen();reqGen()}},500);if(!localStorage.getItem||true){const m=G.month;WX={w:'sun',t:MTEMP[m-1]+2}}invFill();autoZoom();try{if(!sessionStorage.getItem('rot-ok')&&innerHeight>innerWidth*1.1&&innerWidth<600)document.getElementById('rot-tip').hidden=false}catch(_){}document.getElementById('rot-x').onclick=()=>{document.getElementById('rot-tip').hidden=true;try{sessionStorage.setItem('rot-ok','1')}catch(_){}};let nb=false;try{nb=(USER||localStorage.getItem('shg-newbie')==='1')&&!localStorage.getItem(SAVEKEY)}catch(_){}if(nb){G.lv=1;G.xp=0;G.hp=100;money=30000;bagLv=0;stoLv=0;Object.keys(INV.seed).forEach(c=>INV.seed[c]=0);Object.keys(INV.seedling).forEach(c=>INV.seedling[c]=0);INV.seed.lettuce=4;INV.seed.potato=4;Object.keys(FINV).forEach(k=>FINV[k]=0);FINV['199']=4;Object.keys(FOODINV).forEach(k=>FOODINV[k]=0);FOODINV['163']=2;Object.values(MATS).forEach(m=>m[1]=0);STAT.qs=['163',null,null,null,null]}let hadSave=false;try{hadSave=!!localStorage.getItem(SAVEKEY)}catch(_){}loadGame();ghMigrate();if(hadSave&&LASTTS)offlineRun((Date.now()-LASTTS)/1000);if(!hadSave&&!OBS.length)initObs();rebuildBlocked();hudDraw();const c=T(hero.i,hero.j);cam.x=c.x;cam.y=c.y+80;requestAnimationFrame(loop);qsDraw()}
 function loop(ts){const dt=Math.min(.05,(ts-last)/1000||0);last=ts;update(dt);{const ci=Math.max(0,Math.min(N,(cam.x/(TW/2)+cam.y/(TH/2))/2)),cj=Math.max(0,Math.min(N,(cam.y/(TH/2)-cam.x/(TW/2))/2));cam.x=(ci-cj)*TW/2;cam.y=(ci+cj)*TH/2}draw();requestAnimationFrame(loop)}
 function growTick(dt){if(WX.w==='rain'||WX.w==='storm'){const v=WX.w==='storm'?5:3;PLOTS.forEach(p=>{if(!p.gh&&p.water<v-.5)p.water=v})}PLOTS.forEach(p=>{const c=p.crop;if(!c||c.prog>=1)return;const span=growSec(c),rate=(p.water>0?1:.3)*tempF(c.c,p),use=NEED[c.c]*(c.re?RE[c.c]/DAYS[c.c]:1)*dt*rate/span;
   c.tot=(c.tot||0)+dt;if(p.nut<use){c.stop=true;c.bad=(c.bad||0)+dt;return}if(p.water<=0)c.bad=(c.bad||0)+dt*.7;c.stop=false;p.nut-=use;c.prog=Math.min(1,c.prog+dt*rate/span);c.st=stOf(c)})}
