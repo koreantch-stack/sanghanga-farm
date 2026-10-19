@@ -727,7 +727,7 @@ function sellImpact(c,n){const h=HIST[c],C=CANDLE[c],L=C&&C.at(-1),b=L?L.b:h.at(
 const STO={lettuce:40,potato:25,napa:0,radish:12,tomato:0,strawberry:18,paprika:0,melon:3};const SHIP=[];
 PLOTS.forEach((p,k)=>{p.no=k+1;p.nut=[1000,1000,1600,900,700,800,2400,1800,1200,1500][k];p.water=p.soil==='wet'?3:0;p.base=false;
  if(p.soil!=='wild')p.soil='tilled';if(p.crop){p.crop.prog=p.crop.st===3?1:p.crop.st===2?.6:.2;p.crop.sl=false}});
-PLOTS[8].water=0;
+if(PLOTS[8])PLOTS[8].water=0;
 const root=document.documentElement.style;
 [['--nb','panel_notebook'],['--hw','header_wood'],['--cl','close'],['--grn','btn_green_normal'],['--grp','btn_green_pressed'],['--pn','btn_paper_normal'],['--pp','btn_paper_pressed'],['--pd','btn_paper_disabled'],['--gn','btn_gold_normal'],['--gp','btn_gold_pressed'],['--cn','btn_clay_normal'],['--cp','btn_clay_pressed']].forEach(([v,k])=>root.setProperty(v,`url(${KIT.kit[k]})`));
 const josa=(w,a,b)=>{const c=w.charCodeAt(w.length-1)-0xAC00;return c>=0&&c<11172&&c%28?a:b};
