@@ -629,7 +629,7 @@ let W=0,H=0,DPR=1,zoom=0.9,cam={x:0,y:0};
 function resize(){DPR=Math.min(2,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR}
 addEventListener('resize',resize);resize();
 const T=(i,j)=>({x:(i-j)*TW/2,y:(i+j)*TH/2});
-const BLD=[['house',0,0,5,5],['storage',6,0,2,2],['shipbox',8,0,1,1],['tap',8,1,1,1],['compost',6,3,2,2],['greenhouse',7,6,2,4,0,0],['greenhouse',9,6,2,4,0,0],['greenhouse',7,10,4,2,1,0]];
+const BLD=[['house',0,0,5,5],['storage',6,0,2,2],['shipbox',8,0,1,1],['tap',8,1,1,1],['compost',6,3,2,2]];
 const ghAt=(i,j)=>BLD.find(b=>b[0]==='greenhouse'&&i>=b[1]&&i<b[1]+b[3]&&j>=b[2]&&j<b[2]+b[4]);const inGH=(i,j)=>!!ghAt(i,j);
 function ghDoor(a,b,c,d){const g=ghAt(a,b)||ghAt(c,d);if(!g)return false;if(g[3]===g[4]){const fj=g[2]+g[4]-1;return a===c&&(a===g[1]||a===g[1]+1)&&((b===fj&&d===fj+1)||(d===fj&&b===fj+1))}
  const m=x=>(Math.min(g[3],g[4])===2?[0,1]:[1,2]).includes(x);if(!g[5]){const fj=g[2]+g[4]-1,bj=g[2];return a===c&&m(a-g[1])&&(Math.min(b,d)===fj||Math.max(b,d)===bj)&&Math.abs(b-d)===1}const fi=g[1]+g[3]-1,bi=g[1];return b===d&&m(b-g[2])&&(Math.min(a,c)===fi||Math.max(a,c)===bi)&&Math.abs(a-c)===1}
@@ -651,8 +651,7 @@ const INV={seed:{lettuce:12,potato:8,napa:5,radish:9,tomato:3,paprika:0,melon:0}
 function invFill(){if(!INV)return;ALLC.forEach(c=>{if(HOW[c]!=='seedling'&&INV.seed[c]==null)INV.seed[c]=0;if(HOW[c]!=='seed'&&INV.seedling[c]==null)INV.seedling[c]=0})}
 let fLv=true,fSeason=false;
 // soil: wild 잡초밭, tilled 갈린 밭, seeded 씨 뿌림, wet 물 준 밭 / crop: {c,st,t}
-const PLOTS=[{i:1,j:6,soil:'wild'},{i:3,j:6,soil:'wild'},{i:1,j:8,soil:'tilled'},{i:3,j:8,soil:'wet',crop:{c:'napa',st:2,t:0}},{i:1,j:10,soil:'wet',crop:{c:'lettuce',st:3,t:0}},{i:3,j:10,soil:'wet',crop:{c:'radish',st:3,t:0}},
- {i:7,j:6,soil:'wet',crop:{c:'strawberry',st:3,t:0}},{i:9,j:6,soil:'tilled'},{i:7,j:8,soil:'wet',crop:{c:'paprika',st:2,t:0}},{i:9,j:8,soil:'wet',crop:{c:'melon',st:3,t:0}},{i:7,j:10,soil:'tilled'},{i:9,j:10,soil:'tilled'}];// 온실 3채(2×4, 2×4, 돌린 4×2)
+const PLOTS=[{i:1,j:6,soil:'wild'},{i:3,j:6,soil:'wild'},{i:1,j:8,soil:'tilled'},{i:3,j:8,soil:'wet',crop:{c:'napa',st:2,t:0}},{i:1,j:10,soil:'wet',crop:{c:'lettuce',st:3,t:0}},{i:3,j:10,soil:'wet',crop:{c:'radish',st:3,t:0}}];// 처음엔 바깥 밭 6개만, 온실 없음// 온실 3채(2×4, 2×4, 돌린 4×2)
 PLOTS.forEach(p=>{p.gh=inGH(p.i,p.j)});
 const plotAt=(i,j)=>PLOTS.find(p=>i>=p.i&&i<p.i+2&&j>=p.j&&j<p.j+2);
 let money=90000000000;
