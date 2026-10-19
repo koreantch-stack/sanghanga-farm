@@ -107,7 +107,7 @@ body{background:var(--field);color:var(--ink);font-family:var(--f-b);overflow:hi
 .sw-nm{font:400 24px var(--f-d);color:#3a2a1a;margin-right:8px}.sw-top small{display:block;color:#8a6f50;font-size:12px}.sw-ren{border:1px solid #b08a5a;background:#fbf0d8;border-radius:10px;font:600 11px var(--f-b);padding:2px 8px;cursor:pointer;color:#4a3523;vertical-align:4px}
 .sw-g{background:#fbf0d8;border:2px solid #c9a878;border-radius:8px;padding:4px 10px}.sw-tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}.sw-tool{display:flex;gap:8px;align-items:center;background:#fbf0d8;border:2px solid #c9a878;border-radius:8px;padding:5px 8px}.sw-tool img{width:40px;height:40px;object-fit:contain;flex:none}.sw-tool b{font:400 16px var(--f-d)}.sw-tool small{display:block;font:500 11px var(--f-b);color:#7d6a55}
 #sleepfx{position:fixed;inset:0;z-index:70;background:#0b0906;display:grid;place-items:center;opacity:0;pointer-events:auto}#sleepfx b{font:400 30px var(--f-d);color:#ffe9b8;opacity:0;transition:opacity .5s .5s}#sleepfx.in{animation:slIn .8s forwards}#sleepfx.in b{opacity:1}#sleepfx.out{animation:slOut .8s forwards}@keyframes slIn{to{opacity:1}}@keyframes slOut{from{opacity:1}to{opacity:0}}
-.mk.warn{border-color:#2d68a8;background:#e3f0ff}
+.mk.warn{border-color:#2d68a8;background:#e3f0ff}.mk.warn.nut{border-color:#b5652a;background:#fff0dc}.mk.warn.nut::after{background:#d9822b}
 .mk.warn::after{content:"!";position:absolute;right:-6px;top:-6px;width:18px;height:18px;border-radius:50%;background:#c0392b;color:#fff;font:700 .75rem/18px var(--f-b);text-align:center}
 .mk.batch{border-color:#4f7d2a;background:#eaf6d8;border-style:dashed}
 .mk.batch::after{content:"+";position:absolute;right:-6px;top:-6px;width:18px;height:18px;border-radius:50%;background:#4f7d2a;color:#fff;font:700 .85rem/18px var(--f-b);text-align:center}
@@ -827,12 +827,13 @@ function drawMarks(){if(typeof FREC!=='undefined')facMarks();obsMarks();if(typeo
   else if(batch){if(ok(p,batch)){kind='batch';act=batch}}
   else if(p.crop&&p.crop.prog>=1){kind='ripe';act={t:'harvest'}}
   else if(p.crop&&p.water<=0){kind='warn';act={t:'water'}}
+  else if(p.crop&&p.crop.prog<1&&(p.crop.stop||p.nut<NEED[p.crop.c]*(1-p.crop.prog))){kind='warn nut';const f=TOPF.findIndex(T=>FINV[T[0]]>0);act={t:'top',f:f<0?0:f,nof:f<0}}
   const m=MK.get(p);if(!kind){if(m)m.hidden=true;return}
   const e=mkFor(p);e.hidden=false;e.className='mk '+kind;e.style.left=x+'px';e.style.top=y+'px';
   if(kind==='q'){e.textContent=qi.get(p)?qi.get(p):'…';e.setAttribute('aria-label',`${p.no}번 밭 예약 취소`);e.onclick=ev=>{ev.stopPropagation();if(sheet.classList.contains('on')){closeSheet();return}cancelJob(p)};return}
   if(!e.querySelector('img'))e.innerHTML='<img alt="">';const src=markIcon(act,p);const im=e.querySelector('img');if(im.getAttribute('src')!==src)im.src=src;
-  e.setAttribute('aria-label',`${p.no}번 밭 ${act.t==='harvest'?'수확':act.t==='water'&&kind==='warn'?'물 부족, 물 주기':ACTN[act.t]} 예약`);
-  e.onclick=ev=>{ev.stopPropagation();if(sheet.classList.contains('on')){closeSheet();return}if(!batch)setBatch(act);queueOpen=true;enqueue(p,act)}})}
+  e.setAttribute('aria-label',`${p.no}번 밭 ${act.t==='harvest'?'수확':act.t==='water'&&kind==='warn'?'물 부족, 물 주기':act.t==='top'&&kind!=='batch'?'양분 부족, 덧거름 주기':ACTN[act.t]} 예약`);
+  e.onclick=ev=>{ev.stopPropagation();if(sheet.classList.contains('on')){closeSheet();return}if(act.t==='top'&&(act.nof||!ok(p,act))){openSheet(p);if(act.nof)toast('덧거름이 없어요. 상점 거름 탭에서 사 오세요');else toast('덧거름은 밭마다 하루에 한 번만 줄 수 있어요');return}if(!batch)setBatch(act);queueOpen=true;enqueue(p,act)}})}
 
 // 화면 위 정보 줄
 const need=n=>Math.round((40+25*n+2.5*n*n)/10)*10;
