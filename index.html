@@ -2147,25 +2147,30 @@ async function gz(str){const cs=new Blob([str]).stream().pipeThrough(new Compres
 async function gunz(u8){const ds=new Blob([u8]).stream().pipeThrough(new DecompressionStream('gzip'));return await new Response(ds).text()}
 const fdoc=uid=>firebase.firestore().collection('farms').doc(uid);
 function sySum(str){try{const d=JSON.parse(str);return{ts:d.ts||0,lv:d.G?.lv||1,name:d.G?.name||'',m:d.G?.month,dd:(d.G?.day||0)+1,money:d.money||0}}catch(_){return{ts:0,lv:1}}}
-async function syUp(force){if(!SY.user||SY.busy)return;saveGame();const str=lsG(SAVEKEY);if(!str)return;const h=str.length+':'+str.slice(-64);if(!force&&h===SY.hash)return;SY.busy=true;
+// 여러 기기: 마지막으로 맞춘 계정 저장 시각(base)보다 계정 쪽이 새로우면 다른 기기에서 한 것 → 덮어쓰지 않고 받아옴
+const syBase=()=>+(lsG('shg-sync-base')||0),sySetBase=t=>lsS('shg-sync-base',String(t||0));
+SY.act=0;SY.upAt=0;addEventListener('pointerdown',()=>{SY.act=Date.now()},true);addEventListener('keydown',()=>{SY.act=Date.now()},true);
+async function syPull(snap,why){const rd=snap.data();const rstr=await gunz(rd.data.toUint8Array());saveGame();const local=lsG(SAVEKEY);if(local)await syBackup(SY.user.uid,local,why||'다른 기기 농장을 받기 전');lsS('shg-sync-msg','다른 기기에서 한 농장을 불러왔어요');sySetBase(rd.ts||sySum(rstr).ts);syApply(rstr)}
+async function syCheck(){if(!SY.user||SY.busy||noSave)return false;try{const snap=await fdoc(SY.user.uid).get();if(snap.exists&&(snap.data().ts||0)>syBase()+1000){SY.busy=true;await syPull(snap);return true}}catch(e){SY.err='chk:'+(e.code||e.message)}return false}
+async function syUp(force){if(!SY.user||SY.busy||noSave)return;if(!force&&SY.act<=SY.upAt)return;if(!force&&await syCheck())return;saveGame();const str=lsG(SAVEKEY);if(!str)return;const h=str.length+':'+str.slice(-64);if(!force&&h===SY.hash)return;SY.busy=true;const t0=Date.now();
  try{const sm=sySum(str),bin=await gz(str);if(bin.length>950000)throw Error('too big');
   await fdoc(SY.user.uid).set({data:firebase.firestore.Blob.fromUint8Array(bin),ts:sm.ts,lv:sm.lv,name:sm.name,money:sm.money,email:SY.user.email||'',up:firebase.firestore.FieldValue.serverTimestamp()});
-  SY.hash=h;SY.last=Date.now();lsS('shg-sync-uid',SY.user.uid);lsS('shg-sync-up',null)}catch(e){SY.err='up:'+(e.code||e.message)}SY.busy=false}
+  SY.hash=h;SY.last=Date.now();SY.upAt=t0;sySetBase(sm.ts);lsS('shg-sync-uid',SY.user.uid);lsS('shg-sync-up',null)}catch(e){SY.err='up:'+(e.code||e.message)}SY.busy=false}
 async function syBackup(uid,str,why){try{const bin=await gz(str);await fdoc(uid).collection('backups').doc(String(Date.now())).set({data:firebase.firestore.Blob.fromUint8Array(bin),why,...sySum(str)})}catch(_){}}
 function syApply(str){noSave=true;lsS(SAVEKEY,str);lsS('shg-newbie',null);location.reload()}
 async function syOnLogin(u){setTimeout(mlFetch,1500);try{const snap=await fdoc(u.uid).get(),local=lsG(SAVEKEY),linked=lsG('shg-sync-uid')===u.uid,forceUp=lsG('shg-sync-up')==='1';
  if(!snap.exists){await syUp(true);toast('농장을 계정에 저장했어요. 이제 다른 기기에서도 이어서 할 수 있어요');return}
  const rd=snap.data(),rstr=await gunz(rd.data.toUint8Array()),R=sySum(rstr),L=local?sySum(local):null;
  if(forceUp){await syBackup(u.uid,rstr,'처음부터 다시 하기 전');await syUp(true);return}
- if(!L||(!linked&&L.lv<=1&&R.lv>1)){if(local&&!linked)await syBackup(u.uid,local,'이 기기에 있던 농장');lsS('shg-sync-uid',u.uid);syApply(rstr);return}
- if(linked){if(R.ts>L.ts+3000){syApply(rstr)}else{await syUp(true)}return}
+ if(!L||(!linked&&L.lv<=1&&R.lv>1)){if(local&&!linked)await syBackup(u.uid,local,'이 기기에 있던 농장');lsS('shg-sync-uid',u.uid);sySetBase(R.ts);syApply(rstr);return}
+ if(linked){const b=syBase();if(b?R.ts>b+1000:R.ts>L.ts+3000){await syBackup(u.uid,local,'다른 기기 농장을 받기 전');lsS('shg-sync-msg','다른 기기에서 한 농장을 불러왔어요');sySetBase(R.ts);syApply(rstr)}else{await syUp(true)}return}
  const f=x=>`Lv${x.lv} · ${won(x.money)} · ${new Date(x.ts).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'})} 저장`;
- objMenu('어느 농장을 쓸까요?',[['계정 농장','go',async()=>{await syBackup(u.uid,local,'이 기기에 있던 농장');lsS('shg-sync-uid',u.uid);syApply(rstr)}],['이 기기 농장','',async()=>{await syBackup(u.uid,rstr,'계정에 있던 농장');lsS('shg-sync-uid',u.uid);await syUp(true);toast('이 기기 농장을 계정에 저장했어요')}]],
+ objMenu('어느 농장을 쓸까요?',[['계정 농장','go',async()=>{await syBackup(u.uid,local,'이 기기에 있던 농장');lsS('shg-sync-uid',u.uid);sySetBase(R.ts);syApply(rstr)}],['이 기기 농장','',async()=>{await syBackup(u.uid,rstr,'계정에 있던 농장');lsS('shg-sync-uid',u.uid);await syUp(true);toast('이 기기 농장을 계정에 저장했어요')}]],
   `계정 농장: ${f(R)}<br>이 기기 농장: ${f(L)}<br><small>고르지 않은 쪽도 지우지 않고 백업으로 남겨 둬요.</small>`)}catch(e){SY.err='login:'+(e.code||e.message);toast('계정 농장을 불러오지 못했어요. 잠시 뒤 다시 해 주세요')}}
 async function syLogin(){if(!SY.ready){await syInit();if(!SY.ready){alertBox('로그인할 수 없어요','인터넷 연결을 확인해 주세요.');return}}const pv=new firebase.auth.GoogleAuthProvider();
  try{await firebase.auth().signInWithPopup(pv)}catch(e){if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/cancelled-popup-request'].includes(e.code))firebase.auth().signInWithRedirect(pv);else if(e.code!=='auth/popup-closed-by-user')alertBox('로그인하지 못했어요',e.code||'잠시 뒤 다시 해 주세요.')}}
-async function syLogout(){await syUp(true);await firebase.auth().signOut();lsS('shg-sync-uid',null);window.SHG_ADMIN=false;toast('로그아웃했어요. 이 기기에는 농장이 그대로 남아 있어요');setDraw()}
-if(USER){setTimeout(syInit,1500);setInterval(()=>syUp(false),60000);setInterval(mlFetch,180000);document.addEventListener('visibilitychange',()=>{if(document.hidden)syUp(false)})}document.addEventListener('visibilitychange',()=>{if(document.hidden)saveGame()});
+async function syLogout(){await syUp(true);await firebase.auth().signOut();lsS('shg-sync-uid',null);lsS('shg-sync-base',null);window.SHG_ADMIN=false;toast('로그아웃했어요. 이 기기에는 농장이 그대로 남아 있어요');setDraw()}
+if(USER){setTimeout(syInit,1500);setInterval(()=>syUp(false),60000);setInterval(mlFetch,180000);document.addEventListener('visibilitychange',()=>{if(document.hidden)syUp(false);else syCheck()});setTimeout(()=>{const m=lsG('shg-sync-msg');if(m){lsS('shg-sync-msg',null);toast(m)}},2500)}document.addEventListener('visibilitychange',()=>{if(document.hidden)saveGame()});
 document.getElementById('dock').onclick=e=>{const b=e.target.closest('button');if(!b)return;sfx('menu');if(b.id==='dock-mail'){mlShow();return}if(b.id==='dock-market'){bagShow(false);shopShow(false);mkShow(true);return}if(b.id==='dock-bag'){shopShow(false);bagShow(true);return}if(b.id==='dock-shop'){shopShow(true);return}if(b.id==='dock-note'){nbShow(true);return}if(b.id==='dock-set'){setShow(true);return}if(b.id==='dock-deco'){decoMode(true);return}toast(b.textContent.trim()+' 창은 다음에 만들어요')};
 // ---- 밭 창
 let sel=null,view='main';
