@@ -627,7 +627,7 @@ body:has(.bag-win:not([hidden])) #qslots,body:has(.mk-win:not([hidden])) #qslots
 <div class="u-pop" id="cropwin" hidden><div class="u-pbox" id="cw-box"></div></div><div class="u-pop" id="helpwin" hidden style="z-index:40"><div class="u-pbox" id="hw-box" style="width:min(640px,100%)"></div></div>
 <section class="bag-win" id="admwin" hidden role="dialog" aria-label="관리자"><div class="bag-box"><div class="bag-head"><b>관리자 편집기</b><span>비밀</span><button type="button" class="mk-x bx" id="adm-x" aria-label="닫기" style="margin-left:auto">×</button></div><div class="hs-page" id="adm-page"></div></div></section>
 <section class="bag-win" id="statwin" hidden role="dialog" aria-label="상태"><div class="bag-box box2"><div class="bag-head"><b>상태</b><div class="bag-tabs" id="st-tabs" role="tablist"></div><button type="button" class="mk-x bx" id="stat-x" aria-label="닫기" style="margin-left:auto">×</button></div><div class="hs-page" id="stat-page"></div></div></section>
-<div id="sleepfx" hidden><b></b></div><div id="sleepov" hidden><div><b>쿨쿨 자는 중</b><small>체력이 2배 빨리 차요</small><em><span></span></em><i></i><u>눌러서 일어나기</u></div></div><div class="alert" id="om" hidden><div class="al-box om-box"><b></b><div class="om-row"></div></div></div><div class="lvup" id="lvup" hidden></div><div class="rot-tip" id="rot-tip" hidden><b class="ph"></b>폰을 가로로 돌리면 더 넓게 보여요<button type="button" id="rot-x">알겠어요</button></div><div id="marks"></div><div class="alert" id="alert" hidden role="alertdialog" aria-labelledby="al-t"><div class="al-box"><b id="al-t"></b><p id="al-m"></p><div class="al-row"><button type="button" id="al-no" class="no" hidden>그만두기</button><button type="button" id="al-ok">확인</button></div></div></div><div class="alert" id="wcwin" hidden style="z-index:61"><div class="al-box wc-box"><b><span id="wc-name"></span>, 어서 와요</b><p>먼저 <em>집</em>을 눌러 <em>할머니 서랍</em>을 열어 보세요. 서랍 속 <em>길잡이</em>를 하나씩 따라 하면 농사짓는 법을 배우고, 단계마다 <em>정착 지원금</em>과 <em>경험치</em>도 받아요.</p><div class="al-row"><button type="button" id="wc-later" class="no">나중에</button><button type="button" id="wc-go">서랍 열어 보기</button></div></div></div>
+<div id="sleepfx" hidden><b></b></div><div id="sleepov" hidden><div><b>쿨쿨 자는 중</b><small>체력이 2배 빨리 차요</small><em><span></span></em><i></i><u>눌러서 일어나기</u></div></div><div class="alert" id="om" hidden><div class="al-box om-box"><b></b><div class="om-row"></div></div></div><div class="lvup" id="lvup" hidden></div><div class="rot-tip" id="rot-tip" hidden><b class="ph"></b>폰을 가로로 돌리면 더 넓게 보여요<button type="button" id="rot-x">알겠어요</button></div><div id="marks"></div><div class="alert" id="alert" hidden role="alertdialog" aria-labelledby="al-t"><div class="al-box"><b id="al-t"></b><p id="al-m"></p><div class="al-row"><button type="button" id="al-no" class="no" hidden>그만두기</button><button type="button" id="al-ok">확인</button></div></div></div><div class="alert" id="wcwin" hidden style="z-index:61"><div class="al-box wc-box"><b><span id="wc-name"></span>, 어서 와요</b><p>설정에서 <em>구글로 로그인</em>하면 폰·PC 어디서든 같은 농장을 이어서 할 수 있어요.</p><p>먼저 <em>집</em>을 눌러 <em>할머니 서랍</em>을 열어 보세요. 서랍 속 <em>길잡이</em>를 하나씩 따라 하면 농사짓는 법을 배우고, 단계마다 <em>정착 지원금</em>과 <em>경험치</em>도 받아요.</p><div class="al-row"><button type="button" id="wc-later" class="no">나중에</button><button type="button" id="wc-go">서랍 열어 보기</button></div></div></div>
 <div class="alert" id="ntwin" hidden style="z-index:59"><div class="al-box nt-box"><div class="nt-top"><button type="button" id="nt-back" hidden>‹ 목록</button><b>공지사항</b></div><div id="nt-body"></div><div class="nt-foot"><label><input type="checkbox" id="nt-hide"> 오늘 하루 안 보기</label><button type="button" id="nt-x">닫기</button></div></div></div>
 <div class="qbar" id="qbar" hidden><span id="qbar-t"></span><button type="button" id="qbar-x">모두 취소</button></div><div class="bbar" id="lbar" hidden style="bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:6"><span id="lbar-t"></span><button type="button" id="lbar-x">완료</button></div><div class="bbar mbar" id="mbar" hidden style="bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:6"><span id="mbar-t"></span><button type="button" id="mbar-all">모두</button><button type="button" id="mbar-go">시작</button><button type="button" id="mbar-x">그만두기</button></div><div class="bbar" id="bbar" hidden><span id="bbar-t"></span><button type="button" id="bbar-x">끝</button></div><div id="toast" role="status"></div>
 <script id="cfg">const USER=true;</script>
@@ -1187,6 +1187,7 @@ function setDraw(){const tg=(k,l,d)=>`<div class="set-r"><span>${l}${d?`<small>$
  const seg=(k,l,opts,d)=>`<div class="set-r"><span>${l}${d?`<small>${d}</small>`:''}</span><div class="set-seg">${opts.map(([v,t])=>`<button type="button" id="sg-${k}-${v}" data-k="${k}" data-v="${v}" aria-pressed="${SET[k]==v}">${t}</button>`).join('')}</div></div>`;
  const rng=(k,l)=>`<div class="set-r"><span>${l}<small>${k==='sfx'?'밭일, 사고팔기, 메뉴 소리':'농장 노래 · 0이면 꺼져요'}</small></span><input type="range" min="0" max="100" step="5" id="rg-${k}" data-k="${k}" value="${SET[k]}" aria-label="${l}"></div>`;
  document.getElementById('set-page').innerHTML=`
+ ${USER?`<div class="set-g"><h4>계정</h4>${SY.user?`<div class="set-r"><span>${SY.user.displayName||'구글 계정'}${window.SHG_ADMIN?' · 운영자':''}<small>${SY.user.email||''} · ${SY.last?'마지막 저장 '+new Date(SY.last).toLocaleTimeString('ko-KR',{hour:'numeric',minute:'2-digit'}):'저장 준비 중'}</small></span><button type="button" class="set-btn" id="set-syup">지금 저장</button></div><div class="set-r"><span>로그아웃<small>이 기기의 농장은 그대로 남아요</small></span><button type="button" class="set-btn" id="set-out">로그아웃</button></div>`:`<div class="set-r"><span>구글로 로그인<small>농장을 계정에 저장해서 폰·PC 어디서든 이어서 해요</small></span><button type="button" class="set-btn" id="set-in">로그인</button></div>`}</div>`:''}
  <div class="set-g"><h4>소식</h4><div class="set-r"><span>공지사항<small>업데이트 소식</small></span><button type="button" class="set-btn" id="set-nt">보기</button></div></div>
  <div class="set-g"><h4>소리</h4>${rng('sfx','효과음')}${rng('bgm','배경 음악')}</div>
  <div class="set-g"><h4>화면</h4>${tg('pop','거둘 때 숫자 띄우기','개수와 경험치가 주인공 위에 떠요')}${tg('news','시세 뉴스 띠','새 뉴스가 나오면 위에 흘러가요')}${tg('wxfx','날씨 효과','비와 눈이 내리는 그림')}</div>
@@ -1204,7 +1205,10 @@ document.getElementById('set-page').onclick=e=>{const b=e.target.closest('button
  else if(b.id==='set-money'){money=90000000000;hudDraw();toast('돈을 900억으로 채웠어요')}
  else if(b.id==='set-hp'){G.hp=maxHp();hudDraw();toast('체력을 가득 채웠어요')}
  else if(b.id==='set-nt'){ntShow()}
- else if(b.id==='set-reset'){confirmBox('처음부터 다시 할까요?','레벨 1, 돈 3만 원부터 새로 시작해요. 지금까지 한 일이 모두 없어지고 설정만 남아요.',()=>{noSave=true;try{localStorage.removeItem(SAVEKEY);localStorage.setItem('shg-newbie','1')}catch(_){}location.reload()},'다시 하기',true);return}
+ else if(b.id==='set-in'){syLogin()}
+ else if(b.id==='set-out'){syLogout()}
+ else if(b.id==='set-syup'){syUp(true).then(()=>{toast(SY.err&&SY.err.startsWith('up')?'저장하지 못했어요':'계정에 저장했어요');setDraw()})}
+ else if(b.id==='set-reset'){confirmBox('처음부터 다시 할까요?','레벨 1, 돈 3만 원부터 새로 시작해요. 지금까지 한 일이 모두 없어지고 설정만 남아요.',()=>{noSave=true;try{localStorage.removeItem(SAVEKEY);localStorage.setItem('shg-newbie','1');if(SY.user)localStorage.setItem('shg-sync-up','1')}catch(_){}location.reload()},'다시 하기',true);return}
  else return;setSave();setDraw()};
 document.getElementById('set-page').oninput=e=>{const r=e.target.closest('input[type=range]');if(!r)return;SET[r.dataset.k]=+r.value;setSave();if(r.dataset.k==='bgm')bgmVol()};document.getElementById('set-page').onchange=e=>{if(e.target.dataset&&e.target.dataset.k==='sfx')sfx('menu')};
 function setShow(v){hudH();document.getElementById('setwin').hidden=!v;if(v){closeSheet();mkShow(false);bagShow(false);shopShow(false);stoShow(false);nbShow(false);setDraw()}}
@@ -1773,7 +1777,14 @@ window.afterIntro=()=>{if(!STAT.storySeen){storyStart(()=>{})}else if(!G.name)na
 function welcomeShow(){const w=document.getElementById('wcwin');w.hidden=false;document.getElementById('wc-name').textContent=G.name||'';
  document.getElementById('wc-go').onclick=()=>{w.hidden=true;sfx('open');nbMode='drawer';nbTab='guide';nbShow(true)};document.getElementById('wc-later').onclick=()=>{w.hidden=true;ntAuto()}}
 // ---- 공지사항: 접속하면 뜸, 오늘 하루 안 보기
-const NOTICES=[{id:'2026-10-19',date:'2026-10-19',title:'10월 19일 업데이트 안내',body:`농장 풍경
+const NOTICES=[{id:'2026-10-19b',date:'2026-10-19',title:'구글 로그인으로 농장 저장하기',body:`계정 저장
+- 설정에서 "구글로 로그인"을 누르면 지금 농장이 계정에 저장돼요.
+- 같은 구글 계정으로 폰·PC 어디서 들어와도 같은 농장을 이어서 할 수 있어요.
+- 로그인하지 않아도 지금처럼 이 기기에서 할 수 있어요.
+- 두 기기에서 따로 키운 농장이 있으면 어느 쪽을 쓸지 물어봐요. 고르지 않은 쪽도 백업으로 남겨 둬요.
+날짜와 잠
+- 이제 모두 같은 날짜로 흘러가요. 실제 1분이 게임 하루예요.
+- 안방에서 자면 날짜는 그대로이고, 자는 동안 체력이 2배 빨리 차요.`},{id:'2026-10-19',date:'2026-10-19',title:'10월 19일 업데이트 안내',body:`농장 풍경
 - 농장 둘레가 풀밭과 흙이 자연스럽게 섞인 바닥으로 바뀌고, 바깥은 나무가 둘러싼 숲이 됐어요.
 - 농장 가장자리에 낮은 나무 울타리를 둘렀어요.
 새 창 디자인
@@ -2030,7 +2041,38 @@ function loadGame(){let d;try{d=JSON.parse(localStorage.getItem(SAVEKEY)||'null'
   PLACED.length=0;PLACED.push(...d.PLACED);plN=d.plN;rebuildBlocked();sub(STAT,d.STAT);if(d.FJOB)sub(FJOB,d.FJOB);if(d.QDAY)QDAY=d.QDAY;if(d.can!=null)CAN.left=d.can;if(d.wx)WX=d.wx;if(d.reqs){REQS=d.reqs;reqN=d.reqN||0}if(d.newsfx)NEWSFX=d.newsfx;if(d.obsday)OBSDAY=d.obsday;if(d.ship){SHIP.length=0;SHIP.push(...d.ship)}if(d.mset)Object.assign(MSET,d.mset);if(d.trails)Object.assign(TRAILS,d.trails);if(d.wxq)WXQ=d.wxq;if(d.nextn)NEXTN=d.nextn;if(d.LETTERS){LETTERS.length=0;LETTERS.push(...d.LETTERS)}if(d.OBS){OBS=d.OBS;obN=d.obN||0}if(!d.obsfix){OBS.length=0}sub(GOT,d.GOT);
   ['XS','HIST','HIT','TREND'].forEach(k=>sub({XS,HIST,HIT,TREND}[k],d.mk[k]));sub(CANDLE,d.mk.CANDLE||{});Object.keys(PRICE).forEach(c=>{if(!HIST[c])priceInit(c);else if(!CANDLE[c]||CANDLE[c].length!==HIST[c].length)candleFromHist(c);XS[c]=Math.log(HIST[c].at(-1)/PRICE[c]);if(TREND[c]==null)TREND[c]=0});NEWS.length=0;NEWS.push(...d.mk.NEWS);
  }catch(e){console.log('load fail',e)}}
-setInterval(saveGame,5000);addEventListener('pagehide',saveGame);document.addEventListener('visibilitychange',()=>{if(document.hidden)saveGame()});
+setInterval(saveGame,5000);addEventListener('pagehide',saveGame);
+// ---- 계정 동기화 (구글 로그인 + 파이어베이스). 게임판에서만
+const FBCFG={apiKey:"AIzaSyB-nMHPbHBSnV2EgJpgUM1Tq7c2UH0tiz4",authDomain:"sanghanga-farm.firebaseapp.com",projectId:"sanghanga-farm",storageBucket:"sanghanga-farm.firebasestorage.app",messagingSenderId:"448777625232",appId:"1:448777625232:web:b139bcf16ab5d81e8f8215"};
+const ADMIN_EMAIL='koreantch@gmail.com';
+const SY={ready:false,user:null,last:0,hash:'',busy:false,err:''};
+const lsG=k=>{try{return localStorage.getItem(k)}catch(_){return null}},lsS=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(_){}};
+function loadScript(u){return new Promise((ok,no)=>{const e=document.createElement('script');e.src=u;e.onload=ok;e.onerror=no;document.head.appendChild(e)})}
+async function syInit(){if(!USER||SY.ready)return;try{const B='lib/';await loadScript(B+'firebase-app-compat.js');await Promise.all([loadScript(B+'firebase-auth-compat.js'),loadScript(B+'firebase-firestore-compat.js')]);
+  firebase.initializeApp(FBCFG);SY.ready=true;firebase.auth().getRedirectResult().catch(e=>{SY.err=e.code||''});firebase.auth().onAuthStateChanged(u=>{SY.user=u;window.SHG_ADMIN=!!(u&&u.email===ADMIN_EMAIL&&u.emailVerified);if(u)syOnLogin(u);if(typeof setDraw==='function'&&!document.getElementById('setwin').hidden)setDraw()})}catch(e){SY.err='load'}}
+async function gz(str){const cs=new Blob([str]).stream().pipeThrough(new CompressionStream('gzip'));return new Uint8Array(await new Response(cs).arrayBuffer())}
+async function gunz(u8){const ds=new Blob([u8]).stream().pipeThrough(new DecompressionStream('gzip'));return await new Response(ds).text()}
+const fdoc=uid=>firebase.firestore().collection('farms').doc(uid);
+function sySum(str){try{const d=JSON.parse(str);return{ts:d.ts||0,lv:d.G?.lv||1,name:d.G?.name||'',m:d.G?.month,dd:(d.G?.day||0)+1,money:d.money||0}}catch(_){return{ts:0,lv:1}}}
+async function syUp(force){if(!SY.user||SY.busy)return;saveGame();const str=lsG(SAVEKEY);if(!str)return;const h=str.length+':'+str.slice(-64);if(!force&&h===SY.hash)return;SY.busy=true;
+ try{const sm=sySum(str),bin=await gz(str);if(bin.length>950000)throw Error('too big');
+  await fdoc(SY.user.uid).set({data:firebase.firestore.Blob.fromUint8Array(bin),ts:sm.ts,lv:sm.lv,name:sm.name,money:sm.money,email:SY.user.email||'',up:firebase.firestore.FieldValue.serverTimestamp()});
+  SY.hash=h;SY.last=Date.now();lsS('shg-sync-uid',SY.user.uid);lsS('shg-sync-up',null)}catch(e){SY.err='up:'+(e.code||e.message)}SY.busy=false}
+async function syBackup(uid,str,why){try{const bin=await gz(str);await fdoc(uid).collection('backups').doc(String(Date.now())).set({data:firebase.firestore.Blob.fromUint8Array(bin),why,...sySum(str)})}catch(_){}}
+function syApply(str){noSave=true;lsS(SAVEKEY,str);lsS('shg-newbie',null);location.reload()}
+async function syOnLogin(u){try{const snap=await fdoc(u.uid).get(),local=lsG(SAVEKEY),linked=lsG('shg-sync-uid')===u.uid,forceUp=lsG('shg-sync-up')==='1';
+ if(!snap.exists){await syUp(true);toast('농장을 계정에 저장했어요. 이제 다른 기기에서도 이어서 할 수 있어요');return}
+ const rd=snap.data(),rstr=await gunz(rd.data.toUint8Array()),R=sySum(rstr),L=local?sySum(local):null;
+ if(forceUp){await syBackup(u.uid,rstr,'처음부터 다시 하기 전');await syUp(true);return}
+ if(!L||(!linked&&L.lv<=1&&R.lv>1)){if(local&&!linked)await syBackup(u.uid,local,'이 기기에 있던 농장');lsS('shg-sync-uid',u.uid);syApply(rstr);return}
+ if(linked){if(R.ts>L.ts+3000){syApply(rstr)}else{await syUp(true)}return}
+ const f=x=>`Lv${x.lv} · ${won(x.money)} · ${new Date(x.ts).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'})} 저장`;
+ objMenu('어느 농장을 쓸까요?',[['계정 농장','go',async()=>{await syBackup(u.uid,local,'이 기기에 있던 농장');lsS('shg-sync-uid',u.uid);syApply(rstr)}],['이 기기 농장','',async()=>{await syBackup(u.uid,rstr,'계정에 있던 농장');lsS('shg-sync-uid',u.uid);await syUp(true);toast('이 기기 농장을 계정에 저장했어요')}]],
+  `계정 농장: ${f(R)}<br>이 기기 농장: ${f(L)}<br><small>고르지 않은 쪽도 지우지 않고 백업으로 남겨 둬요.</small>`)}catch(e){SY.err='login:'+(e.code||e.message);toast('계정 농장을 불러오지 못했어요. 잠시 뒤 다시 해 주세요')}}
+async function syLogin(){if(!SY.ready){await syInit();if(!SY.ready){alertBox('로그인할 수 없어요','인터넷 연결을 확인해 주세요.');return}}const pv=new firebase.auth.GoogleAuthProvider();
+ try{await firebase.auth().signInWithPopup(pv)}catch(e){if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/cancelled-popup-request'].includes(e.code))firebase.auth().signInWithRedirect(pv);else if(e.code!=='auth/popup-closed-by-user')alertBox('로그인하지 못했어요',e.code||'잠시 뒤 다시 해 주세요.')}}
+async function syLogout(){await syUp(true);await firebase.auth().signOut();lsS('shg-sync-uid',null);window.SHG_ADMIN=false;toast('로그아웃했어요. 이 기기에는 농장이 그대로 남아 있어요');setDraw()}
+if(USER){setTimeout(syInit,1500);setInterval(()=>syUp(false),60000);document.addEventListener('visibilitychange',()=>{if(document.hidden)syUp(false)})}document.addEventListener('visibilitychange',()=>{if(document.hidden)saveGame()});
 document.getElementById('dock').onclick=e=>{const b=e.target.closest('button');if(!b)return;sfx('menu');if(b.id==='dock-market'){bagShow(false);shopShow(false);mkShow(true);return}if(b.id==='dock-bag'){shopShow(false);bagShow(true);return}if(b.id==='dock-shop'){shopShow(true);return}if(b.id==='dock-note'){nbShow(true);return}if(b.id==='dock-set'){setShow(true);return}if(b.id==='dock-deco'){decoMode(true);return}toast(b.textContent.trim()+' 창은 다음에 만들어요')};
 // ---- 밭 창
 let sel=null,view='main';
