@@ -190,6 +190,7 @@ body{background:var(--field);color:var(--ink);font-family:var(--f-b);overflow:hi
 .mk-sell button{border:2px solid #a8781a;background:#f2c14e;color:#3a250f;border-radius:8px;font:400 15px var(--f-d);padding:4px 10px;cursor:pointer}
 .mk-sell button[disabled]{opacity:.4;cursor:default}
 .mk-news{display:flex;flex-direction:column;gap:4px;font-size:12px}.mk-news div{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px;border-bottom:1px dashed rgba(243,239,226,.2);padding-bottom:3px}
+.ticker.bc{z-index:56;background:#2d4a1c;color:#fff7d6;font-size:14px}.ticker.bc .spk{background:#f2c14e;color:#3a2a1a}.ticker.bc #tk-t{animation-duration:14s}.adm-it select,.adm-bc textarea{font:600 14px var(--f-b);padding:5px 8px;border:1.5px solid #c9ab7e;border-radius:8px;background:#fffaf0;color:#3a2a1a;max-width:220px}.adm-bc textarea{width:100%;box-sizing:border-box;max-width:none;resize:vertical}
 .ticker{position:fixed;left:0;right:0;top:calc(40px + env(safe-area-inset-top,0px));z-index:4;display:flex;gap:8px;align-items:center;background:#3b2a1a;color:#fbe8b8;font:600 13px var(--f-b);padding:4px max(12px,env(safe-area-inset-right,0px)) 4px max(12px,env(safe-area-inset-left,0px));border-bottom:2px solid #2a1c10;white-space:nowrap;overflow:hidden}
 .ticker .spk{background:#b4553a;color:#fff;border-radius:4px;padding:0 6px;font-size:12px}
 .ticker #tk-t{animation:tk 9s linear}
@@ -1893,7 +1894,12 @@ function admDraw(){const pg=document.getElementById('adm-page');
  <div class="sw-g adm"><div class="st-row"><span>돈</span><span><input id="ad-money" type="number" min="0" value="${Math.floor(money)}"><button type="button" id="ad-money-ok">적용</button></span></div>
  <div class="st-row"><span>레벨</span><span><input id="ad-lv" type="number" min="1" max="99" value="${G.lv}"><button type="button" id="ad-lv-ok">적용</button></span></div></div>
  <h4 class="fh">시세</h4><div class="adm-b"><button type="button" id="ad-up">전 품목 상한가</button><button type="button" id="ad-down">전 품목 하한가</button><button type="button" id="ad-reset">시세 원래대로</button></div>
- <h4 class="fh">생산</h4><div class="adm-b"><button type="button" id="ad-done">생산 중인 것 모두 즉시 완료</button><button type="button" id="ad-day">하루 넘기기</button><button type="button" id="ad-hp">체력 가득</button></div>`;
+ <h4 class="fh">생산</h4><div class="adm-b"><button type="button" id="ad-done">생산 중인 것 모두 즉시 완료</button><button type="button" id="ad-day">하루 넘기기</button><button type="button" id="ad-hp">체력 가득</button></div>
+ <h4 class="fh">아이템 만들기</h4><div class="sw-g adm adm-it"><div class="st-row"><span>종류</span><span><select id="ad-cat">${ADMCAT.map(([k,l])=>`<option value="${k}" ${k===admCat?'selected':''}>${l}</option>`).join('')}</select></span></div>
+ <div class="st-row"><span>아이템</span><span><select id="ad-item">${admItems(admCat).map(([id,nm])=>`<option value="${id}">${nm}</option>`).join('')}</select></span></div>
+ <div class="st-row"><span>개수</span><span><input id="ad-n" type="number" min="1" max="9999" value="10"><button type="button" id="ad-make">넣기</button></span></div></div>
+ ${USER?`<h4 class="fh">전체 메시지</h4><div class="sw-g adm adm-bc">${window.SHG_ADMIN&&SY.user?`<textarea id="ad-bc" maxlength="80" rows="2" placeholder="모든 사람 화면 위 자막으로 떠요 (80자까지)"></textarea><div class="adm-b"><button type="button" id="ad-bc-go">보내기</button></div>`:'<p class="hs-note">운영자 계정으로 로그인해야 보낼 수 있어요.</p>'}</div>`:''}`;
+ {const c=document.getElementById('ad-cat');c.onchange=()=>{admCat=c.value;admDraw()}}
  const on=(id,f)=>{const e=document.getElementById(id);if(e)e.onclick=()=>{f();sfx('act');hudDraw();if(mkOpen)mkDraw();saveGame()}};
  on('ad-money-ok',()=>{const v=Math.max(0,Math.floor(+document.getElementById('ad-money').value||0));money=v;toast(`돈을 ${won(v)}으로 바꿨어요`)});
  on('ad-lv-ok',()=>{const v=Math.max(1,Math.min(99,Math.floor(+document.getElementById('ad-lv').value||1)));G.lv=v;G.xp=0;G.hp=maxHp();toast(`레벨을 ${v}로 바꿨어요`)});
@@ -1902,7 +1908,18 @@ function admDraw(){const pg=document.getElementById('adm-page');
  on('ad-reset',()=>{Object.keys(PRICE).forEach(priceInit);toast('시세를 처음 값으로 돌렸어요')});
  on('ad-done',()=>{let f=0,c=0;Object.values(FJOB).forEach(J=>J.forEach(j=>{if(j.end>Date.now()){j.end=Date.now()-1;f++}}));PLOTS.forEach(p=>{if(p.crop&&p.crop.prog<1){p.crop.prog=1;p.crop.st=stOf(p.crop);c++}});toast(`시설 ${f}칸, 밭 ${c}개를 바로 끝냈어요`)});
  on('ad-day',()=>{G.dayT=SET.day-.01});
- on('ad-hp',()=>{G.hp=maxHp()})}
+ on('ad-hp',()=>{G.hp=maxHp()});
+ on('ad-make',()=>{const id=document.getElementById('ad-item').value,n=Math.max(1,Math.min(9999,Math.floor(+document.getElementById('ad-n').value||1)));const nm=(admItems(admCat).find(x=>x[0]===id)||[0,id])[1];admGive(admCat,id,n);toast(`${nm} ${n}개를 넣었어요`)});
+ {const b=document.getElementById('ad-bc-go');if(b)b.onclick=async()=>{const t=document.getElementById('ad-bc').value.replace(/[<>]/g,'').trim().slice(0,80);if(!t){toast('보낼 말을 적어 주세요');return}
+  try{await firebase.firestore().collection('broadcast').doc('latest').set({text:t,id:String(Date.now()),at:firebase.firestore.FieldValue.serverTimestamp(),by:SY.user.email});document.getElementById('ad-bc').value='';sfx('trade');toast('전체 메시지를 보냈어요')}catch(e){alertBox('보내지 못했어요',(e.code||e.message)+'. 파이어베이스 규칙에 broadcast 칸이 있는지 확인해 주세요.')}}}}
+const ADMCAT=[['seed','씨앗'],['seedling','모종'],['fert','밑거름'],['top','덧거름'],['mat','재료'],['food','음식'],['crop','창고 작물(상 등급)']];let admCat='seed';
+function admItems(c){if(c==='seed'||c==='seedling')return Object.keys(INV[c]).filter(k=>NAME[k]).sort((a,b)=>LV[a]-LV[b]).map(k=>[k,NAME[k]+(c==='seed'?' 씨앗':' 모종')]);
+ if(c==='fert')return FERT.map(F=>[F[0],F[1]]);if(c==='top')return TOPF.map(T=>[T[0],T[1]]);if(c==='mat')return Object.entries(MATS).map(([k,v])=>[k,v[0]]);if(c==='food')return Object.entries(FOODS).map(([k,v])=>[k,v[0]]);
+ if(c==='crop')return Object.keys(PRICE).filter(k=>NAME[k]).map(k=>[k,NAME[k]]);return[]}
+function admGive(c,id,n){if(c==='seed'||c==='seedling')INV[c][id]=(INV[c][id]||0)+n;else if(c==='fert'||c==='top')FINV[id]=(FINV[id]||0)+n;else if(c==='mat'){if(MATS[id])MATS[id][1]+=n}else if(c==='food')FOODINV[id]=(FOODINV[id]||0)+n;else if(c==='crop')addLot(id,'상',nowDay(),n);
+ if(typeof qsDraw==='function')qsDraw()}
+function bcShow(text){const t=document.getElementById('ticker'),x=document.getElementById('tk-t');t.querySelector('.spk').textContent='알림';t.classList.add('bc');x.textContent=text;t.hidden=false;x.style.animation='none';x.offsetWidth;x.style.animation='';clearTimeout(tickerShow.h);tickerShow.h=setTimeout(()=>{t.hidden=true;t.classList.remove('bc');t.querySelector('.spk').textContent='뉴스'},20000);sfx('open')}
+function bcListen(){if(!SY.ready||bcListen.on)return;bcListen.on=1;firebase.firestore().collection('broadcast').doc('latest').onSnapshot(d=>{if(!d.exists)return;const v=d.data(),at=v.at&&v.at.toMillis?v.at.toMillis():Date.now();if(!v.id||lsG('shg-bc-seen')===v.id)return;lsS('shg-bc-seen',v.id);if(Date.now()-at<6*3600e3)bcShow(v.text)},()=>{})}
 document.getElementById('adm-x').onclick=()=>{document.getElementById('admwin').hidden=true};
 {const d=document.querySelector('.hud .hb.date');if(d)d.addEventListener('click',e=>{if(USER&&!window.SHG_ADMIN)return;if(e.target.id==='h-weather')return;const now=Date.now();admTaps=admTaps.filter(t=>now-t<2000);admTaps.push(now);if(admTaps.length>=5){admTaps=[];admOpen()}})}
 // ---- 손님방: 건넬 수 있는 부탁이 있나
@@ -2049,7 +2066,7 @@ const SY={ready:false,user:null,last:0,hash:'',busy:false,err:''};
 const lsG=k=>{try{return localStorage.getItem(k)}catch(_){return null}},lsS=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(_){}};
 function loadScript(u){return new Promise((ok,no)=>{const e=document.createElement('script');e.src=u;e.onload=ok;e.onerror=no;document.head.appendChild(e)})}
 async function syInit(){if(!USER||SY.ready)return;try{const B='lib/';await loadScript(B+'firebase-app-compat.js');await Promise.all([loadScript(B+'firebase-auth-compat.js'),loadScript(B+'firebase-firestore-compat.js')]);
-  firebase.initializeApp(FBCFG);SY.ready=true;firebase.auth().getRedirectResult().catch(e=>{SY.err=e.code||''});firebase.auth().onAuthStateChanged(u=>{SY.user=u;window.SHG_ADMIN=!!(u&&u.email===ADMIN_EMAIL&&u.emailVerified);if(u)syOnLogin(u);if(typeof setDraw==='function'&&!document.getElementById('setwin').hidden)setDraw()})}catch(e){SY.err='load'}}
+  firebase.initializeApp(FBCFG);SY.ready=true;bcListen();firebase.auth().getRedirectResult().catch(e=>{SY.err=e.code||''});firebase.auth().onAuthStateChanged(u=>{SY.user=u;window.SHG_ADMIN=!!(u&&u.email===ADMIN_EMAIL&&u.emailVerified);if(u)syOnLogin(u);if(typeof setDraw==='function'&&!document.getElementById('setwin').hidden)setDraw()})}catch(e){SY.err='load'}}
 async function gz(str){const cs=new Blob([str]).stream().pipeThrough(new CompressionStream('gzip'));return new Uint8Array(await new Response(cs).arrayBuffer())}
 async function gunz(u8){const ds=new Blob([u8]).stream().pipeThrough(new DecompressionStream('gzip'));return await new Response(ds).text()}
 const fdoc=uid=>firebase.firestore().collection('farms').doc(uid);
