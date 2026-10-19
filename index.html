@@ -891,7 +891,7 @@ document.getElementById('mkwin').onclick=e=>{if(e.target.id==='mkwin')mkShow(fal
 
 // ---- 가방
 const FOODS={'163':['감자전',80],'165':['비빔밥',200],'166':['삼계탕',999]};const FOODINV={'163':3,'165':2,'166':1};
-const MATS={'174':['벤 풀',23,'낫으로 벤 풀. 퇴비장에 넣으면 거름이 돼요.'],'186':['돌 조각',14,'곡괭이로 깬 돌. 돌담 꾸미기에 써요.'],'187':['옥돌',2,'가끔 나오는 귀한 돌.'],'179':['기본 상토',5,'육묘장에서 씨앗과 함께 넣으면 모종이 돼요.'],'st_time':['시간의 돌',0,'돌을 깨거나 풀을 벨 때 아주 가끔 나와요. 옥돌과 합성하면 시간의 옥돌이 돼요.'],'st_life':['생명의 돌',0,'돌을 깨거나 풀을 벨 때 아주 가끔 나와요. 옥돌과 합성하면 부활도장이 돼요.'],'st_light':['빛의 돌',0,'가장 드물게 나오는 돌. 부활도장, 옥돌과 합성하면 특부활도장이 돼요.'],'st_rain':['단비의 돌',0,'돌을 깨거나 풀을 벨 때 아주 가끔 나와요. 옥돌과 합성하면 단비의 옥돌이 돼요.'],'st_earth':['대지의 돌',0,'돌을 깨거나 풀을 벨 때 아주 가끔 나와요. 옥돌과 합성하면 대지의 옥돌이 돼요.'],'st_plenty':['풍요의 돌',0,'돌을 깨거나 풀을 벨 때 아주 가끔 나와요. 옥돌과 합성하면 풍요의 옥돌이 돼요.'],'jd_time':['시간의 옥돌',0,'자라는 밭이나 시설의 남은 시간을 1개에 10분씩 당겨요. 밭을 누르거나 시설 가공 칸에서 써요.'],'stamp':['부활도장',0,'창고에 있는 작물을 모두 거둘 때 등급으로 되돌리고, 등급이 떨어지기까지 남은 날도 처음으로 돌려요.'],'stamp_s':['특부활도장',0,'창고에 있는 작물을 모두 특 등급으로 올려요.'],'jd_rain':['단비의 옥돌',0,'모든 밭에 한 번에 물을 줘요.'],'jd_earth':['대지의 옥돌',0,'밭 한 칸의 양분을 가득 채워요. 밭을 눌러서 써요.'],'jd_plenty':['풍요의 옥돌',0,'자라는 밭 한 칸의 다음 수확량이 2배가 돼요. 밭을 눌러서 써요.']};
+const MATS={'174':['벤 풀',23,'낫으로 벤 풀. 퇴비장에 넣으면 거름이 돼요.'],'186':['돌 조각',14,'곡괭이로 깬 돌. 돌담 꾸미기에 써요.'],'187':['옥돌',2,'돌을 깨다 보면 종종 나오는 돌. 할머니 서랍에서 신기한 돌과 합성해요.'],'179':['기본 상토',5,'육묘장에서 씨앗과 함께 넣으면 모종이 돼요.'],'st_time':['시간의 돌',0,'돌을 깨거나 풀을 벨 때 가끔 나와요. 옥돌과 합성하면 시간의 옥돌이 돼요.'],'st_life':['생명의 돌',0,'돌을 깨거나 풀을 벨 때 아주 가끔 나와요. 옥돌과 합성하면 부활도장이 돼요.'],'st_light':['빛의 돌',0,'아주아주 드물게 나오는 돌. 부활도장, 옥돌과 합성하면 특부활도장이 돼요.'],'st_rain':['단비의 돌',0,'돌을 깨거나 풀을 벨 때 아주 가끔 나와요. 옥돌과 합성하면 단비의 옥돌이 돼요.'],'st_earth':['대지의 돌',0,'돌을 깨거나 풀을 벨 때 아주 가끔 나와요. 옥돌과 합성하면 대지의 옥돌이 돼요.'],'st_plenty':['풍요의 돌',0,'돌을 깨거나 풀을 벨 때 아주 가끔 나와요. 옥돌과 합성하면 풍요의 옥돌이 돼요.'],'jd_time':['시간의 옥돌',0,'자라는 밭이나 시설의 남은 시간을 1개에 10분씩 당겨요. 밭을 누르거나 시설 가공 칸에서 써요.'],'stamp':['부활도장',0,'창고에 있는 작물을 모두 거둘 때 등급으로 되돌리고, 등급이 떨어지기까지 남은 날도 처음으로 돌려요.'],'stamp_s':['특부활도장',0,'창고에 있는 작물을 모두 특 등급으로 올려요.'],'jd_rain':['단비의 옥돌',0,'모든 밭에 한 번에 물을 줘요.'],'jd_earth':['대지의 옥돌',0,'밭 한 칸의 양분을 가득 채워요. 밭을 눌러서 써요.'],'jd_plenty':['풍요의 옥돌',0,'자라는 밭 한 칸의 다음 수확량이 2배가 돼요. 밭을 눌러서 써요.']};
 const BAGS=[['헝겊 보따리',20,1,0],['대나무 소쿠리',40,5,30000],['짚 망태기',70,10,150000],['등지게',110,18,600000],['캔버스 배낭',160,28,2000000],['등산 배낭',230,38,8000000],['큰 배낭',330,50,30000000],['곳간 보자기',480,62,100000000],['도깨비 자루',700,76,400000000],['화수분 주머니',999,90,1500000000]];
 let bagLv=1;const bagCap=()=>BAGS[bagLv][1];let bagTab='all',bagSel=null;
 function bagUpgrade(){const nx=BAGS[bagLv+1];if(!nx){alertBox('가장 큰 가방이에요','더 키울 수 없어요.');return}
@@ -1171,7 +1171,10 @@ function tutPage(pg){STAT.tutSeen=G.lv;const open=TUT.filter(t=>t[1]<=G.lv&&!tut
 // ---- 옥돌 합성 (할머니 서랍)
 const STN=['st_time','st_life','st_light','st_rain','st_earth','st_plenty'];
 const JREC=[['jd_time',[['st_time',1],['187',1]]],['stamp',[['st_life',1],['187',1]]],['stamp_s',[['stamp',1],['st_light',1],['187',1]]],['jd_rain',[['st_rain',1],['187',1]]],['jd_earth',[['st_earth',1],['187',1]]],['jd_plenty',[['st_plenty',1],['187',1]]]];
-function stoneRoll(pr0){if(Math.random()>=pr0)return null;const Wt=[3,3,1,3,3,3];let r=Math.random()*16;for(let k=0;k<6;k++){r-=Wt[k];if(r<0)return STN[k]}return STN[0]}
+// 장애물 하나 치울 때 나올 확률 (드문 것부터 굴림). m: 배수
+const STP={st_light:.0005,st_life:.002,st_plenty:.003,st_rain:.005,st_earth:.005,st_time:.008};
+function stoneRoll(m=1){for(const k of ['st_light','st_life','st_plenty','st_rain','st_earth','st_time'])if(Math.random()<STP[k]*m)return k;return null}
+const jadeP=(tool,rare)=>tool==='pick'?Math.max(.1,rare||0):.03;
 const jdHave=k=>MATS[k]?MATS[k][1]:0;
 const GOTQ=[];let gotOn=false;
 function gotPop(k,n=1,why){GOTQ.push([k,n,why]);if(!gotOn)gotNext()}
@@ -1428,7 +1431,7 @@ function obsWork(o){const [nm,tool,need,drop,[a,b],rare]=OTYPE[o.t];const tr=TOO
  const dx=o.i+.5-hero.i,dy=o.j+.5-hero.j;face(dx,dy);sfx('hoe');
  startAct(tool==='sickle'?'pull':tool==='pick'?'hoe':'plant',2,()=>{const i=OBS.indexOf(o);if(i>=0)OBS.splice(i,1);rebuildBlocked();
   const n=a+Math.floor(Math.random()*(b-a+1));qAdd('m:'+drop,n);const fl=[['+'+n+' '+MATS[drop][0],'#ffd84a']];
-  if(rare&&Math.random()<rare){qAdd('m:187',1);fl.push(['+1 옥돌','#9be3c8']);gotPop('187')}{const sn=stoneRoll(.04+(rare||0)*.1);if(sn){qAdd('m:'+sn,1);fl.push(['+1 '+MATS[sn][0],'#d7c4ff']);gotPop(sn)}}
+  if(Math.random()<jadeP(tool,rare)){qAdd('m:187',1);fl.push(['+1 옥돌','#9be3c8']);gotPop('187')}{const sn=stoneRoll(1+(rare||0)*2);if(sn){qAdd('m:'+sn,1);fl.push(['+1 '+MATS[sn][0],'#d7c4ff']);gotPop(sn)}}
   G.hp=Math.max(0,G.hp-cost);fl.push(['+5','#7fd3ff']);floatNum(fl);addXp(5);STAT.cleared=(STAT.cleared||0)+1;hero.job=null;hudDraw();kick()},spd)}
 // ---- 땅 넓히기
 const LAND=[[1,12,0],[5,14,50000],[10,16,300000],[15,18,800000],[20,20,2000000],[25,22,5000000],[30,24,10000000],[35,26,18000000],[40,28,30000000],[45,30,55000000],[50,32,100000000],[55,34,180000000],[60,36,300000000],[65,38,480000000],[70,40,700000000],[75,42,1000000000],[80,44,1500000000],[85,46,2200000000],[90,48,3000000000],[95,50,4200000000],[100,52,6000000000]];
@@ -1447,7 +1450,7 @@ const MCLEAR=[['cultivator','관리기',Object.keys(OTYPE),500,10],['tiller','�
 const bestMach=()=>{for(let k=MCLEAR.length-1;k>=0;k--)if(OWN[MCLEAR[k][0]]>0)return MCLEAR[k];return null};
 function machPlan(){const m=bestMach();if(!m)return null;const L=OBS.filter(o=>m[2].includes(o.t));return{m,L,runs:Math.ceil(L.length/m[4]),cost:Math.ceil(L.length/m[4])*m[3]}}
 function machClear(auto){const P=machPlan();if(!P||!P.L.length)return 0;const n=Math.min(P.L.length,Math.floor(money/P.m[3])*P.m[4]);if(!n)return 0;const fuel=Math.ceil(n/P.m[4])*P.m[3];
- const got={};P.L.slice(0,n).forEach(o=>{const [nm,tool,need,drop,[a,b],rare]=OTYPE[o.t];const q=a+Math.floor(Math.random()*(b-a+1));got[drop]=(got[drop]||0)+q;if(rare&&Math.random()<rare)got['187']=(got['187']||0)+1;{const sn=stoneRoll(.04+(rare||0)*.1);if(sn)got[sn]=(got[sn]||0)+1}OBS.splice(OBS.indexOf(o),1)});
+ const got={};P.L.slice(0,n).forEach(o=>{const [nm,tool,need,drop,[a,b],rare]=OTYPE[o.t];const q=a+Math.floor(Math.random()*(b-a+1));got[drop]=(got[drop]||0)+q;if(Math.random()<jadeP(tool,rare))got['187']=(got['187']||0)+1;{const sn=stoneRoll(1+(rare||0)*2);if(sn)got[sn]=(got[sn]||0)+1}OBS.splice(OBS.indexOf(o),1)});
  Object.entries(got).forEach(([k,q])=>{qAdd('m:'+k,q);if(k==='187'||STN.includes(k))gotPop(k,q,auto?'기계가 치우다 주웠어요':undefined)});money-=fuel;STAT.spent+=fuel;STAT.cleared=(STAT.cleared||0)+n;rebuildBlocked();addXp(n);hudDraw();
  const txt=Object.entries(got).map(([k,q])=>`${MATS[k][0]} ${q}개`).join(', ');
  if(auto)toast(`${P.m[1]}가 밤새 장애물 ${n}개를 치웠어요`);else{sfx('hoe');alertBox(`${P.m[1]}로 ${n}개를 치웠어요`,`${Math.ceil(n/P.m[4])}번 돌려서 경유값 ${won(fuel)}이 들었어요. 얻은 것: ${txt||'없음'}`)}
@@ -1581,7 +1584,7 @@ function petDraw(S){myPets().forEach(k=>{const st=PETST[k];if(!st)return;const f
  S.push({k:st.i+st.j+.25,pt:[st.i,st.j],f(){cx.save();cx.translate(t.x,t.y+TH/2+4);if(st.flip)cx.scale(-1,1);cx.drawImage(im,-im.width/2,-im.height);cx.restore()}})})}
 function petDaily(){const L=myPets(),msg=[];
  if(L.includes('baekgu')){const cs=ALLC.filter(c=>LV[c]<=G.lv&&HOW[c]!=='seedling');const c=cs[Math.floor(Math.random()*cs.length)];if(c){INV.seed[c]=(INV.seed[c]||0)+1;msg.push(`백구가 ${NAME[c]} 씨앗을 물어 왔어요`)}}
- if(L.includes('hwanggu')&&Math.random()<.4){MATS['187'][1]++;msg.push('황구가 옥돌을 물어 왔어요');gotPop('187',1,'황구가 물어 왔어요')}if(L.includes('hwanggu')&&Math.random()<.2){const sn=stoneRoll(1);MATS[sn][1]++;gotPop(sn,1,'황구가 물어 왔어요');msg.push('황구가 '+MATS[sn][0]+josa(MATS[sn][0],'을','를')+' 물어 왔어요')}
+ if(L.includes('hwanggu')&&Math.random()<.4){MATS['187'][1]++;msg.push('황구가 옥돌을 물어 왔어요');gotPop('187',1,'황구가 물어 왔어요')}if(L.includes('hwanggu')){const sn=stoneRoll(8);if(sn){MATS[sn][1]++;gotPop(sn,1,'황구가 물어 왔어요');msg.push('황구가 '+MATS[sn][0]+josa(MATS[sn][0],'을','를')+' 물어 왔어요')}}
  if(L.includes('corgi')){MATS['174'][1]+=5;msg.push('웰시코기가 벤 풀 5개를 물어 왔어요')}
  if(msg.length)setTimeout(()=>toast(msg.join(' · ')),900)}
 const catSlow=()=>{const L=myPets();return L.includes('blackcat')?1.1:L.includes('calico')?1.08:L.includes('cheese')?1.05:1};
