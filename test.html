@@ -1458,9 +1458,9 @@ function spawnObs(type){if(!obsOk(type))return false;for(let tries=0;tries<60;tr
 function initObs(){if(N>12){landBand(12);return}const pool=['weed','weed','weed','weed','pebble','pebble','stone','stone','rock','boulder','bush','bush','stump_s','stump','bigrock','stump_b','slab','roots'];for(let k=0;k<14;k++)spawnObs(pool[k%pool.length]);rebuildBlocked()}
 // 새 장애물: 게임 하루에 많아야 5개, 사흘 동안 하나도 안 나오면 반드시 하나. 농장 전체 60개가 넘으면 더 안 나옴
 let OBSDAY={d:'',n:0};const OBSMAX=5;
-// 자리 비운 동안 밀린 날을 한꺼번에 넘길 때는 장애물을 3개까지만 새로 깔아요
-let CATCH=false,CATCHN=0;
-function obsDaily(){if(OWN.autotractor>0&&!CATCH)setTimeout(()=>machClear(true),50);STAT.obsGap=(STAT.obsGap||0)+1;if(OBS.length>=60)return;if(CATCH&&CATCHN>=3)return;let n=0;
+// 자리 비운 동안 밀린 날을 한꺼번에 넘길 때는 장애물을 5~8개까지만 새로 깔아요
+let CATCH=false,CATCHN=0,CATCHMAX=6;
+function obsDaily(){if(OWN.autotractor>0&&!CATCH)setTimeout(()=>machClear(true),50);STAT.obsGap=(STAT.obsGap||0)+1;if(OBS.length>=60)return;if(CATCH&&CATCHN>=CATCHMAX)return;let n=0;
  const put=t=>{if(n<OBSMAX&&spawnObs(t))n++};
  if(Math.random()<.35&&OBS.filter(o=>o.t==='weed').length<35)put('weed');if(Math.random()<.12)put(['pebble','stone','bush','stump_s'][Math.floor(Math.random()*4)]);
  if(!n&&STAT.obsGap>=3)for(const t of ['weed','pebble','stone','bush','stump_s']){if(t==='weed'&&OBS.filter(o=>o.t==='weed').length>=35)continue;put(t);if(n)break}
@@ -1969,14 +1969,14 @@ function worldNow(){const ms=Date.now()-WEPOCH,d=Math.floor(ms/60000);return{abs
 const absOf=()=>(G.month-1)*20+G.day;
 function worldSnap(){const w=worldNow();G.month=Math.floor(w.abs/20)+1;G.day=w.abs%20;G.dayT=w.t}
 function worldSync(){const w=worldNow(),diff=(w.abs-absOf()+240)%240;
- if(diff>0&&diff<120){if(diff>1){CATCH=true;CATCHN=0}try{for(let k=0;k<diff;k++){G.day++;if(G.day>=20){G.day=0;G.month=G.month%12+1}newDay()}}finally{CATCH=false}}else if(diff>=120){worldSnap();return}
+ if(diff>0&&diff<120){if(diff>1){CATCH=true;CATCHN=0;CATCHMAX=5+Math.floor(Math.random()*4)}try{for(let k=0;k<diff;k++){G.day++;if(G.day>=20){G.day=0;G.month=G.month%12+1}newDay()}}finally{CATCH=false}}else if(diff>=120){worldSnap();return}
  G.dayT=w.t}
 // ---- 잠자기: 날짜는 그대로, 자는 동안 체력이 2배 빨리 참
 let SLEEP=false;
 function sleepStart(){SLEEP=true;STAT.slept=(STAT.slept||0)+1;hsShow(false);const o=document.getElementById('sleepov');o.hidden=false;sleepTick();sfx('open')}
 function sleepTick(){const o=document.getElementById('sleepov');if(o.hidden)return;o.querySelector('i').textContent=`체력 ${Math.floor(G.hp)} / ${maxHp()}`;o.querySelector('span').style.width=(G.hp/maxHp()*100)+'%';if(G.hp>=maxHp()-1e-6)sleepEnd(true)}
 function sleepEnd(full){if(!SLEEP)return;SLEEP=false;document.getElementById('sleepov').hidden=true;toast(full?'푹 잤어요. 체력이 가득 찼어요':'잠에서 깼어요');hudDraw()}
-function offlineRun(sec){if(!(sec>5))return;OFFLINE=true;CATCH=true;CATCHN=0;const m0=money,h0=STAT.hvAll||0,d0=G.month*100+G.day;let days=0,rem=sec;const t0=performance.now();
+function offlineRun(sec){if(!(sec>5))return;OFFLINE=true;CATCH=true;CATCHN=0;CATCHMAX=5+Math.floor(Math.random()*4);const m0=money,h0=STAT.hvAll||0,d0=G.month*100+G.day;let days=0,rem=sec;const t0=performance.now();
  try{while(rem>0){const step=Math.min(rem,SET.day-G.dayT);growTick(step);G.dayT+=step;rem-=step;if(G.dayT>=SET.day-1e-6){G.dayT=0;G.day++;if(G.day>=20){G.day=0;G.month=G.month%12+1}newDay();days++}}}catch(e){console.log('offline',e)}
  G.hp=Math.min(maxHp(),G.hp+maxHp()*0.05*sec/60);OFFLINE=false;CATCH=false;
  const ripe=PLOTS.filter(p=>p.crop&&p.crop.prog>=1).length,dm=money-m0,hv=(STAT.hvAll||0)-h0;
