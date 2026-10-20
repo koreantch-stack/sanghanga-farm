@@ -1780,7 +1780,7 @@ function linksOf(po){if(!po.links){const tk=takenBy(po);po.links=plotsNear(po,6,
 const linkedPlots=po=>linksOf(po).map(n=>PLOTS.find(p=>p.no===n)).filter(Boolean);
 function linkStart(po){linksOf(po);LINK=po;closeSheet();linkBar();toast('연결할 밭을 누르세요. 다시 누르면 풀려요')}
 function linkBar(){const b=document.getElementById('lbar');if(!LINK){b.hidden=true;return}b.hidden=false;document.getElementById('lbar-t').textContent=`${pName(LINK.k)} 연결 ${LINK.links.length} / ${capOf(LINK)}`}
-function linkTap(p){const L=LINK.links,i=L.indexOf(p.no);if(i>=0)L.splice(i,1);else{if(takenBy(LINK).has(p.no)){toast(`${p.no}번 밭은 다른 ${pName(LINK.k)}에 연결돼 있어요. 그쪽에서 먼저 풀어 주세요`);return}if(L.length>=capOf(LINK)){toast(`밭 ${capOf(LINK)}개까지 연결할 수 있어요`);return}L.push(p.no)}sfx('menu');linkBar();autoCare()}
+function linkTap(p){const L=LINK.links,i=L.indexOf(p.no);if(i>=0)L.splice(i,1);else{if(takenBy(LINK).has(p.no)){toast(`이 밭은 다른 ${pName(LINK.k)}에 연결돼 있어요. 그쪽에서 먼저 풀어 주세요`);return}if(L.length>=capOf(LINK)){toast(`밭 ${capOf(LINK)}개까지 연결할 수 있어요`);return}L.push(p.no)}sfx('menu');linkBar();autoCare()}
 document.getElementById('lbar-x').onclick=()=>{LINK=null;linkBar()};
 // 연결된 밭은 마르면 바로 물, 스마트팜은 양분이 모자라면 덧거름도
 function autoCare(){const wl=hasPlaced('watertank')?3:2;let w=0,f=0;
