@@ -977,9 +977,9 @@ function shopItems(){const L=[];
    desc:max?`${col} ${vals[9]} · 작업 ${TTIME[9]}`:`${job} · ${col} ${vals[cur]} → <b>${vals[nx]}</b> · 작업 ${TTIME[cur]} → <b>${TTIME[nx]}</b>`,buy:()=>{TOOLT[f]=nx},verb:'바꾸기'})});
  if(shopTab==='mach')MGRP.forEach(([g,gd,ks])=>{L.push({hdr:g,hd:gd});ks.forEach(f=>{const m=MACH.find(x=>x[0]===f);if(!m)return;const [,nm,lv,p,job,ft]=m;L.push({k:'mc:'+f,ic:SIC[f],name:nm,info:job,lv,price:p,once:1,done:OWN[f]>0,doneTxt:'가지고 있음',needGar:1,desc:`${job}<br>${ft}`,buy:()=>OWN[f]=1})})});
  if(shopTab==='inst')INSTS.forEach(([f,nm,lv,p,job,ft,multi])=>L.push({k:'in:'+f,ic:SIC[f],name:nm,info:job,lv,price:p,once:!multi,done:!multi&&OWN[f]>0,doneTxt:'가지고 있음',desc:`${job}<br>${ft}`,have:()=>OWN[f]||0,add:n=>OWN[f]=(OWN[f]||0)+n}));
- if(shopTab==='fac')FACS.forEach(([f,nm,lv,p,sz,job])=>L.push({k:'fc:'+f,ic:SIC[f],name:nm,info:`${sz}칸 · ${job}`,lv,price:p,desc:`${sz}칸 · ${job}`,have:()=>OWN[f]||0,add:n=>OWN[f]=(OWN[f]||0)+n}));
+ if(shopTab==='fac'){const pd=DECO.find(r=>r[0]==='plot');if(pd)L.push({k:'d:plot',ic:SIC.plot,name:pd[1],info:`${pd[4]}칸 · ${pd[5]}`,lv:pd[2],price:pd[3],desc:`${pd[4]}칸 · ${pd[5]}`,have:()=>OWN.plot||0,add:n=>OWN.plot=(OWN.plot||0)+n})}if(shopTab==='fac')FACS.forEach(([f,nm,lv,p,sz,job])=>L.push({k:'fc:'+f,ic:SIC[f],name:nm,info:`${sz}칸 · ${job}`,lv,price:p,desc:`${sz}칸 · ${job}`,have:()=>OWN[f]||0,add:n=>OWN[f]=(OWN[f]||0)+n}));
  if(shopTab==='pet')PETS.forEach(([f,nm,lv,pz,fx])=>L.push({k:'pt:'+f,ic:PETIMG[f+'_f'][0].src,name:nm,info:fx,lv,price:pz,once:1,done:OWN[f]>0,doneTxt:'함께 살아요',desc:fx+'. 사면 농장에서 주인공을 따라다녀요.',buy:()=>OWN[f]=1}));
- if(shopTab==='deco')DECO.forEach(([f,nm,lv,p,sz,fx])=>{const mat=Array.isArray(p);const one=ONLYONE.includes(f);
+ if(shopTab==='deco')DECO.forEach(([f,nm,lv,p,sz,fx])=>{if(f==='plot')return;const mat=Array.isArray(p);const one=ONLYONE.includes(f);
   L.push({k:'d:'+f,ic:SIC[f],name:nm,info:`${sz}칸${fx?' · '+fx:''}`,lv,price:mat?0:p,mat:mat?p:null,once:one,done:one&&OWN[f]>0,doneTxt:'가지고 있음',desc:`${sz}칸${fx?' · '+fx:' · 보기만 좋은 장식'}`,have:()=>OWN[f]||0,add:n=>OWN[f]=(OWN[f]||0)+n,buy:one?()=>OWN[f]=1:null})});
  return L}
 function bagFits(it,n){if(!it.bag)return true;it.add(n);const ok=bagItems().length<=bagCap();it.add(-n);return ok}
@@ -1516,7 +1516,7 @@ function bStore(b){
  if(b[0]==='compost'&&FJOB['bld:compost']&&FJOB['bld:compost'].length){alertBox('만들고 있는 게 있어요','다 된 것을 꺼내거나 기다린 다음 넣어 주세요.');return false}
  BLD.splice(BLD.indexOf(b),1);OWN[b[0]]=(OWN[b[0]]||0)+1;rebuildBlocked();sfx('act');toast(BNAME[b[0]]+' 보관함에 넣었어요');return true}
 function plotRemove(p,after){if(p.crop){alertBox('자라는 작물이 있어요','거두거나 갈아엎은 다음 철거해 주세요.');return}if(busy(p)){alertBox('예약된 일이 있어요','예약을 취소한 다음 철거해 주세요.');return}
- confirmBox(`${p.no}번 밭을 철거할까요?`,'밭이 없어지고 풀밭이 돼요. 양분도 사라져요. 상점 꾸미기에서 밭을 다시 사서 놓을 수 있어요.',()=>{killPlot(p);rebuildBlocked();sfx('hoe');toast('밭을 철거했어요');after&&after()},'철거',true)}
+ confirmBox(`${p.no}번 밭을 철거할까요?`,'밭이 없어지고 풀밭이 돼요. 양분도 사라져요. 상점 시설 탭에서 밭을 다시 사서 놓을 수 있어요.',()=>{killPlot(p);rebuildBlocked();sfx('hoe');toast('밭을 철거했어요');after&&after()},'철거',true)}
 function placeNew(k,gi,gj){const [w,h]=pSize(k,k==='greenhouse'?deco.rot:0);
  if(k==='plot'){newPlot(gi,gj,false);OWN.plot--;return}
  if(k==='greenhouse'){BLD.push([k,gi,gj,w,h,deco.rot||0,0]);OWN[k]--;return}
