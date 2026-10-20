@@ -861,7 +861,7 @@ function hudDraw(){setTimeout(hudFit,0);hudH&&setTimeout(hudH,0);document.getEle
  document.getElementById('h-date').textContent=`${G.month}월 ${G.day+1}일`;wxDraw();document.getElementById('money').textContent=money>=1e8?(Math.floor(money/1e7)/10).toLocaleString('ko-KR')+'억':money>=1e6?Math.floor(money/1e4).toLocaleString('ko-KR')+'만':money.toLocaleString('ko-KR')}
 function addXp(n){G.xp+=n;while(G.lv<99&&G.xp>=need(G.lv)){G.xp-=need(G.lv);G.lv++;G.hp=maxHp();floatNum([['레벨 업!','#ffe27a']]);if(typeof lvQ!=='undefined'){lvQ.push(G.lv);if(document.getElementById('lvup').hidden)setTimeout(lvShow,300)}}hudDraw()}
 [['h-star','ic_star'],['h-heart','ic_heart'],['h-coin','ic_coin'],['h-weather','w_sun']].forEach(([id,k])=>document.getElementById(id).src=KIT.ic[k]);
-document.getElementById('dock').innerHTML=[['market','시세','btn_market'],['bag','가방','btn_bag'],['shop','상점','btn_shop'],['deco','꾸미기','@flowerbed'],['note','수첩','btn_notebook'],...(USER?[['mail','우편함','@mail']]:[]),['set','설정','btn_settings']].map(([k,l,ic])=>`<button type="button" id="dock-${k}"><img src="${ic==='@mail'?MAILIC:ic[0]==='@'?'':KIT.ic[ic]}" alt="">${l}</button>`).join('');
+document.getElementById('dock').innerHTML=[['market','시세','btn_market'],['bag','가방','btn_bag'],['shop','상점','btn_shop'],['deco','보관함','@flowerbed'],['note','수첩','btn_notebook'],...(USER?[['mail','우편함','@mail']]:[]),['set','설정','btn_settings']].map(([k,l,ic])=>`<button type="button" id="dock-${k}"><img src="${ic==='@mail'?MAILIC:ic[0]==='@'?'':KIT.ic[ic]}" alt="">${l}</button>`).join('');
 
 // ---- 시세 창
 let mkOpen=false,mkSel='lettuce',mkAll=false;
@@ -1140,7 +1140,7 @@ const TUT=[
  ['t_ship',1,'출하 상자에 넣어 보기','출하 상자를 누르고 "상자 열기". 넣어 두면 다음 날 아침 시세로 팔리고 수수료가 없어요.',()=>(STAT.shipped||0)>=1,800,15],
  ['t_quest',1,'오늘 할 일 하나 받기','아래 "수첩"의 "오늘 할 일"은 날마다 바뀌어요. 다 하면 "받기"로 돈과 경험치를 받아요.',()=>(STAT.questDone||0)>=1,1000,20],
  ['t_comp',2,'퇴비 만들기','퇴비장을 누르고 벤 풀 10개를 넣으면 하루 뒤 퇴비가 나와요. 다 되면 퇴비장 위에 그림이 떠요.',()=>(STAT.made||0)>=1,1500,25],
- ['t_nurs',3,'육묘장 놓기','상점 시설 탭에서 육묘장(5만 원)을 사고, 아래 "꾸미기"에서 놓으세요. 씨앗 10개와 상토 1개로 모종 10개를 만들어요. 모종은 30% 빨리 크고 두 배쯤 많이 나와요.',()=>pc('nursery'),3000,40],
+ ['t_nurs',3,'육묘장 놓기','상점 시설 탭에서 육묘장(5만 원)을 사고, 아래 "보관함"에서 놓으세요. 씨앗 10개와 상토 1개로 모종 10개를 만들어요. 모종은 30% 빨리 크고 두 배쯤 많이 나와요.',()=>pc('nursery'),3000,40],
  ['t_jang',3,'장독대에서 가공하기','장독대(Lv3, 8만 원)나 방앗간(Lv4, 20만 원)을 놓고 창고 작물을 넣어 보세요. 가공품은 작물보다 2~5배 비싸고 오래 가요.',()=>(STAT.madeP||0)>=1,5000,60],
  ['t_bag',5,'가방 키우기','가방을 열고 위쪽 "가방 키우기". 씨앗과 거름을 더 많이 들고 다닐 수 있어요.',()=>bagLv>=1,3000,40],
  ['t_sto',5,'창고 늘리기','창고를 누르고 "창고 늘리기". 많이 담을수록, 등급이 떨어지기 전 버티는 날도 늘어요.',()=>stoLv>=1,5000,50],
@@ -1149,7 +1149,7 @@ const TUT=[
  ['t_pet',5,'동물 데려오기','상점 동물 탭. 백구(Lv5, 10만 원)는 날마다 씨앗을 물어 와요. 고양이는 창고 등급이 늦게 떨어지게 해요.',()=>Object.keys(OWN).some(k=>OWN[k]>0&&['baekgu','hwanggu','corgi','cheese','calico','blackcat','rabbit'].includes(k)),5000,50],
  ['t_req',6,'손님 부탁 들어주기','집 → 손님방. 마을 사람이 원하는 작물을 건네면 시세보다 비싸게 사 가요. 부탁은 하루가 지나면 사라져요.',()=>(STAT.reqDone||0)>=1,5000,60],
  ['t_plotup',10,'밭 강화하기','밭을 누르고 "밭 강화". 나무 테두리 밭은 기본 양분과 최대 양분이 커져서 거름을 덜 줘도 돼요.',()=>PLOTS.some(p=>(p.tier||0)>0),10000,80],
- ['t_gh',10,'온실 놓기','상점 시설 탭 온실(50만 원). 놓은 다음 꾸미기에서 안에 밭을 놓아요(2개까지). 여러 채 지을 수 있어요. 한겨울에도 10도 아래로 안 내려가고 철 없이 심고, 온실에서만 크는 작물도 있어요.',()=>pc('greenhouse'),20000,100],
+ ['t_gh',10,'온실 놓기','상점 시설 탭 온실(50만 원). 놓은 다음 보관함에서 안에 밭을 놓아요(2개까지). 여러 채 지을 수 있어요. 한겨울에도 10도 아래로 안 내려가고 철 없이 심고, 온실에서만 크는 작물도 있어요.',()=>pc('greenhouse'),20000,100],
  ['t_drip',10,'스프링클러 놓고 밭 연결','상점 설치 탭 스프링클러(20만 원). 놓은 뒤 누르고 "밭 연결하기"로 밭을 고르면, 그 밭은 마르면 바로 물이 들어가요.',()=>PLACED.some(o=>(o.k==='dripline'||o.k==='sprinkler')&&o.links&&o.links.length),20000,100],
  ['t_garage',12,'농기계 차고와 관리기','시설 탭 농기계 차고(200만 원)를 놓고, 농기계 탭 관리기(80만 원)를 사세요. 차고를 누르면 기계에 일을 시킬 수 있어요. 한 번 돌리면 밭 여러 개를 갈아요.',()=>pc('garage')&&MACH.some(m=>OWN[m[0]]>0&&MJOB[m[0]]),50000,150],
  ['t_cold',12,'저온창고 놓기','시설 탭 저온창고(300만 원). 창고 등급이 3분의 1 속도로 떨어져서 값 좋을 때까지 버티기 쉬워요.',()=>pc('coldstore'),50000,150],
@@ -1344,7 +1344,7 @@ function canPlace(k,gi,gj,ignore){const [w,h]=pSize(k,deco.rot);const g=isG(k);c
   if(OBS.some(x=>x.i===a&&x.j===b))return false;const o=placedOn(a,b,g);if(o&&o.id!==ignore)return false;if(!g&&k!=='greenhouse'&&a===hi&&b===hj)return false}return true}
 function decoBar(){const bar=document.getElementById('dbar'),own=Object.keys(PL.size).filter(k=>pAvail(k)>0);
  let msg,acts='';
- if(deco.mv){const ok=canPlace(deco.sel,deco.gi,deco.gj,null);msg=`<b>${pName(deco.sel)}</b> ${ok?'여기로 옮길까요?':'여기는 자리가 없어요'}`;acts=`<button type="button" class="go" id="db-put" ${ok?'':'disabled'}>놓기</button>${deco.mv.k==='greenhouse'&&deco.mv.ref[3]!==deco.mv.ref[4]?'<button type="button" id="db-rot">돌리기</button>':''}<button type="button" id="db-store">${deco.mv.kind==='plot'?'철거':'보관함에'}</button><button type="button" id="db-cancel">그만두기</button>`}
+ if(deco.mv){const ok=canPlace(deco.sel,deco.gi,deco.gj,null);msg=`<b>${pName(deco.sel)}</b> ${ok?'여기로 옮길까요?':'여기는 자리가 없어요'}`;acts=`<button type="button" class="go" id="db-put" ${ok?'':'disabled'}>놓기</button>${deco.mv.k==='greenhouse'&&deco.mv.ref[3]!==deco.mv.ref[4]?'<button type="button" id="db-rot">돌리기</button>':''}<button type="button" id="db-store">${'보관함에'}</button><button type="button" id="db-cancel">그만두기</button>`}
  else if(deco.pick){const o=PLACED.find(x=>x.id===deco.pick);msg=`<b>${pName(o.k)}</b> 어떻게 할까요?`;acts=`<button type="button" id="db-move">옮기기</button><button type="button" id="db-back">보관함에 넣기</button>`}
  else if(deco.sel){const ok=deco.has&&canPlace(deco.sel,deco.gi,deco.gj,null);msg=(deco.has?(ok?`<b>${pName(deco.sel)}</b> 여기에 놓을까요?`:`<b>${pName(deco.sel)}</b> 여기는 자리가 없어요`):`<b>${pName(deco.sel)}</b> 놓을 곳을 누르세요`)+(deco.buy&&deco.buy.k===deco.sel?` · ${pbCost(deco.buy)}${pbCan(deco.buy)?'':' <span style="color:#ffb0a0">(모자라요)</span>'}`:'');acts=`<button type="button" class="go" id="db-put" ${ok?'':'disabled'}>놓기</button>${isG(deco.sel)?'':'<button type="button" id="db-rot">돌리기</button>'}${deco.from?'<button type="button" id="db-store">보관함에</button>':''}${!deco.buy&&!deco.from&&pAvail(deco.sel)>0&&storeSellPrice(deco.sel)?'<button type="button" id="db-sell">팔기</button>':''}<button type="button" id="db-cancel">그만두기</button>`}
  else msg=own.length?'놓을 물건을 고르거나, 놓인 물건을 누르세요':'놓을 물건이 없어요. 상점에서 사 오세요. 놓인 물건을 누르면 옮길 수 있어요';
@@ -1445,7 +1445,7 @@ function facDraw(){if(!facCur)return;document.getElementById('fac-home').hidden=
  pg.querySelectorAll('.u-sl button[data-j]').forEach(b=>b.onclick=()=>jdFac(+b.dataset.j));
  pg.querySelectorAll('.u-sl button[data-k]').forEach(b=>b.onclick=()=>{const j=FJOB[facCur.key][+b.dataset.k];if(j.out.startsWith('p:')){if(stoTotal()+j.n>stoCap()){alertBox('창고가 가득 찼어요','창고를 비우거나 늘린 다음 꺼내 주세요.');return}qAdd(j.out,j.n)}else{qAdd(j.out,j.n);if(bagItems().length>bagCap()){qAdd(j.out,-j.n);alertBox('가방이 가득 찼어요','가방을 비우거나 늘린 다음 꺼내 주세요.');return}}FJOB[facCur.key].splice(+b.dataset.k,1);STAT.made=(STAT.made||0)+j.n;if(j.out.startsWith('p:'))STAT.madeP=(STAT.madeP||0)+j.n;const r2=b.getBoundingClientRect();gainPop(`+${j.n}개`,r2.left+r2.width/2,r2.top);sfx('trade');facDraw()})}
 setInterval(()=>{if(facCur)facDraw()},1000);
-document.getElementById('fac-x').onclick=facClose;document.getElementById('fac-home').onclick=()=>{facClose();hsShow(true);hView='kitchen';sfx('menu');hDraw()};document.getElementById('fac-store').onclick=()=>{if(facCur.key==='bld:compost'){const b=BLD.find(x=>x[0]==='compost');confirmBox('퇴비장을 보관함에 넣을까요?','꾸미기에서 다시 놓을 수 있어요.',()=>{if(bStore(b))facClose()},'넣기',false);return}const id=+facCur.key.slice(1),o=PLACED.find(x=>x.id===id);if(!o)return;confirmBox(`${pName(o.k)}${josa(pName(o.k),'을','를')} 보관함에 넣을까요?`,'농장에서 치워지고, 꾸미기에서 다시 놓을 수 있어요.',()=>{if(storeBack(o))facClose()},'넣기',false)};document.getElementById('fac-move').onclick=()=>{if(facCur.key==='bld:compost'){const b=BLD.find(x=>x[0]==='compost');facClose();if(b)mvStart('bld',b);return}const id=+facCur.key.slice(1),o=PLACED.find(x=>x.id===id);facClose();if(o)decoMove(o)};document.getElementById('facwin').onclick=e=>{if(e.target.id==='facwin')facClose()};
+document.getElementById('fac-x').onclick=facClose;document.getElementById('fac-home').onclick=()=>{facClose();hsShow(true);hView='kitchen';sfx('menu');hDraw()};document.getElementById('fac-store').onclick=()=>{if(facCur.key==='bld:compost'){const b=BLD.find(x=>x[0]==='compost');confirmBox('퇴비장을 보관함에 넣을까요?','보관함에서 다시 놓을 수 있어요.',()=>{if(bStore(b))facClose()},'넣기',false);return}const id=+facCur.key.slice(1),o=PLACED.find(x=>x.id===id);if(!o)return;confirmBox(`${pName(o.k)}${josa(pName(o.k),'을','를')} 보관함에 넣을까요?`,'농장에서 치워지고, 보관함에서 다시 놓을 수 있어요.',()=>{if(storeBack(o))facClose()},'넣기',false)};document.getElementById('fac-move').onclick=()=>{if(facCur.key==='bld:compost'){const b=BLD.find(x=>x[0]==='compost');facClose();if(b)mvStart('bld',b);return}const id=+facCur.key.slice(1),o=PLACED.find(x=>x.id===id);facClose();if(o)decoMove(o)};document.getElementById('facwin').onclick=e=>{if(e.target.id==='facwin')facClose()};
 // ---- 장애물: 잡초·돌·그루터기 (치우면 재료)
 const OIMG={};Object.entries({"pebble": "a/892946685f7d.webp", "stone": "a/b726f66dba43.webp", "rock": "a/bdbabb99d2ad.webp", "boulder": "a/0e06d7002032.webp", "bigrock": "a/f1897c50d452.webp", "slab": "a/e5c57d644144.webp", "bush": "a/a63cdfd082a5.webp", "stump_s": "a/745e99a89823.webp", "stump": "a/cf7fb564e593.webp", "stump_b": "a/cc0ef67b8e7d.webp", "roots": "a/30507f6e07b4.webp", "weed": "a/d0ee4eda7757.webp"}).forEach(([k,u])=>{const im=new Image();im.src=u;OIMG[k]=im});
 const OTYPE={weed:['잡초','sickle',0,'174',[2,4]],pebble:['자갈','pick',0,'186',[1,2]],stone:['돌','pick',1,'186',[2,3]],rock:['큰 돌','pick',2,'186',[3,4],.1],boulder:['바위','pick',3,'186',[4,6],.2],bigrock:['큰 바위','pick',4,'186',[6,8],.3],slab:['암반','pick',5,'186',[8,12],.4],
@@ -1458,11 +1458,13 @@ function spawnObs(type){if(!obsOk(type))return false;for(let tries=0;tries<60;tr
 function initObs(){if(N>12){landBand(12);return}const pool=['weed','weed','weed','weed','pebble','pebble','stone','stone','rock','boulder','bush','bush','stump_s','stump','bigrock','stump_b','slab','roots'];for(let k=0;k<14;k++)spawnObs(pool[k%pool.length]);rebuildBlocked()}
 // 새 장애물: 게임 하루에 많아야 5개, 사흘 동안 하나도 안 나오면 반드시 하나. 농장 전체 60개가 넘으면 더 안 나옴
 let OBSDAY={d:'',n:0};const OBSMAX=5;
-function obsDaily(){if(OWN.autotractor>0)setTimeout(()=>machClear(true),50);STAT.obsGap=(STAT.obsGap||0)+1;if(OBS.length>=60)return;let n=0;
+// 자리 비운 동안 밀린 날을 한꺼번에 넘길 때는 장애물을 3개까지만 새로 깔아요
+let CATCH=false,CATCHN=0;
+function obsDaily(){if(OWN.autotractor>0&&!CATCH)setTimeout(()=>machClear(true),50);STAT.obsGap=(STAT.obsGap||0)+1;if(OBS.length>=60)return;if(CATCH&&CATCHN>=3)return;let n=0;
  const put=t=>{if(n<OBSMAX&&spawnObs(t))n++};
  if(Math.random()<.35&&OBS.filter(o=>o.t==='weed').length<35)put('weed');if(Math.random()<.12)put(['pebble','stone','bush','stump_s'][Math.floor(Math.random()*4)]);
  if(!n&&STAT.obsGap>=3)for(const t of ['weed','pebble','stone','bush','stump_s']){if(t==='weed'&&OBS.filter(o=>o.t==='weed').length>=35)continue;put(t);if(n)break}
- if(n)STAT.obsGap=0;rebuildBlocked()}
+ if(n){STAT.obsGap=0;if(CATCH)CATCHN+=n}rebuildBlocked()}
 function obsDraw(S,vis){OBS.forEach(o=>{const im=OIMG[o.t];if(!im)return;const t=T(o.i,o.j);if(vis&&!vis(t.x,t.y))return;
  if(o.t==='weed'){S.push({k:o.i+o.j+.9,pt:[o.i+.5,o.j+.5],f(){cx.drawImage(im,t.x-65,t.y-(im.height-66))}});return}
  S.push({k:o.i+o.j+.95,pt:[o.i+.5,o.j+.5],f(){cx.drawImage(im,t.x-im.width/2,t.y+56-im.height)}})})}
@@ -1527,8 +1529,8 @@ function mvPut(){const m=deco.mv,gi=deco.gi,gj=deco.gj;
 function bStore(b){
  if(b[0]==='compost'&&FJOB['bld:compost']&&FJOB['bld:compost'].length){alertBox('만들고 있는 게 있어요','다 된 것을 꺼내거나 기다린 다음 넣어 주세요.');return false}
  BLD.splice(BLD.indexOf(b),1);OWN[b[0]]=(OWN[b[0]]||0)+1;rebuildBlocked();sfx('act');toast(BNAME[b[0]]+' 보관함에 넣었어요');return true}
-function plotRemove(p,after){if(p.crop){alertBox('자라는 작물이 있어요','거두거나 갈아엎은 다음 철거해 주세요.');return}if(busy(p)){alertBox('예약된 일이 있어요','예약을 취소한 다음 철거해 주세요.');return}
- confirmBox(`${p.no}번 밭을 철거할까요?`,'밭이 없어지고 풀밭이 돼요. 양분도 사라져요. 상점 시설 탭에서 밭을 다시 사서 놓을 수 있어요.',()=>{killPlot(p);rebuildBlocked();sfx('hoe');toast('밭을 철거했어요');after&&after()},'철거',true)}
+function plotRemove(p,after){if(p.crop){alertBox('자라는 작물이 있어요','거두거나 갈아엎은 다음 보관함에 넣어 주세요.');return}if(busy(p)){alertBox('예약된 일이 있어요','예약을 취소한 다음 보관함에 넣어 주세요.');return}
+ confirmBox('이 밭을 보관함에 넣을까요?',`밭을 걷어서 보관함에 넣어요. 그 자리는 풀밭이 되고, 보관함에서 다시 놓을 수 있어요. 밭에 쌓인 ${(p.tier||0)>0?'양분과 밭 강화('+pT(p)[0]+')는':'양분은'} 없어져요.`,()=>{killPlot(p);OWN.plot=(OWN.plot||0)+1;rebuildBlocked();sfx('act');toast('밭을 보관함에 넣었어요');after&&after()},'넣기',false)}
 function placeNew(k,gi,gj){const [w,h]=pSize(k,k==='greenhouse'?deco.rot:0);
  if(k==='plot'){newPlot(gi,gj,false);OWN.plot--;return}
  if(k==='greenhouse'){BLD.push([k,gi,gj,w,h,deco.rot||0,0]);OWN[k]--;return}
@@ -1719,14 +1721,14 @@ function garageDraw(){document.getElementById('mach-t').textContent='농기계 �
  const pg=document.getElementById('mach-page');pg.innerHTML=h;
  pg.querySelectorAll('.gar button[data-k]').forEach(b=>b.onclick=()=>{if(!MJOB[b.dataset.k]){toast('트럭은 팔 때 수수료를 저절로 줄여 줘요');return}machOpen(b.dataset.k)});
  const mv=document.getElementById('gar-mv');if(mv)mv.onclick=()=>{const po=garPo;machClose();decoMove(po)};
- const st=document.getElementById('gar-st');if(st)st.onclick=()=>{const po=garPo;machClose();confirmBox('농기계 차고를 보관함에 넣을까요?','꾸미기에서 다시 놓을 수 있어요. 차고가 없으면 농기계를 쓸 수 없어요.',()=>storeBack(po),'넣기',false)}}
+ const st=document.getElementById('gar-st');if(st)st.onclick=()=>{const po=garPo;machClose();confirmBox('농기계 차고를 보관함에 넣을까요?','보관함에서 다시 놓을 수 있어요. 차고가 없으면 농기계를 쓸 수 없어요.',()=>storeBack(po),'넣기',false)}}
 function machOpen(k){machCur=k;if(!MSET[k])MSET[k]={auto:true};if(MJOB[k].base&&MSET[k].b==null){const i=FERT.map((F,n)=>FINV[F[0]]>0?n:-1).filter(n=>n>=0).pop();MSET[k].b=i==null?-1:i}
  tapGuard('machwin');bagShow(false);closeSheet();hudH();document.getElementById('machwin').hidden=false;sfx('open');machDraw()}
 function machClose(){document.getElementById('machwin').hidden=true;machCur=null;garPo=null}
 const MGRP=[['갈기','풀 난 빈 밭을 갈아요',['cultivator','tiller','tractor','autotractor']],['심기','갈아 둔 밭에 씨앗·모종을 심어요',['seeder','transplanter','planterbot']],['거름 주기','자라는 밭에 덧거름을 뿌려요',['spraydrone','droneswarm']],['거두기','다 익은 곡물을 거둬요',['combine','bigcombine']],['출하','팔 때 수수료를 줄여 줘요 (저절로)',['truck','reefer']]];
 const garCards=()=>{const own=k=>OWN[k]>0,cards=MGRP.map(([g,d,ks])=>{const L=ks.filter(own);if(!L.length)return'';return`<div class="mg-h"><b>${g}</b><small>${d}</small></div>`+L.map(k=>{const m=MACH.find(x=>x[0]===k),J=MJOB[k];return`<button type="button" class="u-m" data-k="${k}" aria-pressed="${k===machCur}">${J&&J.auto&&(MSET[k]||{}).auto!==false?'<span class="au">매일 자동</span>':''}${MAN.some(x=>x.k===k)?'<span class="au wk">일하는 중</span>':''}<img src="${SIC[k]}" alt=""><b>${m[1]}</b><small>${J?`한 번에 밭 ${J.per}개`:'출하 수수료 할인'}</small></button>`}).join('')}).join('');return cards||'<p class="u-hint">아직 산 농기계가 없어요. 상점 농기계 탭에서 사요.</p>'};
 function garWire(){const pg=document.getElementById('mach-page');document.getElementById('gar-mv').hidden=document.getElementById('gar-st').hidden=!garPo;pg.querySelectorAll('.u-m').forEach(b=>b.onclick=()=>{if(!MJOB[b.dataset.k]){toast('트럭은 팔 때 수수료를 저절로 줄여 줘요');return}machCur=b.dataset.k;sfx('menu');machDraw()});
- const mv=document.getElementById('gar-mv');if(mv)mv.onclick=()=>{const po=garPo;machClose();decoMove(po)};const st=document.getElementById('gar-st');if(st)st.onclick=()=>{const po=garPo;machClose();confirmBox('농기계 차고를 보관함에 넣을까요?','꾸미기에서 다시 놓을 수 있어요. 차고가 없으면 농기계를 쓸 수 없어요.',()=>storeBack(po),'넣기',false)}}
+ const mv=document.getElementById('gar-mv');if(mv)mv.onclick=()=>{const po=garPo;machClose();decoMove(po)};const st=document.getElementById('gar-st');if(st)st.onclick=()=>{const po=garPo;machClose();confirmBox('농기계 차고를 보관함에 넣을까요?','보관함에서 다시 놓을 수 있어요. 차고가 없으면 농기계를 쓸 수 없어요.',()=>storeBack(po),'넣기',false)}}
 function machDraw(){const k=machCur;if(!k){document.getElementById('mach-t').textContent='농기계 차고';document.getElementById('mach-sub').textContent=`경유값 20% 아낌`;document.getElementById('mach-page').innerHTML=`<div class="u2"><div class="u-grid" style="grid-template-columns:repeat(auto-fill,minmax(140px,1fr))">${garCards()}</div><div class="u-det"><p class="u-hint">기계를 고르세요.</p></div></div>`;garWire();return}if(!MSET[k])MSET[k]={auto:true};if(MJOB[k].base&&MSET[k].b==null){const fi=FERT.map((F,n)=>FINV[F[0]]>0?n:-1).filter(n=>n>=0).pop();MSET[k].b=fi==null?-1:fi}const J=MJOB[k],m=MACH.find(x=>x[0]===k),o=MSET[k];
  document.getElementById('mach-t').textContent='농기계 차고';document.getElementById('mach-sub').textContent=`경유값 20% 아낌 · ${MACH.filter(x=>OWN[x[0]]>0).length}대`;const subT={hoe:'밭 갈기',plant:J.kind==='sl'?'모종 심기':J.kind==='seed'?'씨앗 심기':'씨앗·모종 심기',harvest:J.grain?'곡물 수확':'수확',top:'덧거름 뿌리기'}[J.t];
  let h=`<div class="u-dh"><div class="im"><img src="${SIC[k]}" alt=""></div><div><h2>${m[1]}</h2><small>${subT} · 한 번에 밭 ${J.per}개 · 경유 ${won(mFuel(k))}</small></div></div><p class="u-desc">${m[5]}${J.grain?' · 벼·보리·밀·옥수수·메밀·콩·팥·땅콩만 거둬요':''}</p>`;
@@ -1901,7 +1903,7 @@ const NOTICES=[{id:'2026-10-20a',date:'2026-10-20',title:'베타 테스트 안�
 온실
 - 온실 그림을 새로 바꿨어요. 크기는 2×4칸이고 돌려서 가로·세로로 놓을 수 있어요.
 - 온실을 여러 채 지을 수 있어요. (50만 원, Lv10)
-- 온실과 밭은 따로예요. 꾸미기에서 온실 안에 밭을 2개까지 넣고 뺄 수 있어요.
+- 온실과 밭은 따로예요. 보관함에서 온실 안에 밭을 2개까지 넣고 뺄 수 있어요.
 - 온실 안에서는 철과 상관없이 심을 수 있고, 딸기·파프리카·멜론은 온실에서만 자라요.
 - 기본 온실: 한겨울에도 10도 아래로 안 내려가요.
 - 난방기(Lv14, 120만 원): 한겨울에도 20도 아래로 안 내려가요. 여름에 식혀 주지는 않아요.
@@ -1967,16 +1969,16 @@ function worldNow(){const ms=Date.now()-WEPOCH,d=Math.floor(ms/60000);return{abs
 const absOf=()=>(G.month-1)*20+G.day;
 function worldSnap(){const w=worldNow();G.month=Math.floor(w.abs/20)+1;G.day=w.abs%20;G.dayT=w.t}
 function worldSync(){const w=worldNow(),diff=(w.abs-absOf()+240)%240;
- if(diff>0&&diff<120){for(let k=0;k<diff;k++){G.day++;if(G.day>=20){G.day=0;G.month=G.month%12+1}newDay()}}else if(diff>=120){worldSnap();return}
+ if(diff>0&&diff<120){if(diff>1){CATCH=true;CATCHN=0}try{for(let k=0;k<diff;k++){G.day++;if(G.day>=20){G.day=0;G.month=G.month%12+1}newDay()}}finally{CATCH=false}}else if(diff>=120){worldSnap();return}
  G.dayT=w.t}
 // ---- 잠자기: 날짜는 그대로, 자는 동안 체력이 2배 빨리 참
 let SLEEP=false;
 function sleepStart(){SLEEP=true;STAT.slept=(STAT.slept||0)+1;hsShow(false);const o=document.getElementById('sleepov');o.hidden=false;sleepTick();sfx('open')}
 function sleepTick(){const o=document.getElementById('sleepov');if(o.hidden)return;o.querySelector('i').textContent=`체력 ${Math.floor(G.hp)} / ${maxHp()}`;o.querySelector('span').style.width=(G.hp/maxHp()*100)+'%';if(G.hp>=maxHp()-1e-6)sleepEnd(true)}
 function sleepEnd(full){if(!SLEEP)return;SLEEP=false;document.getElementById('sleepov').hidden=true;toast(full?'푹 잤어요. 체력이 가득 찼어요':'잠에서 깼어요');hudDraw()}
-function offlineRun(sec){if(!(sec>5))return;OFFLINE=true;const m0=money,h0=STAT.hvAll||0,d0=G.month*100+G.day;let days=0,rem=sec;const t0=performance.now();
+function offlineRun(sec){if(!(sec>5))return;OFFLINE=true;CATCH=true;CATCHN=0;const m0=money,h0=STAT.hvAll||0,d0=G.month*100+G.day;let days=0,rem=sec;const t0=performance.now();
  try{while(rem>0){const step=Math.min(rem,SET.day-G.dayT);growTick(step);G.dayT+=step;rem-=step;if(G.dayT>=SET.day-1e-6){G.dayT=0;G.day++;if(G.day>=20){G.day=0;G.month=G.month%12+1}newDay();days++}}}catch(e){console.log('offline',e)}
- G.hp=Math.min(maxHp(),G.hp+maxHp()*0.05*sec/60);OFFLINE=false;
+ G.hp=Math.min(maxHp(),G.hp+maxHp()*0.05*sec/60);OFFLINE=false;CATCH=false;
  const ripe=PLOTS.filter(p=>p.crop&&p.crop.prog>=1).length,dm=money-m0,hv=(STAT.hvAll||0)-h0;
  const h=Math.floor(sec/3600),mi=Math.floor(sec%3600/60);
  if(days>=1)setTimeout(()=>alertBox(`자리 비운 동안 ${days.toLocaleString('ko-KR')}일이 지났어요`,`${h?h+'시간 ':''}${mi}분 동안 농장 시간이 흘렀어요. 오늘은 ${G.month}월 ${G.day+1}일이에요.${ripe?` 다 자란 밭 ${ripe}개가 기다려요.`:''}${hv>0?` 자동으로 거둔 작물 ${hv.toLocaleString('ko-KR')}개.`:''}${dm?` 돈 ${dm>0?'+':''}${won(dm)}.`:''}`),900)}
@@ -2172,7 +2174,7 @@ setInterval(qsDraw,1000);
 // ===== 손님방 부탁 도움말 =====
 function reqHelp(r){const c=r.c,P=typeof PRODS!=='undefined'?PRODS.p.find(x=>x.k===c):null;let steps=[],go=null;
  if(P){const fn=(FACS.find(x=>x[0]===P.f)||[0,P.f==='homekitchen'?'집 부엌':P.f])[1],have=P.f==='homekitchen'||pc(P.f),fac=FACS.find(x=>x[0]===P.f);
-  if(!have&&fac)steps.push(`${fn}이 있어야 해요. 상점 시설 탭에서 사요 (Lv${fac[2]}, ${won(fac[3])}). 꾸미기에서 농장에 놓아요.`);
+  if(!have&&fac)steps.push(`${fn}이 있어야 해요. 상점 시설 탭에서 사요 (Lv${fac[2]}, ${won(fac[3])}). 보관함에서 농장에 놓아요.`);
   steps.push(`${NAME[P.c]} ${P.q}개가 창고에 있어야 해요. 지금 ${(STO[P.c]||0).toLocaleString('ko-KR')}개.`);
   steps.push(`${fn}을 눌러 '${P.n}'을 고르고 넣기. ${P.q}개로 ${P.o}개가 나오고 ${P.d}일 걸려요.`);
   steps.push(`${r.n}개가 필요하니 ${Math.ceil(r.n/P.o)}번 넣어야 해요. 다 되면 꺼내서 창고에 넣고, 여기서 건네기.`);
@@ -2322,7 +2324,7 @@ function renderSheet(){const p=sel;if(!p)return;
   ${c?`<span>자람</span><span class="meter"><i class="gro" style="width:${Math.round(c.prog*100)}%"></i></span><span class="num">${Math.round(c.prog*100)}%</span>`:''}
  </div>
  ${c&&c.prog<1&&p.nut<need?`<small class="warn" style="font-weight:600">다 자랄 때까지 양분 ${Math.round(need).toLocaleString('ko-KR')}이 필요해요. 덧거름을 주세요.</small>`:''}
- ${p.gh&&ghAt(p.i,p.j)?(()=>{const g=ghAt(p.i,p.j),lv=g[6]||0,nx=GHUP[lv+1],tc=ghTempG(g);return`<div class="pl-gh"><span>${GHUP[lv][0]}${lv?' 단 온실':''} · 안 ${Math.round(tc)}℃${c&&tempF(c.c,p)<1?' <em>작물에 안 맞아요</em>':''}</span>${lv>=2?`<span class="pl-ghset"><button type="button" data-d="-1">−</button>${ghSet(g)}℃<button type="button" data-d="1">+</button></span>`:''}<button type="button" id="pl-ghm">온실 메뉴 ›</button>${nx&&g[3]!==g[4]?`<button type="button" id="pl-gh">${nx[0]} 달기 · ${wonS(nx[2])}${G.lv<nx[1]?` (Lv${nx[1]})`:''}</button>`:''}</div>`})():''}${(()=>{const B=[];if(c&&c.prog<1&&jdHave('jd_time'))B.push(`<button type="button" id="jd-time"><img src="${KIT.ic.jd_time}" alt="">시간 당기기 <small>${jdHave('jd_time')}</small></button>`);if(p.nut<pMax(p)&&jdHave('jd_earth'))B.push(`<button type="button" id="jd-earth"><img src="${KIT.ic.jd_earth}" alt="">양분 채우기 <small>${jdHave('jd_earth')}</small></button>`);if(c&&!c.plenty&&jdHave('jd_plenty'))B.push(`<button type="button" id="jd-plenty"><img src="${KIT.ic.jd_plenty}" alt="">수확 2배 <small>${jdHave('jd_plenty')}</small></button>`);return(c&&c.plenty?'<small class="jd-on">풍요의 옥돌 · 다음 수확 2배</small>':'')+(B.length?`<div class="pl-jd">${B.join('')}</div>`:'')})()}<div class="pl-tools"><span class="pl-tier">${pT(p)[0]}</span>${PTIER[(p.tier||0)+1]?'<button type="button" id="pl-up">밭 강화</button>':''}<button type="button" id="pl-move">밭 옮기기</button><button type="button" id="pl-del">철거</button></div>
+ ${p.gh&&ghAt(p.i,p.j)?(()=>{const g=ghAt(p.i,p.j),lv=g[6]||0,nx=GHUP[lv+1],tc=ghTempG(g);return`<div class="pl-gh"><span>${GHUP[lv][0]}${lv?' 단 온실':''} · 안 ${Math.round(tc)}℃${c&&tempF(c.c,p)<1?' <em>작물에 안 맞아요</em>':''}</span>${lv>=2?`<span class="pl-ghset"><button type="button" data-d="-1">−</button>${ghSet(g)}℃<button type="button" data-d="1">+</button></span>`:''}<button type="button" id="pl-ghm">온실 메뉴 ›</button>${nx&&g[3]!==g[4]?`<button type="button" id="pl-gh">${nx[0]} 달기 · ${wonS(nx[2])}${G.lv<nx[1]?` (Lv${nx[1]})`:''}</button>`:''}</div>`})():''}${(()=>{const B=[];if(c&&c.prog<1&&jdHave('jd_time'))B.push(`<button type="button" id="jd-time"><img src="${KIT.ic.jd_time}" alt="">시간 당기기 <small>${jdHave('jd_time')}</small></button>`);if(p.nut<pMax(p)&&jdHave('jd_earth'))B.push(`<button type="button" id="jd-earth"><img src="${KIT.ic.jd_earth}" alt="">양분 채우기 <small>${jdHave('jd_earth')}</small></button>`);if(c&&!c.plenty&&jdHave('jd_plenty'))B.push(`<button type="button" id="jd-plenty"><img src="${KIT.ic.jd_plenty}" alt="">수확 2배 <small>${jdHave('jd_plenty')}</small></button>`);return(c&&c.plenty?'<small class="jd-on">풍요의 옥돌 · 다음 수확 2배</small>':'')+(B.length?`<div class="pl-jd">${B.join('')}</div>`:'')})()}<div class="pl-tools"><span class="pl-tier">${pT(p)[0]}</span>${PTIER[(p.tier||0)+1]?'<button type="button" id="pl-up">밭 강화</button>':''}<button type="button" id="pl-move">밭 옮기기</button><button type="button" id="pl-del">보관함에</button></div>
  <div class="acts">${busy(p)?'<small>예약된 일이 있어요</small>':acts.map(([k,l,cl])=>`<button class="act ${cl}" type="button" id="act-${k}" data-k="${k}">${l}</button>`).join('')}</div>`;
  {const ub=document.getElementById('pl-up');if(ub)ub.onclick=()=>plotUp(p)}{const a=document.getElementById('jd-time');if(a)a.onclick=()=>jdTimePlot(p);const b=document.getElementById('jd-earth');if(b)b.onclick=()=>jdEarth(p);const d=document.getElementById('jd-plenty');if(d)d.onclick=()=>jdPlenty(p)}{const gb=document.getElementById('pl-gh');if(gb)gb.onclick=()=>ghUp(ghAt(p.i,p.j))}{const gm=document.getElementById('pl-ghm');if(gm)gm.onclick=()=>ghMenu(ghAt(p.i,p.j))}body.querySelectorAll('.pl-ghset button').forEach(b=>b.onclick=()=>{const g=ghAt(p.i,p.j);g[7]=Math.max(5,Math.min(35,ghSet(g)+ +b.dataset.d));sfx('act');renderSheet()});document.getElementById('pl-move').onclick=()=>{closeSheet();mvStart('plot',p)};document.getElementById('pl-del').onclick=()=>plotRemove(p);
  body.querySelectorAll('.act').forEach(b=>b.onclick=()=>{const k=b.dataset.k;
@@ -2364,14 +2366,14 @@ cv.addEventListener('wheel',e=>{e.preventDefault();const w=screenToWorld(e.clien
 function setZoom(z){zoom=Math.max(N>24?.18:.35,Math.min(2,z))}
 document.getElementById('zin').onclick=()=>setZoom(zoom*1.2);document.getElementById('zout').onclick=()=>setZoom(zoom/1.2);
 function reach(si,sj){const seen=new Map([[si+','+sj,[si,sj]]]),q=[[si,sj]];while(q.length){const [i,j]=q.shift();for(const [di,dj] of [[1,0],[-1,0],[0,1],[0,-1]]){const a=i+di,b=j+dj,k=a+','+b;if(!seen.has(k)&&canStep(i,j,a,b)){seen.set(k,[a,b]);q.push([a,b])}}}return[...seen.values()]}
-function placedTap(po){closeSheet();if(FREC[po.k]){facOpen('p'+po.id,po.k);return}if(po.k==='garage'){garageOpen(po);return}{const ia=instActs(po);objMenu(pName(po.k),[...ia.acts,...((po.k==='well'||po.k==='watertank')?[['물 채우기','go',()=>{if(hero.act||hero.job||Q.length){toast('일을 마치고 떠 주세요');return}goFill(null,{i:po.i,j:po.j,w:po.w,h:po.h,n:po.k==='well'?'우물':'물탱크'})}]]:[]),['옮기기','',()=>decoMove(po)],['보관함에','',()=>confirmBox(`${pName(po.k)}${josa(pName(po.k),'을','를')} 보관함에 넣을까요?`,'꾸미기에서 다시 놓을 수 있어요.',()=>storeBack(po),'넣기',false)]],ia.desc)}}
+function placedTap(po){closeSheet();if(FREC[po.k]){facOpen('p'+po.id,po.k);return}if(po.k==='garage'){garageOpen(po);return}{const ia=instActs(po);objMenu(pName(po.k),[...ia.acts,...((po.k==='well'||po.k==='watertank')?[['물 채우기','go',()=>{if(hero.act||hero.job||Q.length){toast('일을 마치고 떠 주세요');return}goFill(null,{i:po.i,j:po.j,w:po.w,h:po.h,n:po.k==='well'?'우물':'물탱크'})}]]:[]),['옮기기','',()=>decoMove(po)],['보관함에','',()=>confirmBox(`${pName(po.k)}${josa(pName(po.k),'을','를')} 보관함에 넣을까요?`,'보관함에서 다시 놓을 수 있어요.',()=>storeBack(po),'넣기',false)]],ia.desc)}}
 const AHIT=new Map();function alphaAt(im,x,y){let c=AHIT.get(im);if(!c){c=document.createElement('canvas');c.width=im.width;c.height=im.height;const g=c.getContext('2d',{willReadFrequently:true});try{g.drawImage(im,0,0)}catch(_){}AHIT.set(im,c)}try{return c.getContext('2d').getImageData(x|0,y|0,1,1).data[3]}catch(_){return 255}}
 function spriteHit(w){let best=null,bd=-1;PLACED.forEach(o=>{if(isG(o.k)||o.k==='plot')return;const im=PIMG[o.k];if(!im||!im.width)return;const f=T(o.i+o.w,o.j+o.h),cxp=(o.i-o.j+(o.w-o.h)/2)*TW/2,x0=cxp-im.width/2,y0=f.y-im.height+4;
  let lx=w.x-x0;const ly=w.y-y0;if(lx<0||ly<0||lx>=im.width||ly>=im.height)return;if(o.rot)lx=im.width-1-lx;if(alphaAt(im,lx,ly)<60)return;const d=o.i+o.j+o.w+o.h;if(d>bd){bd=d;best=o}});return best}
 function tap(sx,sy){if(sheet.classList.contains('on')){closeSheet();return}const w=screenToWorld(sx,sy),t=worldToTile(w.x,w.y);if(deco.on){decoTap(t);return}if(!LINK&&!batch&&!MSEL){const hp=spriteHit(w);if(hp){placedTap(hp);return}}if(MSEL){const mp=(t.i>=0&&t.j>=0&&t.i<N&&t.j<N)?plotAt(t.i,t.j):null;if(mp)mSelTap(mp);else toast('일할 밭을 누르세요. 다 골랐으면 시작을 누르세요');return}if(LINK){const lp=(t.i>=0&&t.j>=0&&t.i<N&&t.j<N)?plotAt(t.i,t.j):null;if(lp)linkTap(lp);else toast('밭을 눌러 주세요. 다 했으면 완료를 누르세요');return}
  const p=(t.i>=0&&t.j>=0&&t.i<N&&t.j<N)?plotAt(t.i,t.j):null;
  if(p){if(batch&&ok(p,batch)&&!busy(p)){enqueue(p,batch);return}if(p.crop&&p.crop.prog>=1)return;openSheet(p);return}
- if(!batch&&bldAt(t)==='storage'){closeSheet();sfx('open');stoShow(true);return}if(!batch&&(bldAt(t)==='tap'||bldAt(t)==='shipbox')){const b=bldEnt(t);closeSheet();objMenu(BNAME[b[0]],[...(b[0]==='shipbox'?[['상자 열기','go',shipOpen]]:[]),...(b[0]==='tap'?[['물 채우기','go',()=>{if(hero.act||hero.job||Q.length){toast('일을 마치고 떠 주세요');return}goFill(null,{i:b[1],j:b[2],w:b[3],h:b[4],n:'수돗가'})}]]:[]),['옮기기','',()=>mvStart('bld',b)],['보관함에','',()=>confirmBox(`${BNAME[b[0]]}${josa(BNAME[b[0]],'을','를')} 보관함에 넣을까요?`,'꾸미기에서 다시 놓을 수 있어요.',()=>bStore(b),'넣기',false)]]);return}if(!batch&&bldAt(t)==='house'){closeSheet();sfx('open');hsShow(true);return}if(!batch&&!plotAt(t.i,t.j)&&inGH(t.i,t.j)){const b=ghAt(t.i,t.j);closeSheet();ghMenu(b);return}if(!batch&&bldAt(t)==='compost'){facOpen('bld:compost','compost');return}if(!batch){const ob=obsAt(t);if(ob){closeSheet();obsTap(ob);return}}if(!batch){const po=placedAt(t);if(po){placedTap(po);return}}
+ if(!batch&&bldAt(t)==='storage'){closeSheet();sfx('open');stoShow(true);return}if(!batch&&(bldAt(t)==='tap'||bldAt(t)==='shipbox')){const b=bldEnt(t);closeSheet();objMenu(BNAME[b[0]],[...(b[0]==='shipbox'?[['상자 열기','go',shipOpen]]:[]),...(b[0]==='tap'?[['물 채우기','go',()=>{if(hero.act||hero.job||Q.length){toast('일을 마치고 떠 주세요');return}goFill(null,{i:b[1],j:b[2],w:b[3],h:b[4],n:'수돗가'})}]]:[]),['옮기기','',()=>mvStart('bld',b)],['보관함에','',()=>confirmBox(`${BNAME[b[0]]}${josa(BNAME[b[0]],'을','를')} 보관함에 넣을까요?`,'보관함에서 다시 놓을 수 있어요.',()=>bStore(b),'넣기',false)]]);return}if(!batch&&bldAt(t)==='house'){closeSheet();sfx('open');hsShow(true);return}if(!batch&&!plotAt(t.i,t.j)&&inGH(t.i,t.j)){const b=ghAt(t.i,t.j);closeSheet();ghMenu(b);return}if(!batch&&bldAt(t)==='compost'){facOpen('bld:compost','compost');return}if(!batch){const ob=obsAt(t);if(ob){closeSheet();obsTap(ob);return}}if(!batch){const po=placedAt(t);if(po){placedTap(po);return}}
  closeSheet();if(batch){if(!Q.length&&!hero.job)setBatch(null);else{queueOpen=false;toast('예약한 일이 끝날 때까지 기다려 주세요')}return}
  if(hero.act||hero.job||Q.length){toast('일을 마치면 움직일 수 있어요');return}
  const si=Math.round(hero.i-.5),sj=Math.round(hero.j-.5);
@@ -2495,7 +2497,7 @@ function ghMigrate(){const old=BLD.filter(b=>b[0]==='greenhouse'&&!((b[3]===2&&b
   PLOTS.forEach(p=>{if(p.gh)p.gh=inGH(p.i,p.j)})});rebuildBlocked()}
 function ghMenu(g){const lv=g[6]||0,nx=GHUP[lv+1],ps=PLOTS.filter(p=>p.gh&&ghAt(p.i,p.j)===g),t=Math.round(ghTempG(g));closeSheet();
  const A=[];if(nx)A.push([`${nx[0]} 달기 · ${wonS(nx[2])}${G.lv<nx[1]?` (Lv${nx[1]})`:''}`,'go',()=>ghUp(g)]);if(lv>=2)A.push([`온도 ${ghSet(g)}℃ 바꾸기`,'',()=>ghTempAsk(g)]);
- A.push(['옮기기','',()=>mvStart('bld',g)],['보관함에','',()=>confirmBox('온실을 보관함에 넣을까요?','안의 밭은 그 자리에 남고 바깥 밭이 돼요. 꾸미기에서 다시 놓을 수 있어요.',()=>bStore(g),'넣기',false)]);
+ A.push(['옮기기','',()=>mvStart('bld',g)],['보관함에','',()=>confirmBox('온실을 보관함에 넣을까요?','안의 밭은 그 자리에 남고 바깥 밭이 돼요. 보관함에서 다시 놓을 수 있어요.',()=>bStore(g),'넣기',false)]);
  objMenu(lv?GHUP[lv][0]+' 단 온실':'온실',A,`안 온도 ${t}℃ · 밭 ${ps.length} / 2개<br>${GHUP[lv][3]}`)}
 function ghTempAsk(g){objMenu('온실 온도',[['−1℃','',()=>{g[7]=Math.max(5,ghSet(g)-1);ghTempAsk(g)}],['+1℃','',()=>{g[7]=Math.min(35,ghSet(g)+1);ghTempAsk(g)}],['다 됐어요','go',()=>ghMenu(g)]],`지금 ${ghSet(g)}℃로 맞추고 있어요. (5~35℃)`)}
 function ghUp(g){const lv=g[6]||0,nx=GHUP[lv+1];if(!nx)return;
