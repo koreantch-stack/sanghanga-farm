@@ -1208,9 +1208,9 @@ const rumorLeft=()=>STAT.rumor?(STAT.rumor.day-absOf()+240)%240:0;
 function rumorUse(k){if(!(jdHave(k)>0))return;if(STAT.rumor){const r=STAT.rumor;alertBox('이미 들은 소문이 있어요',`${NAME[r.c]} 소문이 ${rumorLeft()}일 남았어요. 그 소문이 끝난 다음에 읽어 주세요.`);return}
  const hasGH=BLD.some(b=>b[0]==='greenhouse');const L=ALLC.filter(c=>LV[c]<=G.lv&&HIST[c]&&DAYS[c]&&DAYS[c]<=30&&(GHONLY.includes(c)?hasGH:(hasGH||(SOW[c]||[]).includes(G.month))));
  if(!L.length){alertBox('소문이 없어요','지금 키울 수 있는 작물이 없어요.');return}
- const c=L[Math.floor(Math.random()*L.length)],lead=Math.ceil(DAYS[c])+2+(Math.random()<.5?1:0),acc=k==='report'?.9:.7,hit=Math.random()<acc?1:(Math.random()<.5?0:-1);
+ const c=L[Math.floor(Math.random()*L.length)],lead=Math.max(8,Math.ceil(DAYS[c]*1.5)+3+Math.floor(Math.random()*3)),acc=k==='report'?.9:.7,hit=Math.random()<acc?1:(Math.random()<.5?0:-1);
  MATS[k][1]--;STAT.rumorRead=(STAT.rumorRead||0)+1;STAT.rumor={c,day:(absOf()+lead)%240,hit,k};const ab=(absOf()+lead)%240,m=Math.floor(ab/20)+1,d=ab%20+1;sfx('open');
- alertBox(k==='report'?'고급 정보지':'찌라시',`"${lead}일 뒤 ${m}월 ${d}일, ${NAME[c]} 값이 상한가를 친대요." ${NAME[c]}${josa(NAME[c],'은','는')} ${DAYS[c]}일이면 자라요. 지금 심으면 그날 전에 거둘 수 있어요. ${k==='report'?'믿을 만한 정보라 열에 아홉은 맞아요.':'찌라시라 열에 셋은 틀려요. 거꾸로 떨어질 수도 있어요.'}`);
+ alertBox(k==='report'?'고급 정보지':'찌라시',`"${lead}일 뒤 ${m}월 ${d}일, ${NAME[c]} 값이 상한가를 친대요." ${NAME[c]}${josa(NAME[c],'은','는')} ${DAYS[c]}일이면 자라요. 물과 거름을 잘 챙기면 넉넉하게 거둘 수 있어요. ${k==='report'?'믿을 만한 정보라 열에 아홉은 맞아요.':'찌라시라 열에 셋은 틀려요. 거꾸로 떨어질 수도 있어요.'}`);
  if(!document.getElementById('bagwin').hidden)bagDraw()}
 function rumorDay(){{const w=STAT.rumorWin;if(w&&w.day!==absOf()){if(((STAT.soldBy&&STAT.soldBy[w.c])||0)>w.s0)STAT.rumorSold=(STAT.rumorSold||0)+1;STAT.rumorWin=null}}const r=STAT.rumor;if(!r||r.day!==absOf())return;STAT.rumor=null;const nm=NAME[r.c];
  if(r.hit===1){spike(r.c,1.3);STAT.rumorWin={c:r.c,day:absOf(),s0:(STAT.soldBy&&STAT.soldBy[r.c])||0};toast(`소문대로 ${nm} 상한가!`)}else if(r.hit===-1){spike(r.c,.7);toast(`찌라시가 틀렸어요. ${nm} 하한가`)}else toast(`소문과 달리 ${nm} 값은 잠잠해요`)}
