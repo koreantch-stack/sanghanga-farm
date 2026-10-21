@@ -1181,11 +1181,11 @@ const TUT=[
  ['t_plant',1,'씨앗 심기','밭을 누르고 "씨앗"을 고르세요. 처음엔 사흘이면 크는 상추나 감자가 좋아요. 이름 옆 "지금 철"을 보고 고르세요.',()=>(STAT.a_plant||0)>=1,800,15],
  ['t_water',1,'물 주기','작물이 있는 밭을 누르고 "물 주기". 물뿌리개가 비면 수돗가로 가서 저절로 채워요. 비 오는 날은 하늘이 대신 줘요.',()=>(STAT.a_water||0)>=1,500,10],
  ['t_hv',1,'첫 수확','다 자라면 밭 위에 작물 그림이 통통 튀어요. 그걸 누르면 거둬서 창고에 넣어요.',()=>(STAT.hvAll||0)>=1,1000,20],
- ['t_sell',1,'시세 보고 팔기','아래 "시세"를 열면 작물값이 매일 바뀌어요. 기준가보다 높을 때 팔면 이득이에요. 창고를 눌러서 팔아도 돼요. 바로 팔면 수수료 10%.',()=>(STAT.soldN||0)>=1,1000,20],
+ ['t_sell',1,'시세 보고 팔기','오른쪽 메뉴의 "시세"를 열면 작물값이 매일 바뀌어요. 기준가보다 높을 때 팔면 이득이에요. 창고를 눌러서 팔아도 돼요. 바로 팔면 수수료 10%.',()=>(STAT.soldN||0)>=1,1000,20],
  ['t_ship',1,'출하 상자에 넣어 보기','출하 상자를 누르고 "상자 열기". 넣어 두면 다음 날 아침 시세로 팔리고 수수료가 없어요.',()=>(STAT.shipped||0)>=1,800,15],
- ['t_quest',1,'오늘 할 일 하나 받기','아래 "수첩"의 "오늘 할 일"은 날마다 바뀌어요. 다 하면 "받기"로 돈과 경험치를 받아요.',()=>(STAT.questDone||0)>=1,1000,20],
+ ['t_quest',1,'오늘 할 일 하나 받기','오른쪽 메뉴 "수첩"의 "오늘 할 일"은 날마다 바뀌어요. 다 하면 "받기"로 돈과 경험치를 받아요.',()=>(STAT.questDone||0)>=1,1000,20],
  ['t_comp',2,'퇴비 만들기','퇴비장을 누르고 벤 풀 10개를 넣으면 하루 뒤 퇴비가 나와요. 다 되면 퇴비장 위에 그림이 떠요.',()=>(STAT.made||0)>=1,1500,25],
- ['t_nurs',3,'육묘장 놓기','상점 시설 탭에서 육묘장(5만 원)을 사고, 아래 "보관함"에서 놓으세요. 씨앗 10개와 상토 10개로 모종 10개를 만들어요. 모종은 30% 빨리 크고 두 배쯤 많이 나와요.',()=>pc('nursery'),3000,40],
+ ['t_nurs',3,'육묘장 놓기','상점 시설 탭에서 육묘장(5만 원)을 고르고 "사서 놓기"를 누르면 바로 놓을 수 있어요. 씨앗 10개와 상토 10개로 모종 10개를 만들어요. 모종은 30% 빨리 크고 두 배쯤 많이 나와요.',()=>pc('nursery'),3000,40],
  ['t_jang',3,'장독대에서 가공하기','장독대(Lv3, 8만 원)나 방앗간(Lv4, 20만 원)을 놓고 창고 작물을 넣어 보세요. 가공품은 작물보다 2~5배 비싸고 오래 가요.',()=>(STAT.madeP||0)>=1,5000,60],
  ['t_bag',5,'가방 키우기','가방을 열고 위쪽 "가방 키우기". 씨앗과 거름을 더 많이 들고 다닐 수 있어요.',()=>bagLv>=1,3000,40],
  ['t_sto',5,'창고 늘리기','창고를 누르고 "창고 늘리기". 많이 담을수록, 등급이 떨어지기 전 버티는 날도 늘어요.',()=>stoLv>=1,5000,50],
@@ -1194,7 +1194,7 @@ const TUT=[
  ['t_pet',5,'동물 데려오기','상점 동물 탭. 백구(Lv5, 10만 원)는 날마다 씨앗을 물어 와요. 고양이는 창고 등급이 늦게 떨어지게 해요.',()=>Object.keys(OWN).some(k=>OWN[k]>0&&['baekgu','hwanggu','corgi','cheese','calico','blackcat','rabbit'].includes(k)),5000,50],
  ['t_req',6,'손님 부탁 들어주기','집 → 손님방. 마을 사람이 원하는 작물을 건네면 시세보다 비싸게 사 가요. 부탁은 하루가 지나면 사라져요.',()=>(STAT.reqDone||0)>=1,5000,60],
  ['t_plotup',10,'밭 강화하기','밭을 누르고 "밭 강화". 나무 테두리 밭은 기본 양분과 최대 양분이 커져서 거름을 덜 줘도 돼요.',()=>PLOTS.some(p=>(p.tier||0)>0),10000,80],
- ['t_gh',10,'온실 놓기','상점 시설 탭 온실(50만 원). 놓은 다음 보관함에서 안에 밭을 놓아요(2개까지). 여러 채 지을 수 있어요. 한겨울에도 10도 아래로 안 내려가고 철 없이 심고, 온실에서만 크는 작물도 있어요.',()=>pc('greenhouse'),20000,100],
+ ['t_gh',10,'온실 놓기','상점 시설 탭 온실(50만 원). 온실을 놓은 다음, 같은 시설 탭의 밭을 "사서 놓기"로 온실 안에 놓아요(2개까지). 여러 채 지을 수 있어요. 한겨울에도 10도 아래로 안 내려가고 철 없이 심고, 온실에서만 크는 작물도 있어요.',()=>pc('greenhouse'),20000,100],
  ['t_drip',10,'스프링클러 놓고 밭 연결','상점 설치 탭 스프링클러(20만 원). 놓은 뒤 누르고 "밭 연결하기"로 밭을 고르면, 그 밭은 마르면 바로 물이 들어가요.',()=>PLACED.some(o=>(o.k==='dripline'||o.k==='sprinkler')&&o.links&&o.links.length),20000,100],
  ['t_garage',12,'농기계 차고와 관리기','시설 탭 농기계 차고(200만 원)를 놓고, 농기계 탭 관리기(80만 원)를 사세요. 차고를 누르면 기계에 일을 시킬 수 있어요. 한 번 돌리면 밭 여러 개를 갈아요.',()=>pc('garage')&&MACH.some(m=>OWN[m[0]]>0&&MJOB[m[0]]),50000,150],
  ['t_cold',12,'저온창고 놓기','시설 탭 저온창고(300만 원). 창고 등급이 3분의 1 속도로 떨어져서 값 좋을 때까지 버티기 쉬워요.',()=>pc('coldstore'),50000,150],
@@ -1208,12 +1208,14 @@ const TUT=[
 // 새 길잡이 (2026-10-20)
 {const gotK=k=>((STAT.got||{})[k]||0)>=1,ghLv=()=>BLD.some(b=>b[0]==='greenhouse'&&(b[6]||0)>=1);
  TUT.push(
+ ['t_deco',2,'꾸미기 하나 놓기','상점 꾸미기 탭에서 마음에 드는 장식을 골라 "사서 놓기"를 누르세요. 꾸미기마다 효과가 있어요. 주변 밭의 특품이나 수확량을 올리기도 하고, 체력이나 경험치를 도와주기도 해요. 같은 장식은 여러 개 놓아도 한 번만 치고, 서로 다른 장식끼리는 효과가 더해져요.',()=>PLACED.some(o=>DFX[o.k]&&DCAT[o.k]&&DCAT[o.k]!=='floor'&&!FAM[o.k]&&!GATE[o.k]),0,15],
+ ['t_fence',3,'울타리 이어 놓기','상점 꾸미기 탭 "울타리"에서 울타리를 사서 옆 칸에 나란히 놓아 보세요. 같은 울타리끼리는 저절로 이어져요. 울타리 사이에 같은 종류의 문을 끼우면 지나다닐 수 있어요.',()=>PLACED.some(o=>FAM[o.k]&&PLACED.some(q=>q!==o&&famOf(q.k)===FAM[o.k]&&Math.abs(q.i-o.i)+Math.abs(q.j-o.j)===1)),0,20],
  ...(USER?[['t_login',1,'구글로 로그인하기','설정 맨 위 "구글로 로그인"을 누르세요. 농장이 계정에 저장돼서 폰·PC 어디서든 이어서 할 수 있어요. 기기를 바꾸거나 게임을 끝낼 때는 설정에서 "지금 저장"을 누른 다음 꺼 주세요. 같은 계정으로 두 곳에서 동시에 하면 저장이 꼬일 수 있어요.',()=>!!(STAT.login||SY.user),0,10]]:[]),
  ['t_top',2,'덧거름으로 양분 채우기','자라는 밭 위에 주황색 느낌표가 뜨면 양분이 모자란 거예요. 양분이 모자라면 작물이 자라지 않아요. 밭을 누르고 "덧거름"을 고르세요. 덧거름은 상점 거름 탭에 있어요.',()=>(STAT.a_top||0)>=1,0,10],
  ['t_sleep',2,'잠자기','집을 누르고 "안방"에 들어가 자 보세요. 자는 동안 체력이 2배 빨리 차요. 화면을 누르면 일어나고, 체력이 다 차면 저절로 깨요.',()=>(STAT.slept||0)>=1,0,10],
  ['t_jade',2,'옥돌 줍기','곡괭이로 돌을 깨다 보면 옥돌이 나와요. 풀을 벨 때도 가끔 나와요. 옥돌은 할머니 서랍 합성에 쓰는 귀한 재료예요.',()=>gotK('187'),0,10],
- ...(USER?[['t_mail',2,'우편함 열어 보기','오른쪽 아래 "우편함"을 눌러 보세요. 운영자가 보낸 선물을 받고, 운영자에게 편지도 쓸 수 있어요.',()=>(STAT.mailOpen||0)>=1,0,10]]:[]),
- ['t_cook',3,'새참 만들기','집을 누르고 "부엌"에서 창고 채소로 새참을 만들어요. 위쪽 빠른 칸에 넣어 두면 누르기만 해도 먹고 체력이 차요.',()=>(STAT.cooked||0)>=1,0,15],
+ ...(USER?[['t_mail',2,'우편함 열어 보기','오른쪽 메뉴의 "우편함"을 눌러 보세요. 운영자가 보낸 선물을 받고, 운영자에게 편지도 쓸 수 있어요.',()=>(STAT.mailOpen||0)>=1,0,10]]:[]),
+ ['t_cook',3,'새참 만들기','집을 누르고 "부엌"에서 창고 채소로 새참을 만들어요. 화면 아래 가운데 빠른 칸에 넣어 두면 누르기만 해도 먹고 체력이 차요.',()=>(STAT.cooked||0)>=1,0,15],
  ['t_paper',3,'종잇조각 줍기','낫으로 풀이나 덤불을 베다 보면 종잇조각이 나와요. 할머니 서랍 합성에서 벤 풀 20개로 만들 수도 있어요. 종잇조각 10장이면 찌라시가 돼요.',()=>gotK('paper'),0,15],
  ['t_rumor',5,'찌라시 읽기','할머니 서랍 합성에서 종잇조각 10장으로 찌라시를 만들고, 가방에서 찌라시를 눌러 "읽기"를 누르세요. 며칠 뒤 상한가를 칠 작물을 알려 줘요. 찌라시는 열에 셋은 틀려요.',()=>(STAT.rumorRead||0)>=1,0,40],
  ['t_rumorSell',8,'소문대로 팔기','찌라시가 알려 준 작물을 미리 심어 거두고, 상한가가 된 날 팔아 보세요. 시세 창에서 그 작물 옆에 "소문 D-○" 표시가 붙어요. 찌라시 3장과 옥돌 1개로 만드는 고급 정보지는 열에 아홉은 맞아요.',()=>(STAT.rumorSold||0)>=1||!!(STAT.rumorWin&&STAT.rumorWin.day===absOf()&&((STAT.soldBy&&STAT.soldBy[STAT.rumorWin.c])||0)>STAT.rumorWin.s0),0,60],
@@ -1223,7 +1225,7 @@ const TUT=[
  ['t_heater',14,'온실에 난방기 달기','온실 안 밭을 누르고 "난방기 달기"를 누르세요. 온실 안이 늘 20도 넘게 유지돼서 한겨울에도 따뜻한 걸 좋아하는 작물이 잘 자라요. Lv20부터는 온도조절기로 원하는 온도를 맞출 수 있어요.',()=>ghLv(),0,150]);
  TUT.sort((a,b)=>a[1]-b[1]);}
 // 정착 지원금: 초반엔 넉넉히, 뒤로 갈수록 그 단계에 사야 할 것 값의 절반쯤
-const TUTPAY={t_gm:5000000,t_login:10000,t_top:10000,t_sleep:10000,t_jade:10000,t_mail:5000,t_cook:15000,t_paper:15000,t_rumor:50000,t_rumorSell:100000,t_craft:200000,t_jdtime:300000,t_heater:600000,t_obs:10000,t_hoe:10000,t_base:10000,t_plant:15000,t_water:10000,t_hv:20000,t_sell:20000,t_ship:20000,t_quest:20000,t_comp:30000,t_nurs:50000,t_jang:100000,t_bag:50000,t_sto:150000,t_land:100000,t_tool:50000,t_pet:100000,t_req:50000,t_plotup:100000,t_gh:500000,t_drip:200000,t_garage:1500000,t_cold:1500000,t_mush:4000000,t_truck:6000000,t_bot:20000000,t_auto:30000000,t_smart:40000000,t_trade:75000000,t_wx:150000000};
+const TUTPAY={t_deco:20000,t_fence:30000,t_gm:5000000,t_login:10000,t_top:10000,t_sleep:10000,t_jade:10000,t_mail:5000,t_cook:15000,t_paper:15000,t_rumor:50000,t_rumorSell:100000,t_craft:200000,t_jdtime:300000,t_heater:600000,t_obs:10000,t_hoe:10000,t_base:10000,t_plant:15000,t_water:10000,t_hv:20000,t_sell:20000,t_ship:20000,t_quest:20000,t_comp:30000,t_nurs:50000,t_jang:100000,t_bag:50000,t_sto:150000,t_land:100000,t_tool:50000,t_pet:100000,t_req:50000,t_plotup:100000,t_gh:500000,t_drip:200000,t_garage:1500000,t_cold:1500000,t_mush:4000000,t_truck:6000000,t_bot:20000000,t_auto:30000000,t_smart:40000000,t_trade:75000000,t_wx:150000000};
 TUT.forEach(t=>{if(TUTPAY[t[0]])t[5]=TUTPAY[t[0]]});
 const tutGot=id=>!!(STAT.tut&&STAT.tut[id]);
 const tutReady=()=>TUT.filter(t=>t[1]<=G.lv&&!tutGot(t[0])&&t[4]());
@@ -2287,7 +2289,7 @@ function helpOpen(title,sub,steps,go){const w=document.getElementById('helpwin')
  const close=()=>{w.hidden=true};document.getElementById('hw-x').onclick=close;document.getElementById('hw-close').onclick=close;if(go)document.getElementById('hw-go').onclick=()=>{close();nbShow(false);hsShow(false);go[1]()}}
 document.getElementById('helpwin').onclick=e=>{if(e.target.id==='helpwin')e.currentTarget.hidden=true};
 const goShop=(tab,lab)=>[lab||'상점',()=>{shopTab=tab;shopSel=null;shopShow(true)}];
-const TUTGO={t_gm:goShop('seed','상점 씨앗 탭'),t_login:['설정',()=>setShow(true)],t_top:goShop('fert','상점 거름 탭'),t_sleep:['집',()=>hsShow(true)],t_mail:['우편함',()=>mlShow()],t_cook:['부엌',()=>{hsShow(true);hView='kitchen';hDraw()}],t_rumor:['할머니 서랍 합성',()=>{nbMode='drawer';nbTab='craft';nbShow(true)}],t_craft:['할머니 서랍 합성',()=>{nbMode='drawer';nbTab='craft';nbShow(true)}],t_rumorSell:['시세 창',()=>mkShow(true)],t_base:goShop('fert','상점 거름 탭'),t_plant:goShop('seed','상점 씨앗 탭'),t_sell:['시세 창',()=>mkShow(true)],t_ship:['출하 상자',()=>shipOpen()],t_quest:['수첩 오늘 할 일',()=>{nbMode='note';nbTab='goal';nbShow(true)}],t_comp:['퇴비장',()=>facOpen('bld:compost','compost')],
+const TUTGO={t_deco:goShop('deco','상점 꾸미기 탭'),t_fence:['상점 울타리',()=>{shopDCat='fence';goShop('deco')[1]()}],t_gm:goShop('seed','상점 씨앗 탭'),t_login:['설정',()=>setShow(true)],t_top:goShop('fert','상점 거름 탭'),t_sleep:['집',()=>hsShow(true)],t_mail:['우편함',()=>mlShow()],t_cook:['부엌',()=>{hsShow(true);hView='kitchen';hDraw()}],t_rumor:['할머니 서랍 합성',()=>{nbMode='drawer';nbTab='craft';nbShow(true)}],t_craft:['할머니 서랍 합성',()=>{nbMode='drawer';nbTab='craft';nbShow(true)}],t_rumorSell:['시세 창',()=>mkShow(true)],t_base:goShop('fert','상점 거름 탭'),t_plant:goShop('seed','상점 씨앗 탭'),t_sell:['시세 창',()=>mkShow(true)],t_ship:['출하 상자',()=>shipOpen()],t_quest:['수첩 오늘 할 일',()=>{nbMode='note';nbTab='goal';nbShow(true)}],t_comp:['퇴비장',()=>facOpen('bld:compost','compost')],
  t_nurs:goShop('fac','상점 시설 탭'),t_jang:goShop('fac','상점 시설 탭'),t_gh:goShop('fac','상점 시설 탭'),t_cold:goShop('fac','상점 시설 탭'),t_mush:goShop('fac','상점 시설 탭'),t_garage:goShop('fac','상점 시설 탭'),
  t_bag:['가방',()=>bagShow(true)],t_sto:['창고',()=>stoShow(true)],t_land:['집',()=>hsShow(true)],t_tool:goShop('tool','상점 농기구 탭'),t_pet:goShop('pet','상점 동물 탭'),t_req:['손님방',()=>{hsShow(true);hView='guest';hDraw()}],
  t_drip:goShop('inst','상점 설치 탭'),t_bot:goShop('inst','상점 설치 탭'),t_smart:goShop('inst','상점 설치 탭'),t_trade:goShop('inst','상점 설치 탭'),t_wx:goShop('inst','상점 설치 탭'),t_truck:goShop('mach','상점 농기계 탭'),t_auto:goShop('mach','상점 농기계 탭')};
