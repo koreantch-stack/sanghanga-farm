@@ -16,38 +16,16 @@ canvas{display:block}
 <div id="act"><button data-a="hoe">괭이질</button><button data-a="water">물 주기</button><button data-a="plant">심기</button><button data-a="pull">뽑기</button></div></div>
 <script>
 const HM={"walk": [[{"x": 0, "y": 0, "w": 64, "h": 114, "ax": 32, "ay": 114}, {"x": 65, "y": 0, "w": 62, "h": 111, "ax": 31, "ay": 111}, {"x": 128, "y": 0, "w": 60, "h": 114, "ax": 33, "ay": 114}, {"x": 189, "y": 0, "w": 64, "h": 114, "ax": 32, "ay": 114}, {"x": 254, "y": 0, "w": 60, "h": 110, "ax": 31, "ay": 110}, {"x": 315, "y": 0, "w": 61, "h": 114, "ax": 33, "ay": 114}], [{"x": 377, "y": 0, "w": 62, "h": 115, "ax": 32, "ay": 115}, {"x": 440, "y": 0, "w": 61, "h": 112, "ax": 32, "ay": 112}, {"x": 502, "y": 0, "w": 61, "h": 116, "ax": 34, "ay": 116}, {"x": 564, "y": 0, "w": 66, "h": 116, "ax": 33, "ay": 116}, {"x": 631, "y": 0, "w": 61, "h": 112, "ax": 32, "ay": 112}, {"x": 693, "y": 0, "w": 62, "h": 116, "ax": 34, "ay": 116}]], "hoe": [[{"x": 756, "y": 0, "w": 92, "h": 128, "ax": 56, "ay": 126}, {"x": 849, "y": 0, "w": 99, "h": 109, "ax": 47, "ay": 108}, {"x": 0, "y": 129, "w": 97, "h": 107, "ax": 48, "ay": 105}, {"x": 98, "y": 129, "w": 94, "h": 112, "ax": 51, "ay": 111}], [{"x": 193, "y": 129, "w": 79, "h": 130, "ax": 35, "ay": 129}, {"x": 273, "y": 129, "w": 106, "h": 110, "ax": 54, "ay": 109}, {"x": 380, "y": 129, "w": 98, "h": 108, "ax": 53, "ay": 107}, {"x": 479, "y": 129, "w": 95, "h": 112, "ax": 50, "ay": 110}]], "plant": [[{"x": 575, "y": 129, "w": 90, "h": 116, "ax": 52, "ay": 115}, {"x": 666, "y": 129, "w": 94, "h": 117, "ax": 53, "ay": 115}, {"x": 761, "y": 129, "w": 89, "h": 116, "ax": 53, "ay": 114}, {"x": 851, "y": 129, "w": 90, "h": 116, "ax": 51, "ay": 114}], [{"x": 0, "y": 260, "w": 87, "h": 113, "ax": 42, "ay": 111}, {"x": 88, "y": 260, "w": 103, "h": 115, "ax": 57, "ay": 113}, {"x": 192, "y": 260, "w": 91, "h": 114, "ax": 46, "ay": 113}, {"x": 284, "y": 260, "w": 90, "h": 114, "ax": 45, "ay": 112}]], "water": [[{"x": 375, "y": 260, "w": 82, "h": 121, "ax": 45, "ay": 120}, {"x": 458, "y": 260, "w": 86, "h": 122, "ax": 52, "ay": 121}, {"x": 545, "y": 260, "w": 92, "h": 121, "ax": 54, "ay": 118}, {"x": 638, "y": 260, "w": 83, "h": 124, "ax": 43, "ay": 122}], [{"x": 722, "y": 260, "w": 92, "h": 123, "ax": 40, "ay": 121}, {"x": 815, "y": 260, "w": 82, "h": 125, "ax": 41, "ay": 123}, {"x": 898, "y": 260, "w": 111, "h": 125, "ax": 42, "ay": 123}, {"x": 0, "y": 386, "w": 89, "h": 123, "ax": 40, "ay": 121}]], "pull": [[{"x": 90, "y": 386, "w": 85, "h": 90, "ax": 11, "ay": 90}, {"x": 176, "y": 386, "w": 82, "h": 112, "ax": 26, "ay": 111}, {"x": 259, "y": 386, "w": 82, "h": 117, "ax": 30, "ay": 117}], [{"x": 342, "y": 386, "w": 81, "h": 105, "ax": 42, "ay": 104}, {"x": 424, "y": 386, "w": 83, "h": 114, "ax": 57, "ay": 113}, {"x": 508, "y": 386, "w": 76, "h": 117, "ax": 55, "ay": 117}]]};
-const SHEET='a/35a44a168ba5.png';
-// 무늬: [이름, 종류, 색1, 색2]
-const TOPS=[['기본 흰 티','plain','#f4f1ea'],['빨간 체크','check','#c8402e','#3a2f4a'],['파란 줄무늬','stripe','#f4f1ea','#3d63b8'],['노란 티','plain','#f2c94c'],['분홍 물방울','dots','#f4a6b8','#ffffff'],['검정 티','plain','#3a3a40']];
-const BOTS=[['기본 청멜빵','plain','#3e5fa8'],['카키 멜빵','plain','#6b7a3a'],['꽃무늬 몸빼','flower','#6a3f7a','#f2c0d0'],['빨간 멜빵','plain','#b8323a'],['체크 멜빵','check','#3d6b4a','#2a2a2a'],['밤색 멜빵','plain','#6b4a2e']];
+const BASE='a/wear/base.webp';
+// 옷 층: [이름, 그림(없으면 기본)]
+const TOPS=[['기본 회색 티',null],['체크 남방','a/wear/top_flannel.webp']];
+const BOTS=[['기본 회색 반바지',null],['꽃무늬 몸빼','a/wear/bot_mombbae.webp']];
 let topI=0,botI=0;
 const cv=document.getElementById('c'),g=cv.getContext('2d');let W,H;function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight}rs();addEventListener('resize',rs);
-const src=new Image();src.src=SHEET;let base=null,mask=null,lumA=null,sheet=null;
-const hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
-// 프레임 칸 위치표: 픽셀이 어느 프레임 안에서 몇 % 높이에 있는지
-function frameMap(w,h){const fm=new Float32Array(w*h).fill(-1);Object.values(HM).forEach(D=>D.forEach(F=>F.forEach(f=>{for(let y=f.y;y<f.y+f.h;y++)for(let x=f.x;x<f.x+f.w;x++)fm[y*w+x]=(y-f.y)/f.h})));return fm}
-function prep(){const w=src.width,h=src.height,t=document.createElement('canvas');t.width=w;t.height=h;const c=t.getContext('2d');c.drawImage(src,0,0);base=c.getImageData(0,0,w,h);const d=base.data,fm=frameMap(w,h);
- mask=new Uint8Array(w*h);lumA=new Float32Array(w*h);
- for(let p=0;p<w*h;p++){const r=d[p*4],gg=d[p*4+1],b=d[p*4+2],a=d[p*4+3];if(a<20)continue;const mx=Math.max(r,gg,b),mn=Math.min(r,gg,b),sat=mx?(mx-mn)/mx:0,l=(r+gg+b)/3;lumA[p]=l;const ry=fm[p];
-  if(b>r+12&&b>=gg-4&&sat>=.25)mask[p]=2;            // 파란 멜빵 → 하의
-  else if(sat<.26&&l>118&&ry>.38)mask[p]=1}           // 흰 티 → 상의 (얼굴 아래만)
- build()}
-function pat(kind,c1,c2,x,y){if(kind==='plain')return c1;
- if(kind==='check'){const a=(Math.floor(x/5)+Math.floor(y/5))%2;return a?c1:mix(c1,c2,.45)}
- if(kind==='stripe')return Math.floor(y/3)%2?c1:c2;
- if(kind==='dots')return((x%6-3)**2+(y%6-3)**2)<3?c2:c1;
- if(kind==='flower'){const u=x%9,v=y%9;return((u-4)**2+(v-4)**2)<4?c2:(u===4&&v===4?[240,210,90]:c1)}return c1}
-const mix=(a,b,t)=>a.map((v,i)=>v*(1-t)+b[i]*t);
-function build(){const w=src.width,h=src.height,o=new ImageData(new Uint8ClampedArray(base.data),w,h),d=o.data;
- const T=TOPS[topI],B=BOTS[botI],t1=hex(T[2]),t2=T[3]?hex(T[3]):t1,b1=hex(B[2]),b2=B[3]?hex(B[3]):b1;
- for(let p=0;p<w*h;p++){const m=mask[p];if(!m)continue;const x=p%w,y=(p/w)|0,l=lumA[p];
-  let col,sh;if(m===1){if(topI===0)continue;col=pat(T[1],t1,t2,x,y);sh=Math.min(1.08,l/228)}else{if(botI===0)continue;col=pat(B[1],b1,b2,x,y);sh=Math.min(1.5,l/92)}
-  d[p*4]=col[0]*sh;d[p*4+1]=col[1]*sh;d[p*4+2]=col[2]*sh}
- const t=document.createElement('canvas');t.width=w;t.height=h;t.getContext('2d').putImageData(o,0,0);sheet=t}
-src.onload=prep;
+const IM={};const ld=u=>{if(!u)return null;if(!IM[u]){IM[u]=new Image();IM[u].src=u}return IM[u]};ld(BASE);TOPS.forEach(t=>ld(t[1]));BOTS.forEach(t=>ld(t[1]));
 // 고르기 단추
 function ui(){[['tops',TOPS,()=>topI,v=>topI=v],['bots',BOTS,()=>botI,v=>botI=v]].forEach(([id,L,get,set])=>{const r=document.getElementById(id);r.querySelectorAll('button').forEach(b=>b.remove());
- L.forEach((it,i)=>{const b=document.createElement('button');b.className=get()===i?'on':'';const bg=it[3]?`linear-gradient(135deg,${it[2]} 50%,${it[3]} 50%)`:it[2];b.innerHTML=`<i style="background:${bg}"></i>${it[0]}`;b.onclick=()=>{set(i);ui();if(base)build()};r.appendChild(b)})})}ui();
+ L.forEach((it,i)=>{const b=document.createElement('button');b.className=get()===i?'on':'';b.textContent=it[0];b.onclick=()=>{set(i);ui()};r.appendChild(b)})})}ui();
 // 걷기
 const hero={x:0,y:0,tx:0,ty:0,dir:0,flip:false,f:0,t:0,act:null};
 addEventListener('pointerdown',e=>{if(e.target!==cv)return;hero.tx=e.clientX-W/2;hero.ty=e.clientY-H/2;hero.act=null});
@@ -60,7 +38,7 @@ function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;
  if(mv){const s=Math.min(dd,160*dt);hero.x+=dx/dd*s;hero.y+=dy/dd*s;hero.dir=dy<-Math.abs(dx)*.3?1:0;hero.flip=dx<0;hero.t+=dt;if(hero.t>.1){hero.t=0;hero.f++}}else hero.f=0;
  if(hero.act){const a=hero.act;a.t+=dt;if(a.t>.16){a.t=0;a.f++;if(a.f>=HM[a.n][hero.dir].length){a.f=0;if(++a.loop>=2)hero.act=null}}}
  g.fillStyle='#7da23e';g.fillRect(0,0,W,H);g.fillStyle='#8fb24c';for(let y=-H;y<H*2;y+=64)for(let x=-W;x<W*2;x+=128){g.beginPath();g.moveTo(x,y);g.lineTo(x+64,y+32);g.lineTo(x,y+64);g.lineTo(x-64,y+32);g.closePath();if(((x/128+y/64)|0)%2)g.fill()}
- if(sheet){const an=hero.act?hero.act.n:'walk',fs=HM[an][hero.dir],m=fs[(hero.act?hero.act.f:hero.f)%fs.length],S=1.6;
-  g.save();g.translate(W/2+hero.x,H/2+hero.y);g.fillStyle='rgba(0,0,0,.25)';g.beginPath();g.ellipse(0,0,30,10,0,0,7);g.fill();if(hero.flip)g.scale(-1,1);g.scale(S,S);g.drawImage(sheet,m.x,m.y,m.w,m.h,-m.ax,-m.ay,m.w,m.h);g.restore()}
+ {const L=[ld(BASE),ld(BOTS[botI][1]),ld(TOPS[topI][1])].filter(x=>x&&x.complete&&x.width);const an=hero.act?hero.act.n:'walk',fs=HM[an][hero.dir],m=fs[(hero.act?hero.act.f:hero.f)%fs.length],S=1.6;
+  g.save();g.translate(W/2+hero.x,H/2+hero.y);g.fillStyle='rgba(0,0,0,.25)';g.beginPath();g.ellipse(0,0,30,10,0,0,7);g.fill();if(hero.flip)g.scale(-1,1);g.scale(S,S);L.forEach(im=>g.drawImage(im,m.x,m.y,m.w,m.h,-m.ax,-m.ay,m.w,m.h));g.restore()}
  requestAnimationFrame(loop)}requestAnimationFrame(loop);
 </script></body></html>
