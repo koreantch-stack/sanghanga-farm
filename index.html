@@ -2788,23 +2788,23 @@ const riseOf=c=>HIST[c]?pr(c)/baseP(c)-1:0;
 const valOf=(t,id,n)=>t==='m'?(MATSELL[id]||10)*n:(HIST[id]?pr(id):PRICE[id]||100)*n;
 
 // ===== 이장님 부탁 =====
-const DIFF=['쉬움','보통','어려움'],DXP=[.03,.10,.25],DMUL=[1.5,2.5,4],DQM=[1,2.5,4];
+const DIFF=['쉬움','보통','어려움'],DXP=[.03,.10,.25],DMUL=[1.5,2.5,4],DQM=[.5,1,2];
 const WORK=[['a_hoe','밭 {n}번 갈기',[4,10,25]],['a_water','물 {n}번 주기',[5,12,30]],['a_plant','씨앗이나 모종 {n}번 심기',[4,10,25]],['cleared','장애물 {n}개 치우기',[3,8,20]],['hvAll','작물 {n}개 거두기',[30,80,200]]];
 const MAKE=[['made','시설에서 {n}개 만들어 꺼내기',[3,8,20]],['cooked','부엌에서 새참 {n}번 만들기',[1,3,6]]];
 const TRV=[2,3,4],TRT=[.05,.15,.25];
 const trCrops=d=>{const L=new Set([...growable(),...ALLC.filter(c=>(STO[c]||0)>0)]);return[...L].filter(c=>(VOL[c]||1)>=TRV[d]&&HIST[c]).sort((a,b)=>(VOL[b]||1)-(VOL[a]||1))};
 function chiefMake(d){const crops=growable(),lvk=1+G.lv/50,kinds=[];
  const prods=typeof PRODS!=='undefined'?PRODS.p.filter(x=>LV[x.c]<=G.lv&&(x.f==='homekitchen'||pc(x.f))&&x.d<=3&&NAME[x.k]):[];
- if(crops.length)kinds.push('crop','crop');if(prods.length)kinds.push('prod');kinds.push('mat','work','work');
+ if(crops.length)kinds.push('crop','crop');if(prods.length)kinds.push('prod');if(d===0)kinds.push('mat');kinds.push('work','work');
  if(typeof FREC!=='undefined'&&PLACED.some(o=>FREC[o.k]))kinds.push('make');if(trCrops(d).length)kinds.push('trade');
  const kind=kinds[rnd(kinds.length)],q={d,kind};
  if(kind==='crop'){const c=crops[rnd(crops.length)],base=Math.max(5,Math.round((6+Math.random()*4)*(1+chPl()/10)));Object.assign(q,{t:'c',c,need:Math.round(base*[1,2.5,6][d]/5)*5||5})}
  else if(kind==='prod'){const x=prods[rnd(prods.length)];Object.assign(q,{t:'p',c:x.k,need:[2,5,12][d]})}
  else if(kind==='mat'){const m=Math.random()<.6?'174':'186';Object.assign(q,{t:'m',c:m,need:(m==='174'?[10,25,60]:[5,12,30])[d]})}
- else if(kind==='work'||kind==='make'){const L=kind==='work'?WORK:MAKE,w=L[rnd(L.length)],n=Math.max(1,Math.round(w[2][d]*(w[0]==='cooked'?1:lvk)));Object.assign(q,{ck:w[0],need:n,tx:w[1].replace('{n}',n.toLocaleString('ko-KR'))})}
+ else if(kind==='work'||kind==='make'){const L=(kind==='work'?WORK:MAKE).filter(w=>d<2||w[0]==='hvAll'||w[0]==='made'),w=L[rnd(L.length)],n=Math.max(1,Math.round(w[2][d]*(w[0]==='cooked'?1:lvk)));Object.assign(q,{ck:w[0],need:n,tx:w[1].replace('{n}',n.toLocaleString('ko-KR'))})}
  else{const n=Math.round([10,30,60][d]*(1+chPl()/20)),cs=trCrops(d);Object.assign(q,{thr:TRT[d],need:n,hint:cs.slice(0,3)})}
  const val=q.t?valOf(q.t,q.c,q.need):0;
- q.rw={xp:Math.max(10,Math.round(need(G.lv)*DXP[d])),m:Math.max(q.t?Math.round(val*DMUL[d]/100)*100:0,qMoney(G.lv,DQM[d])),jd:d===1?1+rnd(2):d===2?5+rnd(6):0,st:d===2?(Math.random()<.1?'st_light':['st_time','st_rain','st_earth','st_plenty','st_life'][rnd(5)]):null};
+ q.rw={xp:Math.max(10,Math.round(need(G.lv)*DXP[d])),m:q.t?Math.max(100,Math.round(val*DMUL[d]/100)*100):qMoney(G.lv,DQM[d]),jd:d===1?1+rnd(2):d===2?5+rnd(6):0,st:d===2?(Math.random()<.1?'st_light':['st_time','st_rain','st_earth','st_plenty','st_life'][rnd(5)]):null};
  return q}
 function chiefText(q){if(q.t==='c')return`${NAME[q.c]} ${q.need}개 갖다 주기`;if(q.t==='p')return`${NAME[q.c]} ${q.need}개 갖다 주기`;if(q.t==='m')return`${MATS[q.c][0]} ${q.need}개 갖다 주기`;if(q.ck)return q.tx;return`아무 작물이나 기준가보다 ${Math.round(q.thr*100)}% 넘게 오른 값에 ${q.need}개 팔기`}
 function chiefSay(q){if(q.t==='c')return`마을 잔치에 ${NAME[q.c]}${josa(NAME[q.c],'이','가')} 모자라서 그려.`;if(q.t==='p')return`읍내에 보낼 ${NAME[q.c]}${josa(NAME[q.c],'이','가')} 필요혀.`;if(q.t==='m')return`마을 길 손보는 데 쓸 거여.`;if(q.ck)return`젊은 사람 손이 좀 필요혀.`;return`장사 수완 좀 보자. 오를 때 팔아야 남는 거여.`}
