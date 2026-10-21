@@ -2670,12 +2670,12 @@ let GC=null,GCk='';
 function baseTiles(vis){for(let i=0;i<N;i++)for(let j=0;j<N;j++){const t=T(i,j);if(vis&&!vis(t.x,t.y))continue;cx.drawImage(((i>=5&&i<10&&j<6)||(i<5&&j<5&&!(i<hSize()&&j<hSize())))?IMG.dirt:IMG.grass,t.x-65,t.y-1,130,66)}}
 function groundCache(){if(!IMG.grass.complete||!IMG.dirt.complete)return null;let h=N*7+hSize();for(const o of PLACED)if(isG(o.k)){const im=PIMG[o.k];if(!im||!im.complete)return null;h=(h*31+o.i*97+o.j*13+o.k.length*7+o.k.charCodeAt(o.k.length-1))|0}
  const k=String(h);if(GC&&GCk===k)return GC;
- const sc=.5,x0=T(0,N).x-70,x1=T(N,0).x+70,y0=T(0,0).y-6,y1=T(N,N).y+72;const c=document.createElement('canvas');c.width=Math.ceil((x1-x0)*sc);c.height=Math.ceil((y1-y0)*sc);const g=c.getContext('2d');if(!g)return null;g.setTransform(sc,0,0,sc,-x0*sc,-y0*sc);g.imageSmoothingEnabled=true;
+ const x0=T(0,N).x-70,x1=T(N,0).x+70,y0=T(0,0).y-6,y1=T(N,N).y+72;const sc=Math.min(1,4096/(x1-x0),Math.max(.5,zoom*DPR));const c=document.createElement('canvas');c.width=Math.ceil((x1-x0)*sc);c.height=Math.ceil((y1-y0)*sc);const g=c.getContext('2d');if(!g)return null;g.setTransform(sc,0,0,sc,-x0*sc,-y0*sc);g.imageSmoothingEnabled=true;
  const keep=cx,kv=VIS;cx=g;VIS=()=>true;try{baseTiles(null);decoGround()}finally{cx=keep;VIS=kv}GC={c,x0,y0,sc};GCk=k;return GC}
 function draw(){cx.setTransform(DPR,0,0,DPR,0,0);cx.fillStyle='#7da23e';cx.fillRect(0,0,W,H);
  cx.setTransform(DPR*zoom,0,0,DPR*zoom,DPR*(W/2-cam.x*zoom),DPR*(H/2-cam.y*zoom));cx.imageSmoothingEnabled=true;
  const VW=screenToWorld(0,0),VE=screenToWorld(W,H),vis=(x,y,m=160)=>x>VW.x-m&&x<VE.x+m&&y>VW.y-m&&y<VE.y+m*2;VIS=vis;bgGround(vis);
- if(zoom<.75&&groundCache()){const g=GC;cx.drawImage(g.c,g.x0,g.y0,g.c.width/g.sc,g.c.height/g.sc)}else{baseTiles(vis);decoGround()}fenceBack();
+ if(N>=30&&zoom<.5&&groundCache()){const g=GC;cx.drawImage(g.c,g.x0,g.y0,g.c.width/g.sc,g.c.height/g.sc)}else{baseTiles(vis);decoGround()}fenceBack();
  PLOTS.forEach(p=>{if(hiddenPlot(p))return;const t=T(p.i,p.j);ghWrap(p,()=>cx.drawImage(IMG[soilImg(p)],t.x-128,t.y))});
  PLOTS.forEach(p=>{if(hiddenPlot(p))return;const t=pT(p);if(!t[5])return;ghWrap(p,()=>{const a=T(p.i,p.j),b=T(p.i+2,p.j),c=T(p.i+2,p.j+2),d=T(p.i,p.j+2);cx.save();cx.lineJoin='round';cx.beginPath();[a,b,c,d].forEach((q,n)=>n?cx.lineTo(q.x,q.y+1):cx.moveTo(q.x,q.y+1));cx.closePath();cx.lineWidth=t[6]+4;cx.strokeStyle='rgba(40,25,10,.55)';cx.stroke();cx.lineWidth=t[6];cx.strokeStyle=t[5];cx.stroke();cx.lineWidth=1.5;cx.strokeStyle='rgba(255,255,255,.35)';cx.stroke();cx.restore()})});
  mSelDraw();if(sel)ghWrap(sel,()=>{const t=T(sel.i,sel.j);cx.save();cx.strokeStyle='rgba(255,226,120,'+(.6+.4*Math.sin(performance.now()/200))+')';cx.lineWidth=4;cx.beginPath();cx.moveTo(t.x,t.y);cx.lineTo(t.x+128,t.y+64);cx.lineTo(t.x,t.y+128);cx.lineTo(t.x-128,t.y+64);cx.closePath();cx.stroke();cx.restore()})
