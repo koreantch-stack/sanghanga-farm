@@ -846,8 +846,8 @@ function markIcon(a,p){if(a.t==='hoe'||a.t==='gm')return KIT.ic.hoe;if(a.t==='wa
  if(a.t==='plant')return KIT.ic[a.sl?'168':'167'];if(a.t==='harvest')return A[p.crop.c+'_3']}
 const FMK=new Map();
 function facSpots(){const L=[];
- if(typeof PLACED!=='undefined')PLACED.forEach(o=>{if(!FREC[o.k]||(deco.mv&&deco.mv.ref===o))return;const im=PIMG[o.k];if(!im)return;const f=T(o.i+o.w,o.j+o.h);L.push({key:'p'+o.id,type:o.k,x:(o.i-o.j+(o.w-o.h)/2)*TW/2,y:f.y-im.height+30})});
- BLD.forEach(B=>{const [n,i,j,w,h]=B;if(n==='compost'){const im=IMG[n],f=T(i+w-1,j+h-1);L.push({key:'bld:compost',type:'compost',x:f.x,y:f.y+64-im.height+30})}
+ if(typeof PLACED!=='undefined')PLACED.forEach(o=>{if(!FREC[o.k]||(deco.mv&&deco.mv.ref===o))return;const im=PIMG[o.k];if(!im)return;const f=T(o.i+o.w,o.j+o.h);L.push({key:'p'+o.id,type:o.k,x:(o.i-o.j+(o.w-o.h)/2)*TW/2,y:f.y-im.height*SB(im,o.w,o.h)+30})});
+ BLD.forEach(B=>{const [n,i,j,w,h]=B;if(n==='compost'){const im=IMG[n],f=T(i+w-1,j+h-1);L.push({key:'bld:compost',type:'compost',x:f.x,y:f.y+64-im.height*SB(im,w,h)+30})}
   if(n==='house'&&typeof hInfo==='function'){const im=IMG[hInfo(hStage).img],m=HMETA[hInfo(hStage).img],f=T(hSize(),hSize());if(im&&m)L.push({key:'home',type:'homekitchen',x:f.x-m[0]+im.width/2,y:f.y-m[1]+60})}});
  return L}
 function facMarks(){const now=Date.now(),seen=new Set();if(!deco.on&&!(typeof LINK!=='undefined'&&LINK))facSpots().forEach(sp=>{const J=FJOB[sp.key];const d=J&&J.find(j=>now>=j.end);if(!d)return;seen.add(sp.key);
@@ -1319,7 +1319,7 @@ document.getElementById('nb-x').onclick=()=>{nbShow(false);nbMode='note'};docume
 document.getElementById('notewin').onclick=e=>{if(e.target.id==='notewin')nbShow(false)};
 
 // ---- 설정 (이 기기에만 저장)
-const SET=Object.assign({wxfx:true,sfx:70,bgm:50,news:true,pop:true,askBuy:true,day:60,grow:1},(()=>{try{return JSON.parse(localStorage.getItem('shg-set')||'{}')}catch(_){return{}}})());
+const SET=Object.assign({small:true,wxfx:true,sfx:70,bgm:50,news:true,pop:true,askBuy:true,day:60,grow:1},(()=>{try{return JSON.parse(localStorage.getItem('shg-set')||'{}')}catch(_){return{}}})());
 if(USER){SET.day=60;SET.grow=1}
 function setSave(){try{localStorage.setItem('shg-set',JSON.stringify(SET))}catch(_){}}
 function setDraw(){const tg=(k,l,d)=>`<div class="set-r"><span>${l}${d?`<small>${d}</small>`:''}</span><button type="button" class="tg" role="switch" id="sw-${k}" data-k="${k}" aria-checked="${!!SET[k]}" aria-label="${l}"></button></div>`;
@@ -1332,7 +1332,7 @@ function setDraw(){const tg=(k,l,d)=>`<div class="set-r"><span>${l}${d?`<small>$
  <div class="set-g"><h4>화면</h4>${tg('pop','거둘 때 숫자 띄우기','개수와 경험치가 주인공 위에 떠요')}${tg('news','시세 뉴스 띠','새 뉴스가 나오면 위에 흘러가요')}${tg('wxfx','날씨 효과','비와 눈이 내리는 그림')}</div>
  <div class="set-g"><h4>확인창</h4>${tg('askBuy','상점에서 살 때 한 번 더 묻기')}<div class="set-r"><span>가방·창고 늘리기, 갈아엎기<small>되돌릴 수 없는 일이라 늘 물어봐요</small></span></div></div>
  ${USER?`<div class="set-g"><h4>게임</h4><div class="set-r"><span>처음부터 다시<small>레벨 1, 돈 3만 원부터 새로 시작</small></span><button type="button" class="set-btn danger" id="set-reset">다시 하기</button></div></div>`:`<div class="set-g"><h4>시험용</h4>${seg('day','하루 길이',[[60,'1분'],[20,'20초'],[5,'5초']],'시세와 창고 등급이 바뀌는 빠르기')}${seg('grow','작물 자라는 빠르기',[[1,'보통'],[3,'3배'],[10,'10배']])}
-  <div class="set-r"><span>돈 900억으로 채우기</span><button type="button" class="set-btn" id="set-money">채우기</button></div>
+  ${tg('small','작은 비율','사람·시설·꾸미기를 작게 (레알팜 비율 시험)')}<div class="set-r"><span>돈 900억으로 채우기</span><button type="button" class="set-btn" id="set-money">채우기</button></div>
   <div class="set-r"><span>체력 가득 채우기</span><button type="button" class="set-btn" id="set-hp">채우기</button></div>
   <div class="set-r"><span>시험용으로 다시<small>Lv99, 돈 900억으로 새로 시작</small></span><button type="button" class="set-btn" id="set-test">다시 하기</button></div>
   <div class="set-r"><span>처음부터 다시<small>레벨 1, 돈 3만 원부터 새로 시작</small></span><button type="button" class="set-btn danger" id="set-reset">다시 하기</button></div></div>`}
@@ -1453,8 +1453,12 @@ function decoMode(v){deco.buy=null;deco.last=null;if(v&&(hero.act||hero.job||Q.l
  if(v){closeSheet();mkShow(false);bagShow(false);shopShow(false);stoShow(false);nbShow(false);setShow(false);hsShow(false);setBatch(null);decoBar()}}
 function pDraw(im,k,i,j,w,h,rot){if(k==='greenhouse'){drawGH(i,j,w,h,rot,deco.mv&&deco.mv.ref?deco.mv.ref[6]||0:0,1);return}if(k==='plot'){const t=T(i,j);cx.drawImage(IMG.plot_wild,t.x-128,t.y);return}if(isB(k)){const f=T(i+w-1,j+h-1);cx.drawImage(im,f.x-im.width/2,f.y+64-im.height+4);return}const f=T(i+w,j+h),cxp=(i-j+(w-h)/2)*TW/2;
  if(isG(k)){const t=T(i,j);cx.drawImage(im,t.x-65,t.y-1,130,66);return}
- if(rot){cx.save();cx.translate(cxp,0);cx.scale(-1,1);cx.drawImage(im,-im.width/2,f.y-im.height+4);cx.restore()}else cx.drawImage(im,cxp-im.width/2,f.y-im.height+4)}
+ const s=SB(im,w,h),iw=im.width*s,ih=im.height*s;if(rot){cx.save();cx.translate(cxp,0);cx.scale(-1,1);cx.drawImage(im,-iw/2,f.y-ih+4,iw,ih);cx.restore()}else cx.drawImage(im,cxp-iw/2,f.y-ih+4,iw,ih)}
 let VIS=()=>true;
+// 작은 비율(시험판만): 사람·농기계 줄이고, 시설·꾸미기는 바닥 칸에 맞춰 줄임
+const SMALL=()=>!USER&&SET.small!==false;
+const SK=k=>SMALL()?({hero:.65,mach:.7}[k]||1):1;
+const SB=(im,w,h)=>{if(!SMALL()||!im||!im.width)return 1;const fw=(w+h)*TW/2;return Math.min(1,fw*1.05/im.width,fw*1.2/im.height)};
 const FPSON=/[?&]fps/.test(location.search);let fpsN=0,fpsT0=0,fpsEl=null;
 function fpsTick(ts){if(!FPSON)return;fpsN++;if(!fpsT0)fpsT0=ts;if(ts-fpsT0>=1000){if(!fpsEl){fpsEl=document.createElement('div');fpsEl.style.cssText='position:fixed;left:8px;top:56px;z-index:99;background:rgba(0,0,0,.6);color:#fff;font:600 14px sans-serif;padding:3px 8px;border-radius:6px;pointer-events:none';document.body.appendChild(fpsEl)}fpsEl.textContent=`초당 ${Math.round(fpsN*1000/(ts-fpsT0))}장`;fpsN=0;fpsT0=ts}}
 function decoGround(){PLACED.forEach(o=>{if(!isG(o.k))return;const t=T(o.i,o.j);if(VIS(t.x,t.y))pDraw(PIMG[o.k],o.k,o.i,o.j,1,1,0)})}
@@ -1711,7 +1715,7 @@ function petUpdate(dt){const L=myPets();if(!L.length)return;const last=TRAIL[TRA
   const dx=tg[0]-st.i,dy=tg[1]-st.j,d=Math.hypot(dx,dy),sp=3.4*dt;st.mv=d>.25;
   if(st.mv){const m=Math.min(d,sp);st.i+=dx/d*m;st.j+=dy/d*m;if(Math.abs(dx)>=Math.abs(dy)){st.dir=dx>0?0:1;st.flip=dx<0}else{st.dir=dy<0?1:0;st.flip=dy>0}st.t+=dt;if(st.t>.11){st.t=0;st.f++}}else st.f=0})}
 function petDraw(S){myPets().forEach(k=>{const st=PETST[k];if(!st)return;const fr=PETIMG[k+(st.dir?'_b':'_f')];if(!fr||!fr.length)return;const im=fr[st.f%fr.length],t=T(st.i,st.j);
- S.push({k:st.i+st.j+.25,pt:[st.i,st.j],f(){cx.save();cx.translate(t.x,t.y+TH/2+4);if(st.flip)cx.scale(-1,1);cx.drawImage(im,-im.width/2,-im.height);cx.restore()}})})}
+ S.push({k:st.i+st.j+.25,pt:[st.i,st.j],f(){cx.save();cx.translate(t.x,t.y+TH/2+4);{const k=SK('hero');cx.scale(k,k)}if(st.flip)cx.scale(-1,1);cx.drawImage(im,-im.width/2,-im.height);cx.restore()}})})}
 function petDaily(){const L=myPets(),msg=[];
  if(L.includes('baekgu')){const cs=ALLC.filter(c=>LV[c]<=G.lv&&HOW[c]!=='seedling');const c=cs[Math.floor(Math.random()*cs.length)];if(c){INV.seed[c]=(INV.seed[c]||0)+1;msg.push(`백구가 ${NAME[c]} 씨앗을 물어 왔어요`)}}
  if(L.includes('hwanggu')&&Math.random()<.4){MATS['187'][1]++;msg.push('황구가 옥돌을 물어 왔어요');gotPop('187',1,'황구가 물어 왔어요')}if(L.includes('hwanggu')){const sn=stoneRoll(8);if(sn){MATS[sn][1]++;gotPop(sn,1,'황구가 물어 왔어요');msg.push('황구가 '+MATS[sn][0]+josa(MATS[sn][0],'을','를')+' 물어 왔어요')}}
@@ -1782,7 +1786,7 @@ function mAnimTick(dt){MAN.forEach(m=>{m.t+=dt;const p=m.ord[m.n];
  MPT.forEach(q=>{q.a+=dt;q.x+=q.vx*dt;q.y+=q.vy*dt;q.z+=q.vz*dt;q.vz-=q.g*dt});MPT=MPT.filter(q=>q.a<q.l)}
 function mPart(m,road){const J=MJOB[m.k],t=road?'road':J.t,fly=MFLY(m.k);const c={hoe:'#8a5a2b',plant:'#6e9a3a',harvest:'#d9b24a',top:'#9fd4f0',road:'#b59a74'}[t]||'#8a5a2b';
  for(let i=0;i<(road?1:3);i++)MPT.push({x:m.x+(Math.random()-.5)*.6,y:m.y+(Math.random()-.5)*.6,z:fly&&!road?70:4,vx:(Math.random()-.5)*.6,vy:(Math.random()-.5)*.6,vz:fly&&!road?-120:40+Math.random()*50,g:fly&&!road?0:160,a:0,l:.6+Math.random()*.3,c,r:road?3:2.5+Math.random()*2})}
-function mSprite(S,k,x,y,face,alpha,t,moving){const fly=MFLY(k);S.push({k:x+y+.4,pt:[x,y],f(){const tt=T(x,y),im=MIMG[k][face],w=MW[k]||140;if(!im.complete||!im.width)return;const h=im.height*w/im.width;
+function mSprite(S,k,x,y,face,alpha,t,moving){const fly=MFLY(k);S.push({k:x+y+.4,pt:[x,y],f(){const tt=T(x,y),im=MIMG[k][face],w=(MW[k]||140)*SK('mach');if(!im.complete||!im.width)return;const h=im.height*w/im.width;
   const bob=moving?Math.sin(t*(fly?6:22))*(fly?4:1.2):(fly?Math.sin(t*4)*3:0),lift=fly?60:0;
   cx.save();cx.globalAlpha=alpha;cx.save();cx.globalAlpha=alpha*.25;cx.fillStyle='#2a1a0a';cx.beginPath();cx.ellipse(tt.x,tt.y+TH/2,w*.42,w*.16,0,0,7);cx.fill();cx.restore();
   cx.drawImage(im,tt.x-w/2,tt.y+TH/2+6-h-lift+bob,w,h);cx.restore()}})}
@@ -2732,12 +2736,12 @@ function draw(){cx.setTransform(DPR,0,0,DPR,0,0);cx.fillStyle='#7da23e';cx.fillR
  {const SL=new Set();PLACED.forEach(o=>{if(o.k==='sprinkler'&&o.links)o.links.forEach(n=>SL.add(n))});if(SL.size){if(!SPRI.src){SPRI.src=PL.img.sprinkler_dry||PL.img.sprinkler;SPRW.src=PL.img.sprinkler_spray||''}if(SPRI.complete&&SPRI.naturalWidth)PLOTS.forEach(p=>{if(!SL.has(p.no)||hiddenPlot(p))return;const t=T(p.i+1,p.j+1),w=SPRI.naturalWidth*.46,h=SPRI.naturalHeight*.46;S.push({k:p.i+p.j+2.02,pt:[p.i+1,p.j+1],f(){ghWrap(p,()=>{cx.drawImage(SPRI,t.x-w/2,t.y-h+10,w,h);const al=sprA(p.sprT);if(al&&SPRW.complete&&SPRW.naturalWidth){cx.save();cx.globalAlpha*=al;cx.drawImage(SPRW,t.x-w/2+Math.sin(performance.now()/90),t.y-h+10,w,h);cx.restore()}})}})})}}
  BLD.forEach((B)=>{const [n,i,j,w,h]=B;if(deco.mv&&deco.mv.ref===B)return;const im=n==='house'?IMG[hInfo(hStage).img]:IMG[n];if(n==='house'){const sz=hSize(),f=T(sz,sz),m=HMETA[hInfo(hStage).img];S.push({k:i+j+w+h-1.01,box:[i,i+w,j,j+h],f(){cx.drawImage(im,f.x-m[0],f.y-m[1])}});return}const f=T(i+w-1,j+h-1);const fx=f.x,fy=f.y+64;
   if(n==='greenhouse'){S.push({k:100+(i+j+w+h)/100,box:[i,i+w,j,j+h],f(){drawGH(i,j,w,h,B[5]||0,B[6]||0)}});return}
-  S.push({k:i+j+w+h-1.01,box:[i,i+w,j,j+h],f(){cx.drawImage(im,fx-im.width/2,fy-im.height+4)}})});
+  S.push({k:i+j+w+h-1.01,box:[i,i+w,j,j+h],f(){const s=SB(im,w,h);cx.drawImage(im,fx-im.width*s/2,fy-im.height*s+4,im.width*s,im.height*s)}})});
  decoDraw(S);obsDraw(S,vis);petDraw(S);if(typeof npcDraw==='function')npcDraw(S);machWorld(S);bgTrees(S,vis);
  const hp=T(hero.i,hero.j);S.push({k:hero.i+hero.j+.3,pt:[hero.i,hero.j],f(){
   const an=hero.act?hero.act.name:'walk',fi=hero.act?hero.act.frame%HM[an][0].length:hero.frame,m=HM[an][hero.dir][fi];
   const idle=!hero.act&&!hero.path.length&&IDLE.front.complete;
-  cx.save();cx.translate(hp.x,hp.y+TH/2+6);if(idle){const im=hero.dir?IDLE.back:IDLE.front,hh=hero.dir?116:118,ww=im.width*hh/im.height;if(hero.flip!==(hero.dir===1))cx.scale(-1,1);cx.drawImage(im,-ww/2,-hh+4,ww,hh)}else{if(hero.flip)cx.scale(-1,1);cx.drawImage(an==='cheer'?CHIMG:IMG.hero,m.x,m.y,m.w,m.h,-m.ax,-m.ay,m.w,m.h)}cx.restore()}});
+  cx.save();cx.translate(hp.x,hp.y+TH/2+6);{const k=SK('hero');cx.scale(k,k)}if(idle){const im=hero.dir?IDLE.back:IDLE.front,hh=hero.dir?116:118,ww=im.width*hh/im.height;if(hero.flip!==(hero.dir===1))cx.scale(-1,1);cx.drawImage(im,-ww/2,-hh+4,ww,hh)}else{if(hero.flip)cx.scale(-1,1);cx.drawImage(an==='cheer'?CHIMG:IMG.hero,m.x,m.y,m.w,m.h,-m.ax,-m.ay,m.w,m.h)}cx.restore()}});
  const front=(a,b)=>{if(b.box&&a.pt)return a.pt[0]>=b.box[1]||a.pt[1]>=b.box[3]?1:(a.pt[0]<b.box[0]||a.pt[1]<b.box[2]?-1:0);if(a.box&&b.pt)return -front(b,a);
   if(a.box&&b.box)return a.box[0]>=b.box[1]||a.box[2]>=b.box[3]?1:(b.box[0]>=a.box[1]||b.box[2]>=a.box[3]?-1:0);return 0};
  const items=S.filter(x=>!x.box).sort((a,b)=>a.k-b.k),blds=S.filter(x=>x.box).sort((a,b)=>a.k-b.k);
@@ -2889,7 +2893,7 @@ const NPCIMG={};Object.entries(NPCPIC).forEach(([k,u])=>{const im=new Image();im
 function npcDraw(S){const sp=npcSpots();
  [['chief',chiefHere()],['mer',merHere()]].forEach(([k,on])=>{const s=sp[k];if(!on||!s){delete NPCST[k];return}
   const st=NPCST[k]={i:s.i+.5,j:s.j+.5,mv:false},t=T(st.i,st.j);S.push({k:st.i+st.j+.3,pt:[st.i,st.j],f(){npcFig(k,t.x,t.y+TH/2+6)}})})}
-function npcFig(k,x,y){const c=cx,im=NPCIMG[k];c.save();c.translate(x,y);
+function npcFig(k,x,y){const c=cx,im=NPCIMG[k];c.save();c.translate(x,y);{const s=SK('hero');c.scale(s,s)}
  c.fillStyle='rgba(30,20,10,.28)';c.beginPath();c.ellipse(0,-2,26,9,0,0,7);c.fill();
  if(k==='mer'){const hb=HOL.find(h=>h.k===MER.h);c.save();c.translate(0,26);c.fillStyle='#d9b468';c.strokeStyle='#8a6a32';c.lineWidth=2;c.beginPath();c.moveTo(0,-26);c.lineTo(52,0);c.lineTo(0,26);c.lineTo(-52,0);c.closePath();c.fill();c.stroke();
   if(hb){const a=PIMG[hb.deco[0][0]];if(a&&a.complete&&a.width){const hh=a.height*40/a.width;c.drawImage(a,-48,-4-hh,40,hh)}const fi=npcImg(hb.goods[3][0].split(':')[1]);if(fi&&fi.complete)c.drawImage(fi,8,-12,34,34)}c.restore()}
