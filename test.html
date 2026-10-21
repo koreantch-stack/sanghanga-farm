@@ -898,7 +898,7 @@ document.getElementById('mkwin').onclick=e=>{if(e.target.id==='mkwin')mkShow(fal
 
 // ---- 가방
 const FOODS={'163':['감자전',80],'165':['비빔밥',200],'166':['삼계탕',999]};const FOODINV={'163':3,'165':2,'166':1};
-const MATS={'174':['벤 풀',23,'낫으로 벤 풀. 퇴비장에 넣으면 거름이 돼요.'],'186':['돌 조각',14,'곡괭이로 깬 돌. 돌담 꾸미기에 써요.'],'187':['옥돌',2,'돌을 깨다 보면 종종 나오는 돌. 할머니 서랍에서 신기한 돌과 합성해요.'],'179':['기본 상토',5,'육묘장에서 씨앗과 함께 넣으면 모종이 돼요.'],'st_time':['시간의 돌',0,'돌을 깨거나 풀을 벨 때 가끔 나와요. 옥돌과 합성하면 시간의 옥돌이 돼요.'],'st_life':['생명의 돌',0,'돌을 깨거나 풀을 벨 때 아주 가끔 나와요. 옥돌과 합성하면 부활도장이 돼요.'],'st_light':['빛의 돌',0,'아주아주 드물게 나오는 돌. 부활도장, 옥돌과 합성하면 특부활도장이 돼요.'],'st_rain':['단비의 돌',0,'돌을 깨거나 풀을 벨 때 아주 가끔 나와요. 옥돌과 합성하면 단비의 옥돌이 돼요.'],'st_earth':['대지의 돌',0,'돌을 깨거나 풀을 벨 때 아주 가끔 나와요. 옥돌과 합성하면 대지의 옥돌이 돼요.'],'st_plenty':['풍요의 돌',0,'돌을 깨거나 풀을 벨 때 아주 가끔 나와요. 옥돌과 합성하면 풍요의 옥돌이 돼요.'],'jd_time':['시간의 옥돌',0,'자라는 밭이나 시설의 남은 시간을 1개에 10일씩 당겨요. 밭을 누르거나 시설 가공 칸에서 써요.'],'stamp':['부활도장',0,'창고에 있는 작물을 모두 거둘 때 등급으로 되돌리고, 등급이 떨어지기까지 남은 날도 처음으로 돌려요.'],'stamp_s':['특부활도장',0,'창고에 있는 작물을 모두 특 등급으로 올려요.'],'jd_rain':['단비의 옥돌',0,'모든 밭에 한 번에 물을 줘요.'],'jd_earth':['대지의 옥돌',0,'밭 한 칸의 양분을 가득 채워요. 밭을 눌러서 써요.'],'jd_plenty':['풍요의 옥돌',0,'자라는 밭 한 칸의 다음 수확량이 2배가 돼요. 밭을 눌러서 써요.'],'paper':['종잇조각',0,'풀이나 덤불을 벨 때 가끔 나오는 거친 종이. 할머니 서랍 합성에서 10장을 모으면 찌라시가 돼요.'],'rumor':['찌라시',0,'장터에 도는 시세 소문. 가방에서 읽으면 며칠 뒤 상한가를 칠 작물을 알려 줘요. 열에 일곱만 맞아요.'],'report':['고급 정보지',0,'믿을 만한 시세 정보. 가방에서 읽으면 며칠 뒤 상한가를 칠 작물을 알려 줘요. 열에 아홉은 맞아요.']};
+const MATS={'174':['벤 풀',23,'낫으로 벤 풀. 퇴비장에 넣으면 거름이 돼요.'],'186':['돌 조각',14,'곡괭이로 깬 돌. 돌담 꾸미기에 써요.'],'187':['옥돌',2,'돌을 깨다 보면 종종 나오는 돌. 할머니 서랍에서 신기한 돌과 합성해요.'],'179':['기본 상토',5,'육묘장에서 씨앗과 1대1로 넣으면 모종이 돼요. 씨앗 10개에 상토 10개가 들어요.'],'st_time':['시간의 돌',0,'돌을 깨거나 풀을 벨 때 가끔 나와요. 옥돌과 합성하면 시간의 옥돌이 돼요.'],'st_life':['생명의 돌',0,'돌을 깨거나 풀을 벨 때 아주 가끔 나와요. 옥돌과 합성하면 부활도장이 돼요.'],'st_light':['빛의 돌',0,'아주아주 드물게 나오는 돌. 부활도장, 옥돌과 합성하면 특부활도장이 돼요.'],'st_rain':['단비의 돌',0,'돌을 깨거나 풀을 벨 때 아주 가끔 나와요. 옥돌과 합성하면 단비의 옥돌이 돼요.'],'st_earth':['대지의 돌',0,'돌을 깨거나 풀을 벨 때 아주 가끔 나와요. 옥돌과 합성하면 대지의 옥돌이 돼요.'],'st_plenty':['풍요의 돌',0,'돌을 깨거나 풀을 벨 때 아주 가끔 나와요. 옥돌과 합성하면 풍요의 옥돌이 돼요.'],'jd_time':['시간의 옥돌',0,'자라는 밭이나 시설의 남은 시간을 1개에 10일씩 당겨요. 밭을 누르거나 시설 가공 칸에서 써요.'],'stamp':['부활도장',0,'창고에 있는 작물을 모두 거둘 때 등급으로 되돌리고, 등급이 떨어지기까지 남은 날도 처음으로 돌려요.'],'stamp_s':['특부활도장',0,'창고에 있는 작물을 모두 특 등급으로 올려요.'],'jd_rain':['단비의 옥돌',0,'모든 밭에 한 번에 물을 줘요.'],'jd_earth':['대지의 옥돌',0,'밭 한 칸의 양분을 가득 채워요. 밭을 눌러서 써요.'],'jd_plenty':['풍요의 옥돌',0,'자라는 밭 한 칸의 다음 수확량이 2배가 돼요. 밭을 눌러서 써요.'],'paper':['종잇조각',0,'풀이나 덤불을 벨 때 가끔 나오는 거친 종이. 할머니 서랍 합성에서 10장을 모으면 찌라시가 돼요.'],'rumor':['찌라시',0,'장터에 도는 시세 소문. 가방에서 읽으면 며칠 뒤 상한가를 칠 작물을 알려 줘요. 열에 일곱만 맞아요.'],'report':['고급 정보지',0,'믿을 만한 시세 정보. 가방에서 읽으면 며칠 뒤 상한가를 칠 작물을 알려 줘요. 열에 아홉은 맞아요.']};
 const BAGS=[['헝겊 보따리',20,1,0],['대나무 소쿠리',40,5,30000],['짚 망태기',70,10,150000],['등지게',110,18,600000],['캔버스 배낭',160,28,2000000],['등산 배낭',230,38,8000000],['큰 배낭',330,50,30000000],['곳간 보자기',480,62,100000000],['도깨비 자루',700,76,400000000],['화수분 주머니',999,90,1500000000]];
 let bagLv=1;const bagCap=()=>BAGS[bagLv][1];let bagTab='all',bagSel=null;
 function bagUpgrade(){const nx=BAGS[bagLv+1];if(!nx){alertBox('가장 큰 가방이에요','더 키울 수 없어요.');return}
@@ -1140,7 +1140,7 @@ const TUT=[
  ['t_ship',1,'출하 상자에 넣어 보기','출하 상자를 누르고 "상자 열기". 넣어 두면 다음 날 아침 시세로 팔리고 수수료가 없어요.',()=>(STAT.shipped||0)>=1,800,15],
  ['t_quest',1,'오늘 할 일 하나 받기','아래 "수첩"의 "오늘 할 일"은 날마다 바뀌어요. 다 하면 "받기"로 돈과 경험치를 받아요.',()=>(STAT.questDone||0)>=1,1000,20],
  ['t_comp',2,'퇴비 만들기','퇴비장을 누르고 벤 풀 10개를 넣으면 하루 뒤 퇴비가 나와요. 다 되면 퇴비장 위에 그림이 떠요.',()=>(STAT.made||0)>=1,1500,25],
- ['t_nurs',3,'육묘장 놓기','상점 시설 탭에서 육묘장(5만 원)을 사고, 아래 "보관함"에서 놓으세요. 씨앗 10개와 상토 1개로 모종 10개를 만들어요. 모종은 30% 빨리 크고 두 배쯤 많이 나와요.',()=>pc('nursery'),3000,40],
+ ['t_nurs',3,'육묘장 놓기','상점 시설 탭에서 육묘장(5만 원)을 사고, 아래 "보관함"에서 놓으세요. 씨앗 10개와 상토 10개로 모종 10개를 만들어요. 모종은 30% 빨리 크고 두 배쯤 많이 나와요.',()=>pc('nursery'),3000,40],
  ['t_jang',3,'장독대에서 가공하기','장독대(Lv3, 8만 원)나 방앗간(Lv4, 20만 원)을 놓고 창고 작물을 넣어 보세요. 가공품은 작물보다 2~5배 비싸고 오래 가요.',()=>(STAT.madeP||0)>=1,5000,60],
  ['t_bag',5,'가방 키우기','가방을 열고 위쪽 "가방 키우기". 씨앗과 거름을 더 많이 들고 다닐 수 있어요.',()=>bagLv>=1,3000,40],
  ['t_sto',5,'창고 늘리기','창고를 누르고 "창고 늘리기". 많이 담을수록, 등급이 떨어지기 전 버티는 날도 늘어요.',()=>stoLv>=1,5000,50],
@@ -1398,7 +1398,7 @@ document.getElementById('dbar').onclick=e=>e.stopPropagation();document.querySel
 // ---- 시설 가공
 const FREC={
  compost:{name:'퇴비장',slots:5,rec:()=>[{in:[['m:174',10]],out:['f:199',1],days:1}]},
- nursery:{name:'육묘장',slots:5,rec:()=>Object.keys(INV.seed).map(c=>({in:[['seed:'+c,10],['m:179',1]],out:['sl:'+c,10],days:1}))},
+ nursery:{name:'육묘장',slots:5,rec:()=>Object.keys(INV.seed).map(c=>({in:[['seed:'+c,10],['m:179',10]],out:['sl:'+c,10],days:1}))},
  soilmixer:{name:'상토 배합장',slots:5,rec:()=>[{in:[['m:174',5],['m:186',2]],out:['m:179',3],days:1}]}};
 const FJOB={};// 시설 id → [{out,n,end,dur}]
 // ---- 가공품: 창고 작물 → 시설 → 창고 가공품
@@ -1756,7 +1756,7 @@ function instDaily(){const out=[];{const r=autoCare();if(r.w)out.push(`물 ${r.w
 
  if(hasPlaced('seedline')){let n=0;PLACED.filter(o=>o.k==='nursery').forEach(o=>{const key='p'+o.id,J=FJOB[key]||(FJOB[key]=[]);
    for(let i=J.length-1;i>=0;i--){const j=J[i];if(Date.now()>=j.end){qAdd(j.out,j.n);if(bagItems().length>bagCap()){qAdd(j.out,-j.n);break}J.splice(i,1)}}
-   while(J.length<FREC.nursery.slots){const s=Object.entries(INV.seed).filter(([c,v])=>v>=10&&LV[c]<=G.lv).sort((a,b)=>b[1]-a[1])[0];if(!s||!(MATS['179']&&MATS['179'][1]>=1))break;INV.seed[s[0]]-=10;MATS['179'][1]--;const dur=dayMs();J.push({out:'sl:'+s[0],n:10,end:Date.now()+dur,dur});n++}});
+   while(J.length<FREC.nursery.slots){const s=Object.entries(INV.seed).filter(([c,v])=>v>=10&&LV[c]<=G.lv).sort((a,b)=>b[1]-a[1])[0];if(!s||!(MATS['179']&&MATS['179'][1]>=10))break;INV.seed[s[0]]-=10;MATS['179'][1]-=10;const dur=dayMs();J.push({out:'sl:'+s[0],n:10,end:Date.now()+dur,dur});n++}});
   if(n)out.push(`육묘 라인 ${n}판`)}
  return out}
 // ---- 날씨 예보와 작황 뉴스 미리 받기 (기상 관측소)
@@ -1808,7 +1808,7 @@ function instActs(po){const k=po.k,A2=[],near=r=>plotsNear(po,k==='sprinkler'?4.
  else if(k==='tradeterm'){const L=Object.keys(TRAILS);d=`시세 창에서 작물마다 추적 판매를 켜 두면, 최고가에서 10% 떨어질 때 창고 것을 모두 팔아요. 지금 켠 작물: ${L.length?L.map(c=>NAME[c]).join(', '):'없음'}`;A2.push(['시세 창 열기','go',()=>mkShow(true)])}
  else if(k==='coldstore'){d='이 저온창고가 있으면 창고 작물 등급이 3분의 1 속도로 떨어져요.';A2.push(['창고 열기','go',()=>stoShow(true)])}
  else if(k==='smartfarm'){d=`연결한 밭이 마르면 바로 물을 주고, 양분이 모자라면 가방의 덧거름을 넣어요. ${(po.lv||0)+1}단계 · 지금 연결 ${linksOf(po).length} / ${capOf(po)}`;A2.push(['밭 연결하기','go',()=>linkStart(po)]);{const L=LINKUP[po.k],n=po.lv||0;if(n<L.length-1)A2.push([`강화 (밭 ${L[n+1]}개 · ${wonS(Math.round(instPrice(po.k)*LINKUPK[n+1]))})`,'',()=>linkUp(po)])}}
- else if(k==='seedline'){const ns=PLACED.filter(o=>o.k==='nursery');d=`매일 새벽 육묘장에서 다 된 모종을 가방에 꺼내고, 빈 칸에 씨앗 10개와 상토 1개를 넣어요. 육묘장 ${ns.length}곳 · 상토 ${MATS['179']?MATS['179'][1]:0}개`;if(ns.length)A2.push(['육묘장 열기','go',()=>facOpen('p'+ns[0].id,'nursery')])}
+ else if(k==='seedline'){const ns=PLACED.filter(o=>o.k==='nursery');d=`매일 새벽 육묘장에서 다 된 모종을 가방에 꺼내고, 빈 칸에 씨앗 10개와 상토 10개를 넣어요. 육묘장 ${ns.length}곳 · 상토 ${MATS['179']?MATS['179'][1]:0}개`;if(ns.length)A2.push(['육묘장 열기','go',()=>facOpen('p'+ns[0].id,'nursery')])}
  else if(k==='sprinkler'){d=`연결한 밭이 마르면 바로 물을 줘요${hasPlaced('watertank')?' (물탱크 덕분에 하루 더 가요)':''}. ${(po.lv||0)+1}단계 · 지금 연결 ${linksOf(po).length} / ${capOf(po)}`;A2.push(['밭 연결하기','go',()=>linkStart(po)]);{const L=LINKUP[po.k],n=po.lv||0;if(n<L.length-1)A2.push([`강화 (밭 ${L[n+1]}개 · ${wonS(Math.round(instPrice(po.k)*LINKUPK[n+1]))})`,'',()=>linkUp(po)])}}
  else if(k==='harvestbot'){d='매일 새벽 다 익은 밭을 8개까지 거둬 창고에 넣어요.';const r=PLOTS.filter(p=>p.crop&&p.crop.prog>=1).length;if(r)d+=` 지금 다 익은 밭 ${r}개.`}
  else if(k==='watertank'){d='물뿌리개를 여기서 채울 수 있어요. 스프링클러가 준 물이 하루 더 가요.'}
