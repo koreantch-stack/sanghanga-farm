@@ -1931,7 +1931,20 @@ window.afterIntro=()=>{setTimeout(roulAuto,1500);if(!STAT.storySeen){storyStart(
 function welcomeShow(){const w=document.getElementById('wcwin');w.hidden=false;document.getElementById('wc-name').textContent=G.name||'';
  document.getElementById('wc-go').onclick=()=>{w.hidden=true;sfx('open');nbMode='drawer';nbTab='guide';nbShow(true)};document.getElementById('wc-later').onclick=()=>{w.hidden=true;ntAuto()}}
 // ---- 공지사항: 접속하면 뜸, 오늘 하루 안 보기
-const NOTICES=[{id:'2026-10-20a',date:'2026-10-20',title:'베타 테스트 안내',body:`지금 상한가 농장은 베타 테스트 중이에요.
+const NOTICES=[{id:'2026-10-21deco',date:'2026-10-21',title:'꾸미기 대규모 업데이트',body:`새 꾸미기 76종
+- 꽃 16종, 나무 12종, 물·정원 12종, 시골 12종, 생활 12종, 재미 12종이 상점 꾸미기 탭에 들어왔어요.
+- 꾸미기 탭 안에 전체, 바닥, 울타리, 꽃, 나무, 물·정원, 시골, 생활, 재미 하위 탭이 생겼어요.
+레벨 제한 없음
+- 모든 꾸미기 품목을 레벨과 상관없이 처음부터 살 수 있어요.
+꾸미기 효과
+- 이제 꾸미기마다 실제로 효과가 있어요. 상점에서 고르거나 놓아 둔 장식을 누르면 효과가 보여요.
+- 주변 밭에 듣는 효과: 특품 확률, 수확량, 물이 천천히 마름, 양분을 덜 씀
+- 농장 전체에 듣는 효과: 체력이 차는 속도, 음식 먹을 때 체력, 거둘 때 경험치, 판매 수수료, 잡초·돌이 덜 생김
+- 수동 펌프와 대나무 물받이에서도 물뿌리개를 채울 수 있어요. 초가 닭장과 황금 알 둥지는 가끔 선물을 줘요.
+- 같은 장식은 여러 개 놓아도 효과가 한 번만 들어요. 서로 다른 장식끼리는 효과가 더해지고, 종류마다 한도가 있어요.
+바뀐 점
+- 꽃밭과 해바라기 줄은 새 꽃과 겹쳐서 없앴어요. 이미 놓아 둔 것은 코스모스와 해바라기로 바뀌어요.
+- 나비 정원과 UFO 착륙지는 옥돌로 살 수 있어요.`},{id:'2026-10-20a',date:'2026-10-20',title:'베타 테스트 안내',body:`지금 상한가 농장은 베타 테스트 중이에요.
 - 테스트 기간에는 게임을 고치다가 농장이 처음 상태로 초기화될 수 있어요.
 - 같은 계정으로 폰과 PC, 또는 여러 창에서 동시에 접속하면 저장이 꼬이거나 일부가 사라질 수 있어요. 한 곳에서만 플레이해 주세요.
 - 기기를 바꿀 때는 먼저 하던 쪽 화면을 닫은 다음 다른 기기에서 열어 주세요.
