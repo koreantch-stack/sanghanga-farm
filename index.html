@@ -1930,6 +1930,67 @@ window.afterIntro=()=>{setTimeout(roulAuto,1500);if(!STAT.storySeen){storyStart(
 // ---- 처음 온 사람 안내
 function welcomeShow(){const w=document.getElementById('wcwin');w.hidden=false;document.getElementById('wc-name').textContent=G.name||'';
  document.getElementById('wc-go').onclick=()=>{w.hidden=true;sfx('open');nbMode='drawer';nbTab='guide';nbShow(true)};document.getElementById('wc-later').onclick=()=>{w.hidden=true;ntAuto()}}
+// ---- 견본 농장 (?sample): 땅을 끝까지 넓히고 꾸민 농장, 저장 안 함
+function sampleFarm(){
+const LV=LAND.length-1;landLv=LV;N=LAND[LV][1];OBS.length=0;
+const occ=[...Array(N)].map(()=>Array(N).fill(0));
+const mark=(i,j,w,h)=>{for(let a=i;a<i+w;a++)for(let b=j;b<j+h;b++)if(a>=0&&b>=0&&a<N&&b<N)occ[a][b]=1};
+BLD.forEach(B=>mark(B[1]-0,B[2]-0,B[3],B[4]));PLOTS.forEach(p=>mark(p.i,p.j,2,2));PLACED.forEach(o=>mark(o.i,o.j,o.w,o.h));
+const free=(i,j,w,h)=>{for(let a=i;a<i+w;a++)for(let b=j;b<j+h;b++){if(a<0||b<0||a>=N||b>=N||occ[a][b])return false}return true};
+const put=(k,i,j)=>{const z=PL.size[k]||[1,1];if(!free(i,j,z[0],z[1]))return false;PLACED.push({id:++plN,k,i,j,w:z[0],h:z[1],rot:0});mark(i,j,z[0],z[1]);return true};
+const near=(k,i,j)=>{for(let d=0;d<4;d++)for(let a=-d;a<=d;a++)for(let b=-d;b<=d;b++)if(put(k,i+a,j+b))return true;return false};
+const fill=(k,i0,j0,i1,j1)=>{for(let a=i0;a<=i1;a++)for(let b=j0;b<=j1;b++)put(k,a,b)};
+const fenceRect=(f,g,i0,j0,i1,j1,gates)=>{const T=[];for(let a=i0;a<=i1;a++){T.push([a,j0]);T.push([a,j1])}for(let b=j0+1;b<j1;b++){T.push([i0,b]);T.push([i1,b])}
+ T.forEach(([a,b])=>{if(a<0||b<0||a>=N||b>=N)return;const isg=gates.some(([x,y])=>x===a&&y===b);put(isg?g:f,a,b)})};
+const plot=(i,j)=>{if(!free(i,j,2,2))return;newPlot(i,j);mark(i,j,2,2)};
+// 1. 큰길
+const road='fl_slab';
+// reserve road tiles first (mark later by fill)
+fill(road,0,16,N-1,17);fill(road,10,0,11,N-1);fill('path_stone',12,37,N-1,38);
+// 2. 밭 구역 i12..34 j1..14
+for(let a=12;a<=33;a+=3)for(let b=1;b<=13;b+=3)plot(a,b);
+[[14,3,'scarecrow'],[20,6,'dk_robot'],[26,9,'alienscarecrow'],[32,3,'sotdae'],[17,12,'beehive'],[29,12,'beehive'],[23,3,'dk_crates'],[32,9,'dk_barrow']].forEach(([a,b,k])=>put(k,a,b));
+fill('path_dirt',12,0,34,14);
+// 3. 과수원 i37..51 j0..14
+fenceRect('fc_stake','fg_stake',36,-1,N,15,[[36,7],[44,15]]);
+const fr=['dk_persimmon','dk_apple','dk_jujube','dk_plum'];let n=0;
+for(let a=37;a<=49;a+=3)for(let b=1;b<=12;b+=3)put(fr[(n++)%4],a,b);
+put('beehive',43,13);put('dk_straw',37,13);put('dk_cart',39,13);fill('lawn',37,0,N-1,14);fill('path_dirt',35,0,35,15);
+// 4. 시골 마당 i0..9 j18..34
+fenceRect('fence','fg_brush',-1,18,9,34,[[9,26],[4,34]]);
+[['dk_coop',1,19],['dk_clothes',5,19],['dk_chilimat',1,23],['dk_gotgam',5,22],['dk_cauldron',7,24],['dk_firewood',7,25],['dk_jars',0,28],['dk_jars',1,28],['crocks',0,29],['dk_mortar',3,28],['dk_jige',5,27],['dk_straw',0,32],['dk_straw',1,32],['dk_stool',6,30],['pyeongsang',3,31],['mortar',5,32],['dk_doghouse',7,20],['dk_pump',7,28],['dk_basin',8,29]].forEach(([k,a,b])=>near(k,a,b));
+fill('fl_clay',0,19,8,33);
+// 5. 정원 i13..34 j19..35, 생울타리
+fenceRect('fc_hedge','fg_hedge',12,18,35,36,[[23,18],[12,27],[35,27],[23,36]]);
+put('pond',22,26);put('fountain',22,22);put('dk_bridge',21,29);put('dk_turtle',26,26);put('dk_wheel',18,26);
+[['dk_willow',14,20],['dk_cherry',31,20],['dk_magnolia',14,32],['dk_crape',31,32],['dk_cherry',18,20],['dk_magnolia',27,20],
+ ['dk_pergola',23,32],['dk_swing',17,32],['dk_bench',28,32],['dk_bench',19,24],['dk_bench',27,24],['rosearch',23,20],['stonelantern',21,25],['stonelantern',26,25],['stonelantern',21,30],['stonelantern',26,30],
+ ['dk_lotus',25,29],['dk_birdbath',29,28],['dk_birdhouse',16,28],['dk_mossrock',31,25],['dk_stonetower',33,30],['dk_bamboofount',29,26],['butterfly',14,24],['beehive',33,24]].forEach(([k,a,b])=>near(k,a,b));
+const FL=['dk_cosmos','dk_hydb','dk_hydp','dk_tulip','dk_mum','dk_zinnia','dk_lavender','dk_marigold','dk_balsam','dk_mossrose','dk_rose','dk_celosia','dk_mugung','dk_forsythia','dk_azalea','dk_sunflower'];
+// 꽃 테두리: 울타리 안쪽 한 줄
+n=0;for(let a=13;a<=34;a++){put(FL[(n++)%16],a,19);put(FL[(n+7)%16],a,35)}for(let b=20;b<=34;b++){put(FL[(n++)%16],13,b);put(FL[(n+5)%16],34,b)}
+// 꽃잎길 십자
+fill('fl_petal',23,20,24,35);fill('fl_petal',14,27,33,28);
+fill('lawn',13,19,34,35);
+// 6. 놀이 공원 i37..51 j19..35, 흰 울타리
+fenceRect('fc_picket','fg_picket',36,18,N,36,[[36,27],[44,18],[44,36]]);
+[['ufo',47,20],['dino',38,20],['dk_balloon',43,21],['chilislide',47,31],['dk_pumpkin',38,25],['dk_garlic',41,25],['dk_carrot',40,28],['dk_radish',41,28],['cabbagestatue',38,31],['dk_pigfount',47,25],['dk_duck',49,28],['duckpond',44,30],['dk_seesaw',44,25],['dk_pinwheel',43,28],['dk_pinwheel',46,28],['dk_pinwheel',50,24],['dk_goldnest',45,34],['goldpig',46,34],['dk_phone',49,34],['dk_robot',42,33],['dk_picnic',38,34]].forEach(([k,a,b])=>near(k,a,b));
+fill('fl_brick',37,26,51,27);fill('fl_brick',44,19,45,35);fill('fl_sand',37,19,51,35);
+// 7. 숲 j39..51
+[['pavilion',23,41],['zelkova',13,41],['dk_pine',17,40],['dk_pine',30,40],['dk_maple',34,41],['dk_ginkgo',38,40],['dk_maple',42,41],['dk_ginkgo',46,40],['dk_zelkova',49,41],['bamboo',27,41],
+ ['dk_pine',1,40],['dk_willow',5,41],['dk_zelkova',1,45],['dk_pine',6,46],['dk_cherry',13,46],['dk_maple',18,45],['dk_ginkgo',22,47],['dk_pine',27,46],['dk_magnolia',32,45],['dk_cherry',37,46],['dk_pine',42,45],['dk_maple',47,46],['bamboo',50,46],
+ ['dk_pine',2,50],['dk_zelkova',9,50],['dk_ginkgo',15,50],['dk_willow',20,50],['dk_pine',25,50],['dk_maple',30,50],['dk_zelkova',35,50],['dk_pine',40,50],['dk_cherry',45,50],['dk_pine',49,50],
+ ['dk_mossrock',10,44],['dk_mossrock',36,43],['dk_stonetower',21,44],['dk_stonetower',40,44],['dk_birdhouse',16,44],['dk_birdhouse',45,44],['dk_lotus',26,44],['dk_bench',23,45],['pond',30,43]].forEach(([k,a,b])=>near(k,a,b));
+fill('fl_moss',22,40,28,44);
+// 8. 생활: 길가
+[['mailbox',9,14],['vending',12,15],['dk_truckstall',12,19],['dk_bike',8,15],['speaker',9,13],['dk_dish',8,13],['dk_toolrack',8,10],['oldtiller',0,13],['solar',0,35],['parasol',3,35],['dk_dryrack',6,35]].forEach(([k,a,b])=>near(k,a,b));
+for(let a=4;a<N;a+=8){put('streetlamp',a,15);put('streetlamp',a,18)}for(let b=4;b<N;b+=8){put('streetlamp',9,b);put('streetlamp',12,b)}
+// 나머지 빈 땅 잔디
+fill('lawn',0,0,N-1,N-1);
+// 영웅 집 앞
+hero.i=6;hero.j=6;rebuildBlocked&&rebuildBlocked();
+return {N,placed:PLACED.length,plots:PLOTS.length};
+}
 // ---- 공지사항: 접속하면 뜸, 오늘 하루 안 보기
 const NOTICES=[{id:'2026-10-21deco',date:'2026-10-21',title:'꾸미기 대규모 업데이트',body:`새 꾸미기 76종
 - 꽃 16종, 나무 12종, 물·정원 12종, 시골 12종, 생활 12종, 재미 12종이 상점 꾸미기 탭에 들어왔어요.
@@ -2277,8 +2338,8 @@ const foodIc=f=>KIT.ic[f]||A[(FOODIMG[f]||'')+'_3']||'';
 Object.assign(FOODSELL,{f_corn:200,f_cuc:300,f_swp:500,f_tom:500,f_str:800,f_wm:1200,f_pump:1500,f_gin:30000,f_jj:5000});
 RECIPES.length=0;RECIPES.push(['163',[['potato',4]],'감자를 갈아 부쳐요',1],['165',[['lettuce',3],['radish',2]],'나물 얹어 비벼요',3],['f_cuc',[['cucumber',3]],'시원하게 말아요',5],['f_corn',[['corn',3]],'솥에 쪄요',6],['f_swp',[['sweetpotato',4]],'튀겨서 조청 버무려요',8],['166',[['radish',3],['napa',3],['potato',2]],'푹 고아요. 체력이 가득 차요',8],['f_tom',[['tomato',4]],'갈아서 마셔요',9],['f_str',[['strawberry',4]],'얼음 띄워요',10],['f_wm',[['watermelon',2]],'큰 그릇에 띄워요',16],['f_pump',[['kabocha',3]],'곱게 쑤어요',19],['f_gin',[['ginseng',2]],'진하게 달여요. 체력이 가득 차요',45],['f_jj',[['jujube',5]],'오래 달여요',62]);
 // ---- 저장: 이 기기에 자동 저장
-const SAVEKEY=USER?'shg-user-1':'shg-save-1';let noSave=false;
-function saveGame(){if(noSave)return;try{const d={v:1,ts:Date.now(),money,G:{...G},hero:{i:hero.i,j:hero.j},
+const SAVEKEY=USER?'shg-user-1':'shg-save-1';let noSave=false;const SAMPLE=/[?&]sample/.test(location.search);
+function saveGame(){if(noSave||SAMPLE)return;try{const d={v:1,ts:Date.now(),money,G:{...G},hero:{i:hero.i,j:hero.j},
  reqs:REQS,reqN,newsfx:NEWSFX,obsfix:1,obsday:OBSDAY,ship:SHIP,mset:MSET,trails:TRAILS,wxq:WXQ,nextn:NEXTN,wx:WX,can:CAN.left,QDAY,LETTERS,landLv,OBS,obN,FJOB,BLD:BLD.map(b=>[...b]),plots:PLOTS.map(p=>({tier:p.tier||0,i:p.i,j:p.j,no:p.no,gh:p.gh,soil:p.soil,crop:p.crop,nut:p.nut,water:p.water,base:p.base,topD:p.topD})),
  INV,FINV,mats:Object.fromEntries(Object.entries(MATS).map(([k,v])=>[k,v[1]])),FOODINV,LOTS,lotN,stoLv,bagLv,TOOLT,OWN,PLACED,plN,STAT,GOT,
  mk:{XS,HIST,HIT,TREND,NEWS,CANDLE}};localStorage.setItem(SAVEKEY,JSON.stringify(d))}catch(_){}}
@@ -2475,7 +2536,7 @@ const toolVal=(f,t)=>{const r=TOOLS.find(x=>x[0]===f);return r[6][t]};
 function startAct(name,loops,done,spd=1){hero.act={name,loops,frame:0,t:0,done,spd}}
 let hudT=0;let last=0,sheetTick=0;
 function autoZoom(){const s=Math.min(innerWidth,innerHeight);zoom=Math.max(.6,Math.min(1.2,s/620))}
-function start(){setTimeout(()=>{if(!REQS.length){reqGen();reqGen()}},500);if(!localStorage.getItem||true){const m=G.month;WX={w:'sun',t:MTEMP[m-1]+2}}invFill();autoZoom();try{if(!sessionStorage.getItem('rot-ok')&&innerHeight>innerWidth*1.1&&innerWidth<600)document.getElementById('rot-tip').hidden=false}catch(_){}document.getElementById('rot-x').onclick=()=>{document.getElementById('rot-tip').hidden=true;try{sessionStorage.setItem('rot-ok','1')}catch(_){}};let nb=false;try{nb=(USER||localStorage.getItem('shg-newbie')==='1')&&!localStorage.getItem(SAVEKEY)}catch(_){}if(nb){G.lv=1;G.xp=0;G.hp=100;money=30000;bagLv=0;stoLv=0;Object.keys(INV.seed).forEach(c=>INV.seed[c]=0);Object.keys(INV.seedling).forEach(c=>INV.seedling[c]=0);INV.seed.lettuce=4;INV.seed.potato=4;Object.keys(FINV).forEach(k=>FINV[k]=0);FINV['199']=4;Object.keys(FOODINV).forEach(k=>FOODINV[k]=0);FOODINV['163']=2;Object.values(MATS).forEach(m=>m[1]=0);STAT.qs=['163',null,null,null,null]}let hadSave=false;try{hadSave=!!localStorage.getItem(SAVEKEY)}catch(_){}loadGame();ghMigrate();PLOTS.forEach(plotFix);dripMigrate();linkDedupe();setTimeout(decoDot,0);if(hadSave&&LASTTS)offlineRun((Date.now()-LASTTS)/1000);if(USER){SET.day=60;worldSnap()}if(!hadSave&&!OBS.length)initObs();rebuildBlocked();hudDraw();const c=T(hero.i,hero.j);cam.x=c.x;cam.y=c.y+80;requestAnimationFrame(loop);qsDraw()}
+function start(){setTimeout(()=>{if(!REQS.length){reqGen();reqGen()}},500);if(!localStorage.getItem||true){const m=G.month;WX={w:'sun',t:MTEMP[m-1]+2}}invFill();autoZoom();try{if(!sessionStorage.getItem('rot-ok')&&innerHeight>innerWidth*1.1&&innerWidth<600)document.getElementById('rot-tip').hidden=false}catch(_){}document.getElementById('rot-x').onclick=()=>{document.getElementById('rot-tip').hidden=true;try{sessionStorage.setItem('rot-ok','1')}catch(_){}};let nb=false;try{nb=(USER||localStorage.getItem('shg-newbie')==='1')&&!localStorage.getItem(SAVEKEY)}catch(_){}if(nb){G.lv=1;G.xp=0;G.hp=100;money=30000;bagLv=0;stoLv=0;Object.keys(INV.seed).forEach(c=>INV.seed[c]=0);Object.keys(INV.seedling).forEach(c=>INV.seedling[c]=0);INV.seed.lettuce=4;INV.seed.potato=4;Object.keys(FINV).forEach(k=>FINV[k]=0);FINV['199']=4;Object.keys(FOODINV).forEach(k=>FOODINV[k]=0);FOODINV['163']=2;Object.values(MATS).forEach(m=>m[1]=0);STAT.qs=['163',null,null,null,null]}let hadSave=false;try{hadSave=!!localStorage.getItem(SAVEKEY)}catch(_){}if(!SAMPLE)loadGame();ghMigrate();PLOTS.forEach(plotFix);dripMigrate();linkDedupe();if(SAMPLE){STAT.storySeen=1;STAT.welcomed=1;G.name='견본 농장';G.lv=99;G.xp=0;G.hp=maxHp();money=90000000000;try{STAT.roulDay=roulToday()}catch(_){}sampleFarm();setTimeout(()=>toast('견본 농장이에요. 여기서 한 일은 저장되지 않아요'),2500)}setTimeout(decoDot,0);if(hadSave&&LASTTS)offlineRun((Date.now()-LASTTS)/1000);if(USER){SET.day=60;worldSnap()}if(!hadSave&&!OBS.length)initObs();rebuildBlocked();hudDraw();const c=T(hero.i,hero.j);cam.x=c.x;cam.y=c.y+80;requestAnimationFrame(loop);qsDraw()}
 function loop(ts){const dt=Math.min(.05,(ts-last)/1000||0);last=ts;update(dt);{const ci=Math.max(0,Math.min(N,(cam.x/(TW/2)+cam.y/(TH/2))/2)),cj=Math.max(0,Math.min(N,(cam.y/(TH/2)-cam.x/(TW/2))/2));cam.x=(ci-cj)*TW/2;cam.y=(ci+cj)*TH/2}draw();requestAnimationFrame(loop)}
 // 점적호스는 없앰: 가진 것은 스프링클러로 (연결한 밭·강화 단계 그대로)
 function linkDedupe(){const seen={};PLACED.forEach(o=>{if(!o.links||!LINKCAP[o.k])return;const S=seen[o.k]||(seen[o.k]=new Set());o.links=o.links.filter(n=>{if(S.has(n))return false;S.add(n);return true})})}
