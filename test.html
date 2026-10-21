@@ -2420,7 +2420,7 @@ async function syOnLogin(u){setTimeout(mlFetch,1500);STAT.login=1;
  const rd=snap.data(),rstr=await gunz(rd.data.toUint8Array()),R=sySum(rstr),L=local?sySum(local):null;
  if(forceUp){await syBackup(u.uid,rstr,'처음부터 다시 하기 전');await syUp(true);return}
  if(!L||(!linked&&L.lv<=1&&R.lv>1)){if(local&&!linked)await syBackup(u.uid,local,'이 기기에 있던 농장');lsS('shg-sync-uid',u.uid);sySetBase(R.ts);syApply(rstr);return}
- if(linked){const b=syBase();if(b?R.ts>b+1000:R.ts>L.ts+3000){await syBackup(u.uid,local,'다른 기기 농장을 받기 전');lsS('shg-sync-msg','다른 기기에서 한 농장을 불러왔어요');sySetBase(R.ts);syApply(rstr)}else{await syUp(true)}return}
+ if(linked){const b=syBase();if(b?R.ts>b+1000:R.ts>L.ts+3000){await syBackup(u.uid,local,'다른 기기 농장을 받기 전');lsS('shg-sync-msg','다른 기기에서 한 농장을 불러왔어요');sySetBase(R.ts);syApply(rstr)}else{if(R.lv>L.lv||R.money>L.money*2)await syBackup(u.uid,rstr,'계정에 있던 농장(레벨이 더 높음)');await syUp(true)}return}
  const f=x=>`Lv${x.lv} · ${won(x.money)} · ${new Date(x.ts).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'})} 저장`;
  whenFree(()=>objMenu('어느 농장을 쓸까요?',[['계정 농장','go',async()=>{await syBackup(u.uid,local,'이 기기에 있던 농장');lsS('shg-sync-uid',u.uid);sySetBase(R.ts);syApply(rstr)}],['이 기기 농장','',async()=>{await syBackup(u.uid,rstr,'계정에 있던 농장');lsS('shg-sync-uid',u.uid);await syUp(true);toast('이 기기 농장을 계정에 저장했어요')}]],
   `계정 농장: ${f(R)}<br>이 기기 농장: ${f(L)}<br><small>고르지 않은 쪽도 지우지 않고 백업으로 남겨 둬요.</small>`))}catch(e){SY.err='login:'+(e.code||e.message);toast('계정 농장을 불러오지 못했어요. 잠시 뒤 다시 해 주세요')}}
