@@ -603,6 +603,18 @@ body:has(.bag-win:not([hidden])) #qslots,body:has(.mk-win:not([hidden])) #qslots
   <div class="bag-tabs nb-tabs" id="nb-tabs" role="tablist"></div>
   <div class="nb-page" id="nb-page"></div>
  </div>
+</section><section class="bag-win" id="merwin" hidden role="dialog" aria-label="명절 상인">
+ <div class="bag-box nb-box">
+  <div class="bag-head"><b>명절 상인</b><span id="mer-sub"></span><button type="button" class="mk-x bx" id="mer-x" aria-label="닫기" style="margin-left:auto">×</button></div>
+  <div class="bag-tabs nb-tabs" id="mer-tabs" role="tablist"></div>
+  <div class="nb-page" id="mer-page"></div>
+ </div>
+<style>
+.ch-d{display:inline-block;font:700 .72rem/1 var(--f-b);padding:3px 6px;border-radius:6px;margin-right:6px;vertical-align:2px;color:#fff;background:#7fae5a}.ch-d1{background:#d08a2e}.ch-d2{background:#b8323a}
+.gl .ch-hint{display:block;color:#7a5a2e}
+#mer-page .rc .mer-bt{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.mk.npcmk img{width:70%;height:70%}
+</style>
 </section><section class="bag-win" id="setwin" hidden role="dialog" aria-label="설정">
  <div class="bag-box set-box">
   <div class="bag-head"><b>설정</b><button type="button" class="mk-x bx" id="set-x" aria-label="닫기" style="margin-left:auto">×</button></div>
@@ -640,6 +652,7 @@ body:has(.bag-win:not([hidden])) #qslots,body:has(.mk-win:not([hidden])) #qslots
 <div class="qbar" id="qbar" hidden><span id="qbar-t"></span><button type="button" id="qbar-x">모두 취소</button></div><div class="bbar" id="lbar" hidden style="bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:6"><span id="lbar-t"></span><button type="button" id="lbar-x">완료</button></div><div class="bbar mbar" id="mbar" hidden style="bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:6"><span id="mbar-t"></span><button type="button" id="mbar-all">모두</button><button type="button" id="mbar-go">시작</button><button type="button" id="mbar-x">그만두기</button></div><div class="bbar" id="bbar" hidden><span id="bbar-t"></span><button type="button" id="bbar-x">끝</button></div><div id="toast" role="status"></div>
 <script id="cfg">const USER=/*USER*/false;</script>
 <script>
+var CHIEF={day:'',offers:null,taken:false,act:null},MER={on:false},HPB={v:0,until:0};
 const SFX={"water": "a/65c8492d4b95.mp3", "water_fill": "a/f6df3012b616.mp3", "trade": "a/220d4455a097.mp3", "sow": "a/dc2d58afbd28.mp3", "open": "a/0ee109abfa92.mp3", "hoe": "a/eb47b0d5ac05.mp3", "fert": "a/1df4c47fed56.mp3", "act": "a/4232063a221d.mp3", "menu": "a/5ec088bb3ca6.mp3"};let sfxVol=()=>typeof SET==='object'?SET.sfx/100:.7;// 효과음: 웹오디오로 미리 풀어 두고 바로 재생 (Audio 태그는 폰에서 늦게 나옴). 앞쪽 무음은 건너뜀
 let ACX=null;const SFXB={};
 function sfxInit(){if(ACX)return;try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;ACX=new C();Object.entries(SFX).forEach(([k,u])=>{fetch(u).then(r=>r.arrayBuffer()).then(b=>new Promise((ok,no)=>ACX.decodeAudioData(b,ok,no))).then(buf=>{const d=buf.getChannelData(0);let i=0;while(i<d.length&&Math.abs(d[i])<0.008)i++;SFXB[k]={buf,off:Math.max(0,i-32)/buf.sampleRate}}).catch(()=>{})})}catch(_){ACX=null}}
@@ -942,7 +955,7 @@ function bagDraw(){const all=bagItems(),list=bagView();document.getElementById('
   ${it.eat?`<div class="acts"><button type="button" id="bag-eat">먹기</button></div>`:''}${['m:stamp','m:stamp_s','m:jd_rain','m:rumor','m:report'].includes(it.k)?`<div class="acts"><button type="button" id="bag-use">${it.k==='m:jd_rain'?'쓰기':/rumor|report/.test(it.k)?'읽기':'찍기'}</button></div>`:''}${bagSellPrice(it.k)?`<div class="acts">${[[1,'1개'],[10,'10개'],[tot,'전부']].filter(([q],i)=>q>0&&q<=tot&&!(i===1&&tot<=10)&&!(i===2&&tot===1)).map(([q,l])=>`<button type="button" class="bag-sell" data-q="${q}" style="background:#b07a3a;border-color:#7a5228;box-shadow:0 3px 0 #7a5228">${l} 팔기 <small>${wonS(bagSellPrice(it.k)*q)}</small></button>`).join('')}</div>`:''}${it.cat==='mach'&&MJOB[it.k.slice(3)]?`<div class="acts"><button type="button" id="bag-mach">일 시키기</button></div>`:''}`;
  det.querySelectorAll('.bag-sell').forEach(b=>b.onclick=()=>bagSell(it,+b.dataset.q));
  {const bm=document.getElementById('bag-mach');if(bm)bm.onclick=()=>machOpen(it.k.slice(3))}{const bu=document.getElementById('bag-use');if(bu)bu.onclick=()=>{if(it.k==='m:jd_rain')rainUse();else if(/rumor|report/.test(it.k))rumorUse(it.k.slice(2));else stampUse(it.k==='m:stamp_s')}}
- if(it.eat)document.getElementById('bag-eat').onclick=()=>{const v=FOODS[it.eat][1],before=G.hp;G.hp=Math.min(maxHp(),G.hp+v*(1+fxG('eat')/100));FOODINV[it.eat]--;const r=document.getElementById('bag-eat').getBoundingClientRect();gainPop('체력 +'+Math.round(G.hp-before),r.left+r.width/2,r.top);hudDraw();bagDraw()}}
+ if(it.eat)document.getElementById('bag-eat').onclick=()=>{if(typeof foodBlock==='function'&&foodBlock(it.eat))return;const v=FOODS[it.eat][1],before=G.hp;if(typeof foodBuff==='function')foodBuff(it.eat);G.hp=Math.min(maxHp(),G.hp+v*(1+fxG('eat')/100));FOODINV[it.eat]--;const r=document.getElementById('bag-eat').getBoundingClientRect();gainPop('체력 +'+Math.round(G.hp-before),r.left+r.width/2,r.top);hudDraw();bagDraw()}}
 document.getElementById('bag-tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;bagTab=b.dataset.k;bagSel=null;bagDraw()};
 document.getElementById('bag-grid').onclick=e=>{const b=e.target.closest('.bs[data-i]');if(!b)return;const list=bagView(),x=list[+b.dataset.i];bagSel=x.k+b.dataset.i;bagDraw()};
 function hudH(){const rt=document.getElementById('rot-tip');if(rt&&!rt.hidden&&document.querySelector('.bag-win:not([hidden]),.mk-win:not([hidden])'))rt.hidden=true;document.documentElement.style.setProperty('--hudh',Math.ceil(document.getElementById('hud').getBoundingClientRect().bottom)+'px')}document.fonts&&document.fonts.ready.then(hudH);addEventListener('resize',hudH);setTimeout(hudH,0);
@@ -1284,11 +1297,12 @@ function jdPlenty(p){if(!(jdHave('jd_plenty')>0)||!p.crop||p.crop.plenty)return;
 function jdFac(k){const j=FJOB[facCur.key][k];if(!j)return;const left=j.end-Date.now(),H=jdHave('jd_time');if(left<=0||!H)return;const need=Math.max(1,Math.ceil(left/(10*dayMs())-1e-6)),use=Math.min(need,H);
  confirmBox(`시간의 옥돌 ${use}개를 쓸까요?`,use>=need?`${qName(j.out)}${josa(qName(j.out),'이','가')} 바로 다 돼요.`:`${use*10}일만큼 당겨요. 바로 끝내려면 ${need}개가 필요해요.`,()=>{if(jdHave('jd_time')<use)return;MATS.jd_time[1]-=use;STAT.jdTime=(STAT.jdTime||0)+1;j.end-=use*10*dayMs();sfx('trade');facDraw()},'쓰기',false)}
 
-function nbDraw(){const TB=nbMode==='drawer'?[['guide','길잡이'],['memo','할머니 쪽지'],['craft','합성']]:[['goal','오늘 할 일'],['memo','할머니 쪽지'],...(USER?[]:[['letter','편지 쓰기']]),['rec','기록']];if(!TB.some(x=>x[0]===nbTab))nbTab=TB[0][0];
- document.getElementById('nb-tabs').innerHTML=TB.map(([k,l])=>{const dot=(k==='memo'&&memoNew())||(k==='guide'&&(tutNew()||tutReady().length>0));return`<button type="button" role="tab" id="nt-${k}" data-k="${k}" aria-selected="${k===nbTab}">${l}${dot?'<i class="ndot"></i>':''}</button>`}).join('');{const h=document.querySelector('#notewin .bag-head b');if(h){if(!h.dataset.t)h.dataset.t=h.textContent;h.textContent=nbMode==='drawer'?'할머니 서랍':h.dataset.t}}
+function nbDraw(){const TB=nbMode==='drawer'?[['guide','길잡이'],['memo','할머니 쪽지'],['craft','합성']]:[['goal','오늘 할 일'],['chief','이장님 부탁'],['memo','할머니 쪽지'],...(USER?[]:[['letter','편지 쓰기']]),['rec','기록']];if(!TB.some(x=>x[0]===nbTab))nbTab=TB[0][0];
+ document.getElementById('nb-tabs').innerHTML=TB.map(([k,l])=>{const dot=(k==='chief'&&typeof chiefDot==='function'&&chiefDot())||(k==='memo'&&memoNew())||(k==='guide'&&(tutNew()||tutReady().length>0));return`<button type="button" role="tab" id="nt-${k}" data-k="${k}" aria-selected="${k===nbTab}">${l}${dot?'<i class="ndot"></i>':''}</button>`}).join('');{const h=document.querySelector('#notewin .bag-head b');if(h){if(!h.dataset.t)h.dataset.t=h.textContent;h.textContent=nbMode==='drawer'?'할머니 서랍':h.dataset.t}}
  const pg=document.getElementById('nb-page');qCheck();const done=QDAY.list.filter(g=>g.got).length;
  document.getElementById('nb-sub').innerHTML=nbMode==='drawer'?`길잡이 ${TUT.filter(t=>tutGot(t[0])).length} / ${TUT.length}`:`${G.month}월 ${G.day+1}일<br>오늘 할 일 ${done} / ${QDAY.list.length}`;
  if(nbTab==='goal'){questPage(pg);return}
+ if(nbTab==='chief'){chiefPage(pg);return}
  if(false){pg.innerHTML=GOALS.map(g=>{const v=Math.min(g.need,g.v()),ok=v>=g.need,f=x=>g.won?won(x):x.toLocaleString('ko-KR');
    return`<div class="gl ${GOT[g.id]?'done':''}"><b>${g.t}</b><span class="gbar"><i style="width:${v/g.need*100}%"></i></span><small>${f(v)} / ${f(g.need)}</small><span class="rw">${[g.rw.m?won(g.rw.m):'',g.rw.xp?'경험치 '+g.rw.xp:''].filter(Boolean).join(' · ')}</span><button type="button" id="gb-${g.id}" data-id="${g.id}" ${ok&&!GOT[g.id]?'':'disabled'}>${GOT[g.id]?'받았음':'받기'}</button></div>`}).join('');
   pg.querySelectorAll('button[data-id]').forEach(b=>b.onclick=()=>{const g=GOALS.find(x=>x.id===b.dataset.id);GOT[g.id]=true;money+=g.rw.m;const r=b.getBoundingClientRect();gainPop(g.rw.m?'+'+won(g.rw.m):'+'+g.rw.xp+' 경험치',r.left+r.width/2,r.top);addXp(g.rw.xp);hudDraw();nbDraw()});return}
@@ -1670,7 +1684,7 @@ function goFill(next,src){const S=src?[src]:waterSrcs();if(!S.length){alertBox('
 function doFill(j){const s=j.fill;face(s.i+s.w/2-hero.i,s.j+s.h/2-hero.j);sfx('water_fill');
  startAct('water',2,()=>{CAN.left=canCap();floatNum([['물 가득 '+CAN.left+'/'+canCap(),'#7fd3ff']]);hero.job=null;if(j.next)Q.unshift(j.next);if(sel)renderSheet();kick()})}
 // ---- 손님방: 마을 사람 거래 부탁
-const NPCS=[['이장님','동네 잔치에 쓸'],['옆집 할머니','손주들 오면 줄'],['읍내 식당 사장','가게에 낼'],['장터 박 씨','장날에 팔'],['학교 급식실','아이들 점심에 쓸'],['우체부 아저씨','본가에 보낼'],['도시 사는 사촌','회사 사람들 줄'],['마을 회관','경로잔치에 쓸']];
+const NPCS=[['옆집 할머니','손주들 오면 줄'],['읍내 식당 사장','가게에 낼'],['장터 박 씨','장날에 팔'],['학교 급식실','아이들 점심에 쓸'],['우체부 아저씨','본가에 보낼'],['도시 사는 사촌','회사 사람들 줄'],['마을 회관','경로잔치에 쓸']];
 let REQS=[],reqN=0;
 function reqGen(){const gh=typeof pc==='function'&&pc('greenhouse'),facOk=f=>f==='homekitchen'||(typeof pc==='function'&&pc(f));
  const grow=c=>LV[c]<=G.lv&&(!GHONLY.includes(c)||gh)&&(SOW[c].includes(G.month)||gh||HOW[c]!=='seed'||(STO[c]||0)>0);
@@ -2002,7 +2016,18 @@ hero.i=6;hero.j=6;rebuildBlocked&&rebuildBlocked();
 return {N,placed:PLACED.length,plots:PLOTS.length};
 }
 // ---- 공지사항: 접속하면 뜸, 오늘 하루 안 보기
-const NOTICES=[{id:'2026-10-21deco',date:'2026-10-21',title:'꾸미기 대규모 업데이트',body:`새 꾸미기 76종
+const NOTICES=[{id:'2026-10-21npc',date:'2026-10-21',title:'이장님 부탁 · 명절 상인',body:`이장님 부탁
+- 날마다 새벽 5시에 이장님이 집 앞에 찾아와요. 머리 위 표시를 누르면 부탁 세 가지(쉬움·보통·어려움)가 나와요.
+- 그중 하나를 고르면, 고른 때부터 24시간 안에 하면 돼요. 수첩의 "이장님 부탁" 탭에서도 볼 수 있어요.
+- 작물·가공품·재료 갖다 주기, 밭일, 시설 만들기, 오른 값에 팔기 같은 부탁이 와요. 지금 할 수 있는 것만 부탁해요.
+- 보통은 옥돌, 어려움은 옥돌 여러 개와 신기한 돌도 줘요.
+명절 상인
+- 설(2월 1일)과 추석(9월 10일) 열흘 전부터 명절 상인이 대문 앞(대문이 없으면 집 앞)에 좌판을 펴요. 명절 다음 날 떠나요.
+- 차례상 작물을 시세보다 웃돈을 얹어 사 가요. 명절에 가까울수록 웃돈이 커져요.
+- 옥돌로 귀한 물건을 팔고, 명절 꾸미기도 팔아요.
+- 떡국은 24시간 동안 체력이 50%, 송편은 30% 빨리 차요. 잠잘 때와 함께 들어요.
+바뀐 점
+- 손님방 부탁에는 이제 이장님이 오지 않아요.`},{id:'2026-10-21deco',date:'2026-10-21',title:'꾸미기 대규모 업데이트',body:`새 꾸미기 76종
 - 꽃 16종, 나무 12종, 물·정원 12종, 시골 12종, 생활 12종, 재미 12종이 상점 꾸미기 탭에 들어왔어요.
 - 꾸미기 탭 안에 전체, 바닥, 울타리, 꽃, 나무, 물·정원, 시골, 생활, 재미 하위 탭이 생겼어요.
 레벨 제한 없음
@@ -2095,7 +2120,7 @@ function statDraw(){document.getElementById('st-tabs').innerHTML=[['info','능�
  <div class="u-row"><span>하는 일</span><b>${job}</b></div><div class="u-row"><span>${col}</span><b>${vals[t]&&vals[t]!=='+0'?vals[t]:'없음'}</b></div>
  ${nx?`<div class="u-row"><span>다음 단계</span><b>${names[t+1]} · ${col} ${vals[t+1]}</b></div><div class="u-row"><span>필요</span><b>Lv${nx[1]} · ${wonS(nx[2])}</b></div>`:'<div class="u-band ok">가장 높은 단계예요</div>'}
  <h4 class="fh" style="margin:6px 0 0">능력치</h4>
- <div class="u-row"><span>레벨</span><b>Lv ${G.lv}</b></div><div class="u-row"><span>경험치</span><b>${Math.floor(G.xp).toLocaleString('ko-KR')} / ${need(G.lv).toLocaleString('ko-KR')}</b></div><div class="u-row"><span>체력</span><b>${Math.floor(G.hp)} / ${maxHp()}</b></div><div class="u-row"><span>돈</span><b>${won(money)}</b></div>
+ <div class="u-row"><span>레벨</span><b>Lv ${G.lv}</b></div><div class="u-row"><span>경험치</span><b>${Math.floor(G.xp).toLocaleString('ko-KR')} / ${need(G.lv).toLocaleString('ko-KR')}</b></div><div class="u-row"><span>체력</span><b>${Math.floor(G.hp)} / ${maxHp()}</b></div>${typeof hpbRow==='function'?hpbRow():''}<div class="u-row"><span>돈</span><b>${won(money)}</b></div>
  <h4 class="fh" style="margin:6px 0 0">농장</h4>
  <div class="u-row"><span>땅</span><b>${N}×${N}</b></div><div class="u-row"><span>가방</span><b>${BAGS[bagLv][0]} · ${bagCap()}칸</b></div><div class="u-row"><span>창고</span><b>${STOS[stoLv][0]} · ${stoCap().toLocaleString('ko-KR')}개</b></div><div class="u-row"><span>밭</span><b>${PLOTS.length}개</b></div><div class="u-row"><span>함께 사는 동물</span><b>${pets.join(', ')||'없음'}</b></div><div class="u-row"><span>농기계</span><b>${mach.length?mach.length+'대':'없음'}</b></div><div class="u-row"><span>길잡이</span><b>${TUT.filter(t=>tutGot(t[0])).length} / ${TUT.length}</b></div>
  ${nx?`<button type="button" class="u-big" id="sw-up">농기구 강화하러 가기<small>상점 농기구 탭</small></button>`:''}</div></div>`;
@@ -2122,7 +2147,7 @@ function sleepTick(){const o=document.getElementById('sleepov');if(o.hidden)retu
 function sleepEnd(full){if(!SLEEP)return;SLEEP=false;document.getElementById('sleepov').hidden=true;toast(full?'푹 잤어요. 체력이 가득 찼어요':'잠에서 깼어요');hudDraw()}
 function offlineRun(sec){if(!(sec>5))return;OFFLINE=true;CATCH=true;CATCHN=0;CATCHMAX=5+Math.floor(Math.random()*4);const m0=money,h0=STAT.hvAll||0,d0=G.month*100+G.day;let days=0,rem=sec;const t0=performance.now();
  try{while(rem>0){const step=Math.min(rem,SET.day-G.dayT);growTick(step);G.dayT+=step;rem-=step;if(G.dayT>=SET.day-1e-6){G.dayT=0;G.day++;if(G.day>=20){G.day=0;G.month=G.month%12+1}newDay();days++}}}catch(e){console.log('offline',e)}
- G.hp=Math.min(maxHp(),G.hp+maxHp()*0.05*sec/60);OFFLINE=false;CATCH=false;
+ G.hp=Math.min(maxHp(),G.hp+maxHp()*0.05*sec/60*(typeof hpMul==='function'?hpMul():1));OFFLINE=false;CATCH=false;
  const ripe=PLOTS.filter(p=>p.crop&&p.crop.prog>=1).length,dm=money-m0,hv=(STAT.hvAll||0)-h0;
  const h=Math.floor(sec/3600),mi=Math.floor(sec%3600/60);
  if(days>=1)setTimeout(()=>alertBox(`자리 비운 동안 ${days.toLocaleString('ko-KR')}일이 지났어요`,`${h?h+'시간 ':''}${mi}분 동안 농장 시간이 흘렀어요. 오늘은 ${G.month}월 ${G.day+1}일이에요.${ripe?` 다 자란 밭 ${ripe}개가 기다려요.`:''}${hv>0?` 자동으로 거둔 작물 ${hv.toLocaleString('ko-KR')}개.`:''}${dm?` 돈 ${dm>0?'+':''}${won(dm)}.`:''}`),900)}
@@ -2323,7 +2348,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('#qslots button')
  if(a==='del'){L[i]=null;sfx('menu');qsDraw();return}
  if(a==='add'){const own=Object.keys(FOODS).filter(f=>(FOODINV[f]||0)>0&&!L.includes(f));if(!own.length){alertBox('넣을 먹을거리가 없어요','집 → 부엌에서 새참을 만들면 여기에 넣을 수 있어요.');return}
   objMenu('빠른 칸에 넣을 먹을거리',own.map(f=>[`${FOODS[f][0]} ${FOODINV[f]}`,'',()=>{L[i]=f;sfx('menu');qsDraw()}]),'누르면 바로 먹을 수 있게 위쪽 칸에 넣어 둬요.');return}
- if(a==='eat'){const f=L[i];if(!(FOODINV[f]>0)){toast(`${FOODS[f][0]}이 없어요. 부엌에서 만들어요`);return}if(G.hp>=maxHp()){toast('체력이 가득 찼어요');return}
+ if(a==='eat'){const f=L[i];if(!(FOODINV[f]>0)){toast(`${FOODS[f][0]}이 없어요. 부엌에서 만들어요`);return}if(G.hp>=maxHp()&&!(typeof FOODBUFF!=='undefined'&&FOODBUFF[f])){toast('체력이 가득 찼어요');return}if(typeof foodBlock==='function'&&foodBlock(f))return;if(typeof foodBuff==='function')foodBuff(f);
   const before=G.hp;G.hp=Math.min(maxHp(),G.hp+FOODS[f][1]*(1+fxG('eat')/100));FOODINV[f]--;floatNum([['체력 +'+Math.round(G.hp-before),'#7fd3ff']]);sfx('act');hudDraw();qsDraw()}},true);
 setInterval(qsDraw,1000);
 // ===== 손님방 부탁 도움말 =====
@@ -2353,7 +2378,7 @@ const SAVEKEY=USER?'shg-user-1':'shg-save-1';let noSave=false;const SAMPLE=/[?&]
 let MKC='',MKK='';
 function mkStr(){const k=MKV+'.'+NEWS.length+'.'+(NEWS[0]&&NEWS[0].t);if(k===MKK&&MKC)return MKC;const r1=v=>Math.round(v*10)/10,H={},C={},X={};for(const c in HIST)H[c]=HIST[c].map(r1);for(const c in CANDLE)C[c]=CANDLE[c].map(o=>({b:r1(o.b),o:r1(o.o),h:r1(o.h),l:r1(o.l),c:r1(o.c),lim:o.lim}));for(const c in XS)X[c]=Math.round(XS[c]*1e4)/1e4;MKC=JSON.stringify({XS:X,HIST:H,HIT,TREND,NEWS,CANDLE:C});MKK=k;return MKC}
 function saveGame(){if(noSave||SAMPLE)return;SVT=Date.now();try{const d={v:1,ts:Date.now(),money,G:{...G},hero:{i:hero.i,j:hero.j},
- reqs:REQS,reqN,newsfx:NEWSFX,obsfix:1,obsday:OBSDAY,ship:SHIP,mset:MSET,trails:TRAILS,wxq:WXQ,nextn:NEXTN,wx:WX,can:CAN.left,QDAY,LETTERS,landLv,OBS,obN,FJOB,BLD:BLD.map(b=>[...b]),plots:PLOTS.map(p=>({tier:p.tier||0,i:p.i,j:p.j,no:p.no,gh:p.gh,soil:p.soil,crop:p.crop,nut:p.nut,water:p.water,base:p.base,topD:p.topD})),
+ reqs:REQS,reqN,chief:CHIEF,mer:MER,hpb:HPB,newsfx:NEWSFX,obsfix:1,obsday:OBSDAY,ship:SHIP,mset:MSET,trails:TRAILS,wxq:WXQ,nextn:NEXTN,wx:WX,can:CAN.left,QDAY,LETTERS,landLv,OBS,obN,FJOB,BLD:BLD.map(b=>[...b]),plots:PLOTS.map(p=>({tier:p.tier||0,i:p.i,j:p.j,no:p.no,gh:p.gh,soil:p.soil,crop:p.crop,nut:p.nut,water:p.water,base:p.base,topD:p.topD})),
  INV,FINV,mats:Object.fromEntries(Object.entries(MATS).map(([k,v])=>[k,v[1]])),FOODINV,LOTS,lotN,stoLv,bagLv,TOOLT,OWN,PLACED,plN,STAT,GOT,
  };localStorage.setItem(SAVEKEY,JSON.stringify(d).slice(0,-1)+',"mk":'+mkStr()+'}')}catch(_){}}
 function loadGame(){let d;try{d=JSON.parse(localStorage.getItem(SAVEKEY)||'null')}catch(_){return}if(!d||d.v!==1)return;LASTTS=d.ts||0;
@@ -2362,7 +2387,7 @@ function loadGame(){let d;try{d=JSON.parse(localStorage.getItem(SAVEKEY)||'null'
   const sub=(dst,src)=>{Object.keys(dst).forEach(k=>delete dst[k]);Object.assign(dst,src)};
   sub(INV.seed,d.INV.seed);sub(INV.seedling,d.INV.seedling);invFill();sub(FINV,d.FINV);Object.entries(d.mats).forEach(([k,n])=>{if(MATS[k])MATS[k][1]=n});sub(FOODINV,d.FOODINV);
   LOTS.length=0;LOTS.push(...d.LOTS);lotN=d.lotN;stoSync();stoLv=d.stoLv;bagLv=d.bagLv;sub(TOOLT,d.TOOLT);sub(OWN,d.OWN);
-  PLACED.length=0;PLACED.push(...d.PLACED);plN=d.plN;rebuildBlocked();sub(STAT,d.STAT);if(d.FJOB)sub(FJOB,d.FJOB);if(d.QDAY)QDAY=d.QDAY;if(d.can!=null)CAN.left=d.can;if(d.wx)WX=d.wx;if(d.reqs){REQS=d.reqs;reqN=d.reqN||0}if(d.newsfx)NEWSFX=d.newsfx;if(d.obsday)OBSDAY=d.obsday;if(d.ship){SHIP.length=0;SHIP.push(...d.ship)}if(d.mset)Object.assign(MSET,d.mset);if(d.trails)Object.assign(TRAILS,d.trails);if(d.wxq)WXQ=d.wxq;if(d.nextn)NEXTN=d.nextn;if(d.LETTERS){LETTERS.length=0;LETTERS.push(...d.LETTERS)}if(d.OBS){OBS=d.OBS;obN=d.obN||0}if(!d.obsfix){OBS.length=0}sub(GOT,d.GOT);
+  PLACED.length=0;PLACED.push(...d.PLACED);plN=d.plN;rebuildBlocked();sub(STAT,d.STAT);if(d.FJOB)sub(FJOB,d.FJOB);if(d.QDAY)QDAY=d.QDAY;if(d.can!=null)CAN.left=d.can;if(d.wx)WX=d.wx;if(d.reqs){REQS=d.reqs;reqN=d.reqN||0}if(d.chief)CHIEF=d.chief;if(d.mer)MER=d.mer;if(d.hpb)HPB=d.hpb;if(d.newsfx)NEWSFX=d.newsfx;if(d.obsday)OBSDAY=d.obsday;if(d.ship){SHIP.length=0;SHIP.push(...d.ship)}if(d.mset)Object.assign(MSET,d.mset);if(d.trails)Object.assign(TRAILS,d.trails);if(d.wxq)WXQ=d.wxq;if(d.nextn)NEXTN=d.nextn;if(d.LETTERS){LETTERS.length=0;LETTERS.push(...d.LETTERS)}if(d.OBS){OBS=d.OBS;obN=d.obN||0}if(!d.obsfix){OBS.length=0}sub(GOT,d.GOT);
   ['XS','HIST','HIT','TREND'].forEach(k=>sub({XS,HIST,HIT,TREND}[k],d.mk[k]));sub(CANDLE,d.mk.CANDLE||{});Object.keys(PRICE).forEach(c=>{if(!HIST[c])priceInit(c);else if(!CANDLE[c]||CANDLE[c].length!==HIST[c].length)candleFromHist(c);XS[c]=Math.log(HIST[c].at(-1)/PRICE[c]);if(TREND[c]==null)TREND[c]=0});NEWS.length=0;NEWS.push(...d.mk.NEWS);
  }catch(e){console.log('load fail',e)}}
 let SVT=Date.now();setInterval(()=>{const mv=hero.path.length||hero.act;if(mv&&Date.now()-SVT<30000)return;(window.requestIdleCallback||(f=>setTimeout(f,0)))(()=>saveGame(),{timeout:1500})},5000);addEventListener('pagehide',saveGame);
@@ -2588,7 +2613,7 @@ function growTick(dt){PLOTS.forEach(plotFix);if(WX.w==='rain'||WX.w==='storm'){c
 function growDay(){PLOTS.forEach(p=>{plotFix(p);const c=p.crop;if(!c||c.prog>=1)return;const days=growSec(c)/SET.day,rate=(p.water>0?1:.3)*tempF(c.c,p),use=NEED[c.c]*(c.re?RE[c.c]/DAYS[c.c]:1)*rate/days*(1-fxPlot(p,'nut')/100);
  c.tot=(c.tot||0)+SET.day;let f=1;if(p.nut<use){f=use>0?Math.max(0,p.nut/use):1;c.stop=true;c.bad=(c.bad||0)+SET.day*(1-f)}else c.stop=false;
  if(p.water<=0)c.bad=(c.bad||0)+SET.day*.7;p.nut=Math.max(0,p.nut-use*f);c.prog=Math.min(1,c.prog+rate*f/days);if(c.prog>.9999)c.prog=1;c.st=stOf(c)})}
-function update(dt){petUpdate(dt);if(USER)worldSync();else G.dayT+=dt;{const r=document.getElementById('dring');if(r){const f=Math.min(100,G.dayT/SET.day*100);r.style.strokeDasharray=f+' 100'}}if(G.dayT>=SET.day){G.dayT-=SET.day;G.day++;if(G.day>=20){G.day=0;G.month=G.month%12+1}newDay()}G.hp=Math.min(maxHp(),G.hp+maxHp()*0.05*dt/60*(OWN.rabbit>0?1.3:1)*(1+fxG('hp')/100)*(SLEEP?2:1));if(SLEEP)sleepTick();hudT=(typeof hudT==='number'?hudT:0)+dt;if(hudT>.5){hudT=0;hudDraw()}
+function update(dt){petUpdate(dt);if(USER)worldSync();else G.dayT+=dt;{const r=document.getElementById('dring');if(r){const f=Math.min(100,G.dayT/SET.day*100);r.style.strokeDasharray=f+' 100'}}if(G.dayT>=SET.day){G.dayT-=SET.day;G.day++;if(G.day>=20){G.day=0;G.month=G.month%12+1}newDay()}G.hp=Math.min(maxHp(),G.hp+maxHp()*0.05*dt/60*(OWN.rabbit>0?1.3:1)*(1+fxG('hp')/100)*(SLEEP?2:1)*(typeof hpMul==='function'?hpMul():1));if(SLEEP)sleepTick();hudT=(typeof hudT==='number'?hudT:0)+dt;if(hudT>.5){hudT=0;hudDraw()}
 
  growTick(dt);mAnimTick(dt);
  sheetTick+=dt;if(sel&&sheetTick>.5){sheetTick=0;if(view==='main')renderSheet()}
@@ -2707,7 +2732,7 @@ function draw(){cx.setTransform(DPR,0,0,DPR,0,0);cx.fillStyle='#7da23e';cx.fillR
  BLD.forEach((B)=>{const [n,i,j,w,h]=B;if(deco.mv&&deco.mv.ref===B)return;const im=n==='house'?IMG[hInfo(hStage).img]:IMG[n];if(n==='house'){const sz=hSize(),f=T(sz,sz),m=HMETA[hInfo(hStage).img];S.push({k:i+j+w+h-1.01,box:[i,i+w,j,j+h],f(){cx.drawImage(im,f.x-m[0],f.y-m[1])}});return}const f=T(i+w-1,j+h-1);const fx=f.x,fy=f.y+64;
   if(n==='greenhouse'){S.push({k:100+(i+j+w+h)/100,box:[i,i+w,j,j+h],f(){drawGH(i,j,w,h,B[5]||0,B[6]||0)}});return}
   S.push({k:i+j+w+h-1.01,box:[i,i+w,j,j+h],f(){cx.drawImage(im,fx-im.width/2,fy-im.height+4)}})});
- decoDraw(S);obsDraw(S,vis);petDraw(S);machWorld(S);bgTrees(S,vis);
+ decoDraw(S);obsDraw(S,vis);petDraw(S);if(typeof npcDraw==='function')npcDraw(S);machWorld(S);bgTrees(S,vis);
  const hp=T(hero.i,hero.j);S.push({k:hero.i+hero.j+.3,pt:[hero.i,hero.j],f(){
   const an=hero.act?hero.act.name:'walk',fi=hero.act?hero.act.frame%HM[an][0].length:hero.frame,m=HM[an][hero.dir][fi];
   const idle=!hero.act&&!hero.path.length&&IDLE.front.complete;
@@ -2733,5 +2758,164 @@ const _fx=[];
  drawMarks()}
 </script>
 
+<script id="npc-js">
+// ===== 이장님 부탁 · 명절 상인 · 명절 음식 =====
+// ---- 그림
+KIT.ic.tg='a/84261b09e292.webp';KIT.ic.sp='a/15b44bc5e53c.webp';
+const HDECO={bokjori:['복조리 걸이','a/1f9fcbcd47fc.webp',{t:'xp',v:3}],kite:['방패연','a/bd01abc46f5b.webp',{t:'hp',v:5}],moonlantern:['달 등불','a/67569a0a353c.webp',{t:'grade',v:2,r:1}],songpyeon:['송편 바구니','a/ddf46d0f2769.webp',{t:'eat',v:10}]};
+Object.entries(HDECO).forEach(([k,[n,u,fx]])=>{PL.img[k]=u;PL.size[k]=[1,1];const im=new Image();im.src=u;PIMG[k]=im;BNAME[k]=n;DFX[k]=fx});
+
+// ---- 명절 음식: 먹으면 현실 24시간 동안 체력 회복이 빨라짐
+const FOODBUFF={tg:[.5,'떡국'],sp:[.3,'송편']};
+FOODS.tg=['떡국',50];FOODS.sp=['송편',30];FOODSELL.tg=3000;FOODSELL.sp=1000;
+if(FOODINV.tg==null)FOODINV.tg=0;if(FOODINV.sp==null)FOODINV.sp=0;
+const hpbOn=()=>HPB&&HPB.until>Date.now()?HPB.v:0;
+function hpMul(){return 1+hpbOn()}
+const hpbLeft=()=>{const m=Math.max(0,Math.ceil((HPB.until-Date.now())/6e4));return m>=60?`${Math.floor(m/60)}시간 ${m%60}분`:`${m}분`};
+function hpbRow(){const v=hpbOn();return v?`<div class="u-row"><span>체력 회복</span><b>+${Math.round(v*100)}% · ${hpbLeft()} 남음</b></div>`:''}
+function foodBlock(f){const b=FOODBUFF[f];if(!b)return false;const v=hpbOn();if(v>b[0]){toast(`지금 더 센 효과(+${Math.round(v*100)}%)가 남아 있어요`);return true}return false}
+function foodBuff(f){const b=FOODBUFF[f];if(!b)return;HPB={v:b[0],until:Date.now()+864e5};toast(`${b[1]}을 먹었어요. 24시간 동안 체력이 ${Math.round(b[0]*100)}% 빨리 차요`)}
+{const _bi=bagItems;bagItems=function(){const L=_bi();L.forEach(x=>{if(x.eat&&FOODBUFF[x.eat])x.desc=`먹으면 체력 +${FOODS[x.eat][1]}, 그리고 24시간 동안 체력이 ${Math.round(FOODBUFF[x.eat][0]*100)}% 빨리 차요. 잠잘 때와 함께 들어요.`});return L}}
+
+// ---- 공통
+const rnd=n=>Math.floor(Math.random()*n);
+const growable=()=>{const gh=pc('greenhouse');return ALLC.filter(c=>LV[c]<=G.lv&&(!GHONLY.includes(c)||gh)&&(SOW[c].includes(G.month)||gh||HOW[c]!=='seed'||(STO[c]||0)>0))};
+const chPl=()=>Math.min(PLOTS.length,20);
+const kday=()=>new Date(Date.now()+4*36e5).toISOString().slice(0,10); // 한국 시간 새벽 5시에 바뀜
+const baseP=c=>{const L=CANDLE[c]&&CANDLE[c].at(-1);return L?L.b:(HIST[c].at(-2)||HIST[c].at(-1))};
+const riseOf=c=>HIST[c]?pr(c)/baseP(c)-1:0;
+const valOf=(t,id,n)=>t==='m'?(MATSELL[id]||10)*n:(HIST[id]?pr(id):PRICE[id]||100)*n;
+
+// ===== 이장님 부탁 =====
+const DIFF=['쉬움','보통','어려움'],DXP=[.03,.10,.25],DMUL=[1.5,2.5,4],DQM=[1,2.5,4];
+const WORK=[['a_hoe','밭 {n}번 갈기',[4,10,25]],['a_water','물 {n}번 주기',[5,12,30]],['a_plant','씨앗이나 모종 {n}번 심기',[4,10,25]],['cleared','장애물 {n}개 치우기',[3,8,20]],['hvAll','작물 {n}개 거두기',[30,80,200]]];
+const MAKE=[['made','시설에서 {n}개 만들어 꺼내기',[3,8,20]],['cooked','부엌에서 새참 {n}번 만들기',[1,3,6]]];
+const TRV=[2,3,4],TRT=[.05,.15,.25];
+const trCrops=d=>{const L=new Set([...growable(),...ALLC.filter(c=>(STO[c]||0)>0)]);return[...L].filter(c=>(VOL[c]||1)>=TRV[d]&&HIST[c]).sort((a,b)=>(VOL[b]||1)-(VOL[a]||1))};
+function chiefMake(d){const crops=growable(),lvk=1+G.lv/50,kinds=[];
+ const prods=typeof PRODS!=='undefined'?PRODS.p.filter(x=>LV[x.c]<=G.lv&&(x.f==='homekitchen'||pc(x.f))&&x.d<=3&&NAME[x.k]):[];
+ if(crops.length)kinds.push('crop','crop');if(prods.length)kinds.push('prod');kinds.push('mat','work','work');
+ if(typeof FREC!=='undefined'&&PLACED.some(o=>FREC[o.k]))kinds.push('make');if(trCrops(d).length)kinds.push('trade');
+ const kind=kinds[rnd(kinds.length)],q={d,kind};
+ if(kind==='crop'){const c=crops[rnd(crops.length)],base=Math.max(5,Math.round((6+Math.random()*4)*(1+chPl()/10)));Object.assign(q,{t:'c',c,need:Math.round(base*[1,2.5,6][d]/5)*5||5})}
+ else if(kind==='prod'){const x=prods[rnd(prods.length)];Object.assign(q,{t:'p',c:x.k,need:[2,5,12][d]})}
+ else if(kind==='mat'){const m=Math.random()<.6?'174':'186';Object.assign(q,{t:'m',c:m,need:(m==='174'?[10,25,60]:[5,12,30])[d]})}
+ else if(kind==='work'||kind==='make'){const L=kind==='work'?WORK:MAKE,w=L[rnd(L.length)],n=Math.max(1,Math.round(w[2][d]*(w[0]==='cooked'?1:lvk)));Object.assign(q,{ck:w[0],need:n,tx:w[1].replace('{n}',n.toLocaleString('ko-KR'))})}
+ else{const n=Math.round([10,30,60][d]*(1+chPl()/20)),cs=trCrops(d);Object.assign(q,{thr:TRT[d],need:n,hint:cs.slice(0,3)})}
+ const val=q.t?valOf(q.t,q.c,q.need):0;
+ q.rw={xp:Math.max(10,Math.round(need(G.lv)*DXP[d])),m:q.t?Math.round(val*DMUL[d]/100)*100:qMoney(G.lv,DQM[d]),jd:d===1?1+rnd(2):d===2?5+rnd(6):0,st:d===2?(Math.random()<.1?'st_light':['st_time','st_rain','st_earth','st_plenty','st_life'][rnd(5)]):null};
+ return q}
+function chiefText(q){if(q.t==='c')return`${NAME[q.c]} ${q.need}개 갖다 주기`;if(q.t==='p')return`${NAME[q.c]} ${q.need}개 갖다 주기`;if(q.t==='m')return`${MATS[q.c][0]} ${q.need}개 갖다 주기`;if(q.ck)return q.tx;return`아무 작물이나 기준가보다 ${Math.round(q.thr*100)}% 넘게 오른 값에 ${q.need}개 팔기`}
+function chiefSay(q){if(q.t==='c')return`마을 잔치에 ${NAME[q.c]}${josa(NAME[q.c],'이','가')} 모자라서 그려.`;if(q.t==='p')return`읍내에 보낼 ${NAME[q.c]}${josa(NAME[q.c],'이','가')} 필요혀.`;if(q.t==='m')return`마을 길 손보는 데 쓸 거여.`;if(q.ck)return`젊은 사람 손이 좀 필요혀.`;return`장사 수완 좀 보자. 오를 때 팔아야 남는 거여.`}
+function chiefHave(q){if(q.t==='m')return MATS[q.c]?MATS[q.c][1]:0;if(q.t)return STO[q.c]||0;if(q.ck)return Math.max(0,(STAT[q.ck]||0)-q.base);return q.prog||0}
+const chiefDone=q=>chiefHave(q)>=q.need;
+function chiefTick(){const k=kday();if(CHIEF.day!==k){CHIEF.day=k;CHIEF.taken=false;CHIEF.offers=[0,1,2].map(chiefMake)}
+ const a=CHIEF.act;if(a&&a.until<Date.now()){CHIEF.act=null;if(!(typeof OFFLINE!=='undefined'&&OFFLINE))toast('이장님 부탁 기한이 지났어요')}}
+const chiefHere=()=>(CHIEF.offers&&!CHIEF.taken&&!CHIEF.act)||(CHIEF.act&&chiefDone(CHIEF.act));
+const chiefDot=()=>!!chiefHere();
+function chiefTake(i){if(CHIEF.act){toast('하던 부탁부터 마쳐 주세요');return}const q=CHIEF.offers[i];if(!q)return;
+ if(q.ck)q.base=STAT[q.ck]||0;if(q.thr)q.prog=0;q.until=Date.now()+864e5;CHIEF.act=q;CHIEF.taken=true;CHIEF.offers=null;sfx('menu');toast('부탁을 받았어요. 24시간 안에 해 주세요');saveGame&&saveGame()}
+function chiefFinish(b){const q=CHIEF.act;if(!q||!chiefDone(q))return;
+ if(q.t==='m')MATS[q.c][1]-=q.need;else if(q.t)useCrop(q.c,q.need);
+ money+=q.rw.m;STAT.chiefDone=(STAT.chiefDone||0)+1;addXp(q.rw.xp);
+ if(q.rw.jd){MATS['187'][1]+=q.rw.jd;gotPop('187',q.rw.jd,'이장님이 고맙다고 주셨어요')}
+ if(q.rw.st&&MATS[q.rw.st]){MATS[q.rw.st][1]++;gotPop(q.rw.st,1,'이장님이 덤으로 주셨어요')}
+ CHIEF.act=null;if(b){const r=b.getBoundingClientRect();gainPop('+'+won(q.rw.m),r.left+r.width/2,r.top)}sfx('trade');hudDraw();saveGame&&saveGame()}
+const rwText=r=>[won(r.m),'경험치 '+r.xp.toLocaleString('ko-KR'),r.jd?'옥돌 '+r.jd:'',r.st?matName(r.st)+' 1':''].filter(Boolean).join(' · ');
+function chiefPage(pg){chiefTick();const a=CHIEF.act;let h=`<p class="q-h">이장님 부탁 · 날마다 새벽 5시에 새 부탁이 와요</p>`;
+ if(a){const v=Math.min(a.need,chiefHave(a)),ok=v>=a.need,left=Math.max(0,Math.ceil((a.until-Date.now())/6e4));
+  h+=`<div class="gl ch-act"><b><span class="ch-d ch-d${a.d}">${DIFF[a.d]}</span>${chiefText(a)}</b><span class="gbar"><i style="width:${v/a.need*100}%"></i></span><small>${v.toLocaleString('ko-KR')} / ${a.need.toLocaleString('ko-KR')} · ${Math.floor(left/60)}시간 ${left%60}분 남음</small>${a.hint&&a.hint.length?`<small class="ch-hint">잘 오르는 작물: ${a.hint.map(c=>NAME[c]).join(', ')}</small>`:''}<span class="rw">${rwText(a.rw)}</span><button type="button" id="ch-fin" ${ok?'':'disabled'}>${a.t?'건네기':'받기'}</button></div>`}
+ if(CHIEF.offers&&!CHIEF.taken){h+=`<p class="hs-note">"${a?'하던 부탁 마치면 이 중에 하나 골라 봐.':'오늘은 이 중에 하나만 골라서 해 줘.'}" 고른 때부터 24시간 안에 하면 돼요.</p>`+CHIEF.offers.map((q,i)=>`<div class="gl"><b><span class="ch-d ch-d${q.d}">${DIFF[q.d]}</span>${chiefText(q)}</b><small>"${chiefSay(q)}"${q.t?` · 지금 가진 것 ${chiefHave(q).toLocaleString('ko-KR')}`:''}</small>${q.hint&&q.hint.length?`<small class="ch-hint">잘 오르는 작물: ${q.hint.map(c=>NAME[c]).join(', ')}</small>`:''}<span class="rw">${rwText(q.rw)}</span><button type="button" class="ch-take" data-i="${i}" ${a?'disabled':''}>이걸로</button></div>`).join('')}
+ else if(!a)h+=`<p class="hs-note">오늘 부탁은 끝났어요. 새벽 5시에 이장님이 또 오세요.</p>`;
+ pg.innerHTML=h;pg.querySelectorAll('.ch-take').forEach(b=>b.onclick=()=>{chiefTake(+b.dataset.i);nbDraw()});
+ const f=document.getElementById('ch-fin');if(f)f.onclick=()=>{chiefFinish(f);nbDraw()}}
+// 장사 부탁: 오른 값에 판 개수 세기 (팔아서 값이 내려가기 전 시세로 셈)
+{const _si=sellImpact;sellImpact=function(c,n){const q=CHIEF.act;if(q&&q.thr&&q.until>Date.now()&&riseOf(c)>=q.thr-1e-9)q.prog=(q.prog||0)+n;return _si.apply(this,arguments)}}
+
+// ===== 명절 상인 =====
+const HOL=[{k:'seol',n:'설',m:2,d:0,ic:'bokjori',crops:['rice','jujube','ginseng'],
+  goods:[['m:stamp',6,2],['m:st_light',12,1],['m:rumor',2,3],['food:tg',8,1]],deco:[['bokjori',200000],['kite',300000]]},
+ {k:'chuseok',n:'추석',m:9,d:9,ic:'moonlantern',crops:['apple','pear','chestnut'],
+  goods:[['m:jd_plenty',6,2],['m:jd_rain',5,2],['m:jd_time',4,3],['food:sp',4,3]],deco:[['moonlantern',300000],['songpyeon',200000]]}];
+function holNow(){const dn=(G.month-1)*20+G.day;for(const h of HOL){const ahead=((h.m-1)*20+h.d-dn+240)%240;if(ahead<=10)return{h,ahead}}return null}
+const merPrem=a=>.2+.3*(10-a)/10;
+const merCap=()=>20+G.lv*2;
+function merTick(){const cur=holNow(),now=Date.now();
+ if(!cur){if(MER.on)MER.on=false;return}
+ if(!MER.on||MER.h!==cur.h.k||now-(MER.last||0)>30*6e4){MER={on:true,h:cur.h.k,sold:{},got:{},last:now};
+  if(!(typeof OFFLINE!=='undefined'&&OFFLINE))toast(`이장님: ${cur.h.n} 대목이라 장사꾼이 왔다더라. 대문 앞에 가 봐`)}
+ MER.last=now}
+const merHere=()=>MER.on&&!!holNow();
+const goodName=k=>{const [t,id]=k.split(':');return t==='food'?FOODS[id][0]:qName(k)};
+const goodIc=k=>{const [t,id]=k.split(':');return t==='food'?KIT.ic[id]:qIcon(k)};
+let merTab='buy';
+function merOpen(){if(sheet.classList.contains('on'))closeSheet();document.getElementById('merwin').hidden=false;merTab='buy';merDraw()}
+function merDraw(){const cur=holNow();if(!cur||!MER.on){document.getElementById('merwin').hidden=true;return}const H=cur.h,pm=merPrem(cur.ahead);
+ document.getElementById('mer-sub').textContent=cur.ahead?`${H.n}까지 ${cur.ahead}일 · 웃돈 +${Math.round(pm*100)}%`:`오늘이 ${H.n} · 웃돈 +${Math.round(pm*100)}% · 내일 떠나요`;
+ document.getElementById('mer-tabs').innerHTML=[['buy','사 가요'],['sell','팔아요']].map(([k,l])=>`<button type="button" role="tab" data-k="${k}" aria-selected="${k===merTab}">${l}</button>`).join('');
+ const pg=document.getElementById('mer-page');let h='';
+ if(merTab==='buy'){h=`<p class="hs-note">"${H.n} 차례상에 올릴 거 있으면 넘겨. 시세보다 쳐 줄게." 명절에 가까울수록 웃돈이 붙어요. 대목마다 작물별로 ${merCap()}개까지 사 가요.</p>`;
+  h+=H.crops.filter(c=>NAME[c]&&HIST[c]).map(c=>{const have=STO[c]||0,left=Math.max(0,merCap()-(MER.sold[c]||0)),q=Math.min(have,left),p=Math.round(pr(c)*(1+pm));
+   return`<div class="rc"><img src="${A[c+'_3']}" alt=""><div><b>${NAME[c]}</b><small>1개 ${won(p)} (상 등급 기준, 등급 따라 달라요) · 더 살 수 있는 양 ${left}개</small><span class="ing"><span>창고 ${have}개</span></span></div><span class="mer-bt">${(()=>{const B=[];if(q>10)B.push([10,'10개']);if(q>0)B.push([q,q>10?'전부':q+'개']);return B.map(([x,l])=>`<button type="button" class="mer-s" data-c="${c}" data-n="${x}">${l}</button>`).join('')||'<button type="button" disabled>없음</button>'})()}</span></div>`}).join('')}
+ else{const jd=matHave('187');h=`<p class="hs-note">"이건 이맘때만 들고 다니는 거여." 가진 옥돌 ${jd}개</p>`;
+  h+=H.goods.map(([k,p,lim])=>{const n=MER.got[k]||0,left=lim-n,ok=left>0&&jd>=p;return`<div class="rc"><img src="${goodIc(k)}" alt=""><div><b>${goodName(k)}</b><small>옥돌 ${p}개 · 이번 대목에 ${left}개 남음</small></div><button type="button" class="mer-g" data-k="${k}" ${ok?'':'disabled'}>사기</button></div>`}).join('');
+  h+=`<p class="q-h">${H.n} 꾸미기</p>`+H.deco.map(([k,p])=>`<div class="rc"><img src="${PL.img[k]}" alt=""><div><b>${HDECO[k][0]}</b><small>${won(p)} · ${fxText(HDECO[k][2])}</small></div><button type="button" class="mer-d" data-k="${k}" data-p="${p}" ${money>=p?'':'disabled'}>놓기</button></div>`).join('')}
+ pg.innerHTML=h;
+ pg.querySelectorAll('.mer-s').forEach(b=>b.onclick=()=>merSell(b.dataset.c,+b.dataset.n,b));
+ pg.querySelectorAll('.mer-g').forEach(b=>b.onclick=()=>merBuy(b.dataset.k,b));
+ pg.querySelectorAll('.mer-d').forEach(b=>b.onclick=()=>{document.getElementById('merwin').hidden=true;placeBuyStart({k:'d:'+b.dataset.k,price:+b.dataset.p})})}
+function merSell(c,n,b){const cur=holNow();if(!cur)return;n=Math.min(n,STO[c]||0,merCap()-(MER.sold[c]||0));if(n<=0)return;const pm=merPrem(cur.ahead);let need=n,pay=0;
+ LOTS.filter(l=>l.c===c).sort((a,b)=>GRADES.indexOf(a.g)-GRADES.indexOf(b.g)||a.d-b.d).forEach(l=>{const k=Math.min(l.n,need);if(k<=0)return;pay+=lotPr(l)*k*(1+pm);l.n-=k;need-=k});
+ for(let i=LOTS.length-1;i>=0;i--)if(LOTS[i].n<=0)LOTS.splice(i,1);stoSync();pay=Math.round(pay);
+ money+=pay;STAT.sold+=pay;MER.sold[c]=(MER.sold[c]||0)+n;addXp(Math.round(pay/300)||1);const r=b.getBoundingClientRect();gainPop('+'+won(pay),r.left+r.width/2,r.top);sfx('trade');hudDraw();merDraw()}
+function merBuy(k,b){const cur=holNow();if(!cur)return;const g=cur.h.goods.find(x=>x[0]===k);if(!g)return;const [,p,lim]=g;if((MER.got[k]||0)>=lim||matHave('187')<p)return;
+ MATS['187'][1]-=p;MER.got[k]=(MER.got[k]||0)+1;const [t,id]=k.split(':');if(t==='food')FOODINV[id]=(FOODINV[id]||0)+1;else qAdd(k,1);
+ const r=b.getBoundingClientRect();gainPop(goodName(k)+' +1',r.left+r.width/2,r.top);sfx('trade');hudDraw();merDraw()}
+document.getElementById('mer-x').onclick=()=>document.getElementById('merwin').hidden=true;
+document.getElementById('merwin').onclick=e=>{if(e.target.id==='merwin')e.currentTarget.hidden=true};
+document.getElementById('mer-tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;merTab=b.dataset.k;merDraw()};
+
+// ===== 지도 위 이장님·상인 =====
+const npcFree=(i,j,skip)=>i>=0&&j>=0&&i<N&&j<N&&!blocked.has(i+','+j)&&!plotAt(i,j)&&!(skip&&skip.i===i&&skip.j===j)&&!PLACED.some(o=>!isG(o.k)&&i>=o.i&&i<o.i+o.w&&j>=o.j&&j<o.j+o.h);
+function npcSpot(from,skip){const [ci,cj]=from;for(let r=0;r<8;r++){const L=[];for(let a=-r;a<=r;a++)for(let b=-r;b<=r;b++)if(Math.max(Math.abs(a),Math.abs(b))===r)L.push([ci+a,cj+b]);L.sort((x,y)=>Math.hypot(x[0]-ci,x[1]-cj)-Math.hypot(y[0]-ci,y[1]-cj));for(const [i,j] of L)if(npcFree(i,j,skip))return{i,j}}return null}
+const houseB=()=>BLD.find(b=>b[0]==='house')||['house',0,0,5,5];
+function npcSpots(){const hb=houseB(),fr=[hb[1]+hb[3],hb[2]+Math.floor(hb[4]/2)],fl=[hb[1]+Math.floor(hb[3]/2),hb[2]+hb[4]];
+ const c=npcSpot(fr);const g=PLACED.find(o=>GATE[o.k]);const m=g?npcSpot([g.i,g.j],c):npcSpot(fl,c);return{chief:c,mer:m}}
+const NPCST={};let npcT0=0,npcReady=false;setTimeout(()=>npcReady=true,2500);
+function npcDraw(S){const now=performance.now(),dt=Math.min(.1,(now-(npcT0||now))/1000);npcT0=now;const sp=npcSpots();
+ [['chief',chiefHere()],['mer',merHere()]].forEach(([k,on])=>{let st=NPCST[k];const s=sp[k];
+  if(on&&s){if(!st)st=NPCST[k]={i:npcReady?N+1.5:s.i+.5,j:s.j+.5,f:0};st.leave=false;st.ti=s.i+.5;st.tj=s.j+.5}
+  else if(st){st.leave=true;st.ti=N+2;st.tj=st.j}
+  if(!st)return;const dx=st.ti-st.i,dy=st.tj-st.j,d=Math.hypot(dx,dy),mv=d>.05;
+  if(mv){const m=Math.min(d,2.2*dt);st.i+=dx/d*m;st.j+=dy/d*m;st.f+=dt*8;st.flip=(dx-dy)<0}else{st.f=0;if(st.leave){delete NPCST[k];return}}
+  st.mv=mv;const t=T(st.i,st.j);S.push({k:st.i+st.j+.3,pt:[st.i,st.j],f(){npcFig(k,t.x,t.y+TH/2+6,st)}})})}
+function npcFig(k,x,y,st){const c=cx,w=st.mv?Math.sin(st.f)*5:0,bob=st.mv?Math.abs(Math.sin(st.f))*2:0;c.save();c.translate(x,y);
+ c.fillStyle='rgba(30,20,10,.28)';c.beginPath();c.ellipse(0,-2,24,8,0,0,7);c.fill();
+ if(k==='mer'&&!st.mv){const hb=HOL.find(h=>h.k===MER.h);c.save();c.translate(0,24);c.fillStyle='#d9b468';c.strokeStyle='#8a6a32';c.lineWidth=2;c.beginPath();c.moveTo(0,-26);c.lineTo(52,0);c.lineTo(0,26);c.lineTo(-52,0);c.closePath();c.fill();c.stroke();
+  if(hb){const a=PIMG[hb.deco[0][0]];if(a&&a.complete&&a.width){const hh=a.height*40/a.width;c.drawImage(a,-46,-6-hh,40,hh)}const fi=npcImg(hb.goods[3][0].split(':')[1]);if(fi&&fi.complete)c.drawImage(fi,4,-14,36,36)}c.restore()}
+ c.translate(0,-bob);if(st.flip)c.scale(-1,1);
+ const legC=k==='chief'?'#4a4e5a':'#6b4a2e',body=k==='chief'?'#e9e4d8':'#8a5a35',vest=k==='chief'?'#3f6b3a':'#7a4a28';
+ c.fillStyle=legC;c.fillRect(-11+w,-30,9,28);c.fillRect(2-w,-30,9,28);c.fillStyle='#3a2a1a';c.fillRect(-12+w,-4,11,5);c.fillRect(1-w,-4,11,5);
+ if(k==='mer'){c.fillStyle='#b8323a';c.beginPath();c.ellipse(-16,-62,15,17,0,0,7);c.fill();c.fillStyle='#e6c34a';c.fillRect(-20,-80,8,6)}
+ c.fillStyle=body;c.beginPath();c.roundRect(-17,-76,34,k==='mer'?52:48,8);c.fill();
+ c.fillStyle=vest;if(k==='chief'){c.fillRect(-17,-72,10,42);c.fillRect(7,-72,10,42)}else{c.fillRect(-4,-74,8,50)}
+ c.fillStyle=body;c.fillRect(-23,-70+w/2,7,26);c.fillRect(16,-70-w/2,7,26);c.fillStyle='#f0c79a';c.fillRect(-23,-46+w/2,7,6);c.fillRect(16,-46-w/2,7,6);
+ c.fillStyle='#f0c79a';c.beginPath();c.arc(0,-90,15,0,7);c.fill();c.fillStyle='#3a2a1a';c.fillRect(-7,-92,3,3);c.fillRect(4,-92,3,3);c.fillStyle='#b97a5a';c.fillRect(-4,-84,8,2);
+ if(k==='chief'){c.fillStyle='#d8d4cc';c.fillRect(-15,-98,4,8);c.fillRect(11,-98,4,8);c.fillStyle='#4f8a3c';c.beginPath();c.arc(0,-98,15,Math.PI,0);c.fill();c.fillRect(-2,-101,22,5);c.fillStyle='#f2e9c0';c.fillRect(-4,-108,8,5)}
+ else{c.fillStyle='#c9a35a';c.beginPath();c.moveTo(-28,-96);c.lineTo(28,-96);c.lineTo(10,-116);c.lineTo(-10,-116);c.closePath();c.fill();c.strokeStyle='#8a6a32';c.lineWidth=2;c.stroke();c.fillStyle='#3a2a1a';c.fillRect(-10,-100,20,3)}
+ c.restore()}
+const NPCIM={};function npcImg(k){if(!KIT.ic[k])return null;if(!NPCIM[k]){NPCIM[k]=new Image();NPCIM[k].src=KIT.ic[k]}return NPCIM[k]}
+const NMK={};
+function npcMarks(){const hide=deco.on||(typeof LINK!=='undefined'&&LINK);[['chief',chiefHere(),SIC.speaker||KIT.ic.btn_notebook],['mer',merHere(),null]].forEach(([k,on,src])=>{const st=NPCST[k];let e=NMK[k];
+  if(hide||!on||!st||st.mv){if(e)e.hidden=true;return}
+  if(!e){e=NMK[k]=document.createElement('button');e.type='button';e.className='mk ripe fmk npcmk';e.innerHTML='<img alt="">';marks.appendChild(e)}
+  if(k==='mer'){const hb=HOL.find(h=>h.k===MER.h);src=hb?SIC[hb.ic]||PL.img[hb.ic]:src}
+  e.hidden=false;e.dataset.n=k==='chief'?'!':'';const t=T(st.i,st.j);e.style.left=((t.x-cam.x)*zoom+W/2)+'px';e.style.top=((t.y-130-cam.y)*zoom+H/2)+'px';const im=e.querySelector('img');if(src&&im.getAttribute('src')!==src)im.src=src;
+  e.setAttribute('aria-label',k==='chief'?'이장님 부탁 보기':'명절 상인 좌판 열기');
+  e.onclick=ev=>{ev.stopPropagation();if(sheet.classList.contains('on'))closeSheet();if(k==='chief'){nbMode='note';nbTab='chief';nbShow(true)}else merOpen()}})}
+{const _dm=drawMarks;drawMarks=function(){_dm.apply(this,arguments);npcMarks()}}
+function npcTick(){try{chiefTick();merTick()}catch(e){console.log('npc',e)}}
+npcTick();setInterval(npcTick,1000);
+</script>
 <script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))</script>
 </body></html>
