@@ -1311,7 +1311,7 @@ function setDraw(){const tg=(k,l,d)=>`<div class="set-r"><span>${l}${d?`<small>$
  const seg=(k,l,opts,d)=>`<div class="set-r"><span>${l}${d?`<small>${d}</small>`:''}</span><div class="set-seg">${opts.map(([v,t])=>`<button type="button" id="sg-${k}-${v}" data-k="${k}" data-v="${v}" aria-pressed="${SET[k]==v}">${t}</button>`).join('')}</div></div>`;
  const rng=(k,l)=>`<div class="set-r"><span>${l}<small>${k==='sfx'?'밭일, 사고팔기, 메뉴 소리':'농장 노래 · 0이면 꺼져요'}</small></span><input type="range" min="0" max="100" step="5" id="rg-${k}" data-k="${k}" value="${SET[k]}" aria-label="${l}"></div>`;
  document.getElementById('set-page').innerHTML=`
- ${USER?`<div class="set-g"><h4>계정</h4>${SY.user?`<div class="set-r"><span>${SY.user.displayName||'구글 계정'}${window.SHG_ADMIN?' · 운영자':''}<small>${SY.user.email||''} · ${SY.last?'마지막 저장 '+new Date(SY.last).toLocaleTimeString('ko-KR',{hour:'numeric',minute:'2-digit'}):'저장 준비 중'}</small></span><button type="button" class="set-btn" id="set-syup">지금 저장</button></div><div class="set-r"><span>로그아웃<small>이 기기의 농장은 그대로 남아요</small></span><button type="button" class="set-btn" id="set-out">로그아웃</button></div>`:`<div class="set-r"><span>구글로 로그인<small>농장을 계정에 저장해서 폰·PC 어디서든 이어서 해요</small></span><button type="button" class="set-btn" id="set-in">로그인</button></div>`}</div>`:''}
+ ${USER?`<div class="set-g"><h4>계정</h4>${SY.user?`<div class="set-r"><span>${SY.user.displayName||'구글 계정'}${window.SHG_ADMIN?' · 운영자':''}<small>${SY.user.email||''} · ${SY.last?'마지막 저장 '+new Date(SY.last).toLocaleTimeString('ko-KR',{hour:'numeric',minute:'2-digit'}):'저장 준비 중'}</small></span><button type="button" class="set-btn" id="set-syup">지금 저장</button></div><div class="set-r"><span>로그아웃<small>이 기기의 농장은 그대로 남아요</small></span><button type="button" class="set-btn" id="set-out">로그아웃</button></div><div class="set-r"><span>백업에서 되살리기<small>예전에 저장된 농장으로 되돌려요</small></span><button type="button" class="set-btn" id="set-bak">보기</button></div>`:`<div class="set-r"><span>구글로 로그인<small>농장을 계정에 저장해서 폰·PC 어디서든 이어서 해요</small></span><button type="button" class="set-btn" id="set-in">로그인</button></div>`}</div>`:''}
  <div class="set-g"><h4>소식</h4><div class="set-r"><span>공지사항<small>업데이트 소식</small></span><button type="button" class="set-btn" id="set-nt">보기</button></div></div>
  <div class="set-g"><h4>소리</h4>${rng('sfx','효과음')}${rng('bgm','배경 음악')}</div>
  <div class="set-g"><h4>화면</h4>${tg('pop','거둘 때 숫자 띄우기','개수와 경험치가 주인공 위에 떠요')}${tg('news','시세 뉴스 띠','새 뉴스가 나오면 위에 흘러가요')}${tg('wxfx','날씨 효과','비와 눈이 내리는 그림')}</div>
@@ -1331,7 +1331,7 @@ document.getElementById('set-page').onclick=e=>{const b=e.target.closest('button
  else if(b.id==='set-nt'){ntShow()}
  else if(b.id==='set-in'){syLogin()}
  else if(b.id==='set-out'){syLogout()}
- else if(b.id==='set-syup'){syUp(true).then(()=>{toast(SY.err&&SY.err.startsWith('up')?'저장하지 못했어요':'계정에 저장했어요');setDraw()})}
+ else if(b.id==='set-bak'){bakOpen()}else if(b.id==='set-syup'){syUp(true).then(()=>{toast(SY.err&&SY.err.startsWith('up')?'저장하지 못했어요':'계정에 저장했어요');setDraw()})}
  else if(b.id==='set-reset'){confirmBox('처음부터 다시 할까요?','레벨 1, 돈 3만 원부터 새로 시작해요. 지금까지 한 일이 모두 없어지고 설정만 남아요.',()=>{noSave=true;try{localStorage.removeItem(SAVEKEY);localStorage.setItem('shg-newbie','1');if(SY.user)localStorage.setItem('shg-sync-up','1')}catch(_){}location.reload()},'다시 하기',true);return}
  else return;setSave();setDraw()};
 document.getElementById('set-page').oninput=e=>{const r=e.target.closest('input[type=range]');if(!r)return;SET[r.dataset.k]=+r.value;setSave();if(r.dataset.k==='bgm')bgmVol()};document.getElementById('set-page').onchange=e=>{if(e.target.dataset&&e.target.dataset.k==='sfx')sfx('menu')};
@@ -2404,6 +2404,12 @@ async function syUp(force){if(!SY.user||SY.busy||noSave)return;if(!force&&SY.act
   if(!ok)await fdoc(SY.user.uid).set(fd);
   SY.hash=h;SY.last=Date.now();SY.upAt=t0;SY.joined=true;sySetBase(sm.ts);lsS('shg-sync-uid',SY.user.uid);lsS('shg-sync-up',null)}catch(e){SY.err='up:'+(e.code||e.message)}SY.busy=false}
 async function syBackup(uid,str,why){try{const bin=await gz(str);await fdoc(uid).collection('backups').doc(String(Date.now())).set({data:firebase.firestore.Blob.fromUint8Array(bin),why,...sySum(str)})}catch(_){}}
+// 계정 백업 목록에서 골라 되살리기
+async function bakOpen(){if(!SY.user){toast('먼저 로그인해 주세요');return}toast('백업을 불러오는 중이에요');
+ try{const q=await fdoc(SY.user.uid).collection('backups').orderBy(firebase.firestore.FieldPath.documentId(),'desc').limit(12).get();const L=q.docs.map(d=>({id:d.id,...d.data()}));if(!L.length){alertBox('백업이 없어요','아직 계정에 남은 백업이 없어요.');return}
+  const f=x=>`Lv${x.lv||1} · ${won(x.money||0)} · ${new Date(+x.id).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'})}`;setShow(false);
+  objMenu('어느 농장으로 되살릴까요?',L.map(x=>[`${f(x)}<small style="display:block;font-size:.72em;opacity:.75">${x.why||''}</small>`,'',()=>confirmBox('이 농장으로 되살릴까요?',`${f(x)} 농장으로 바꿔요. 지금 농장도 백업으로 남겨 둬요.`,async()=>{try{const str=await gunz(x.data.toUint8Array());saveGame();const cur=lsG(SAVEKEY);if(cur)await syBackup(SY.user.uid,cur,'되살리기 전 농장');const snap=await fdoc(SY.user.uid).get();if(snap.exists)sySetBase(snap.data().ts||0);lsS('shg-sync-uid',SY.user.uid);lsS('shg-sync-up','1');lsS('shg-sync-msg','백업한 농장으로 되살렸어요');syApply(str)}catch(e){alertBox('되살리지 못했어요',e.code||e.message||'잠시 뒤 다시 해 주세요')}},'되살리기',false)]),'계정에 남아 있는 백업이에요. 가장 최근 것이 위에 있어요.')}
+ catch(e){alertBox('백업을 불러오지 못했어요',e.code||e.message||'잠시 뒤 다시 해 주세요')}}
 function syApply(str){noSave=true;lsS(SAVEKEY,str);lsS('shg-newbie',null);location.reload()}
 async function syOnLogin(u){setTimeout(mlFetch,1500);STAT.login=1;
  {let ovr=SY.override;try{if(sessionStorage.getItem('shg-ovr')){ovr=true;sessionStorage.removeItem('shg-ovr')}}catch(_){}
