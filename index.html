@@ -614,6 +614,7 @@ body:has(.bag-win:not([hidden])) #qslots,body:has(.mk-win:not([hidden])) #qslots
 .gl .ch-hint{display:block;color:#7a5a2e}
 #mer-page .rc .mer-bt{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
 .mk.npcmk img{width:70%;height:70%}
+.npc-say{display:flex;gap:10px;align-items:center;background:#fff8e6;border:2px solid #e2cfa4;border-radius:12px;padding:8px 10px;margin:4px 0 10px}.npc-say img{width:64px;height:64px;object-fit:cover;object-position:top;border-radius:50%;background:#f2e3bf;flex:none}.npc-say p{margin:0;font:500 .9rem/1.4 var(--f-b);color:#3a2a1a}.npc-say b{display:block;font-size:.8rem;color:#7a5a2e}.npc-say small{display:block;color:#8a7a62;font-size:.75rem}
 </style>
 </section><section class="bag-win" id="setwin" hidden role="dialog" aria-label="설정">
  <div class="bag-box set-box">
@@ -2803,7 +2804,7 @@ function chiefMake(d){const crops=growable(),lvk=1+G.lv/50,kinds=[];
  else if(kind==='work'||kind==='make'){const L=kind==='work'?WORK:MAKE,w=L[rnd(L.length)],n=Math.max(1,Math.round(w[2][d]*(w[0]==='cooked'?1:lvk)));Object.assign(q,{ck:w[0],need:n,tx:w[1].replace('{n}',n.toLocaleString('ko-KR'))})}
  else{const n=Math.round([10,30,60][d]*(1+chPl()/20)),cs=trCrops(d);Object.assign(q,{thr:TRT[d],need:n,hint:cs.slice(0,3)})}
  const val=q.t?valOf(q.t,q.c,q.need):0;
- q.rw={xp:Math.max(10,Math.round(need(G.lv)*DXP[d])),m:q.t?Math.round(val*DMUL[d]/100)*100:qMoney(G.lv,DQM[d]),jd:d===1?1+rnd(2):d===2?5+rnd(6):0,st:d===2?(Math.random()<.1?'st_light':['st_time','st_rain','st_earth','st_plenty','st_life'][rnd(5)]):null};
+ q.rw={xp:Math.max(10,Math.round(need(G.lv)*DXP[d])),m:Math.max(q.t?Math.round(val*DMUL[d]/100)*100:0,qMoney(G.lv,DQM[d])),jd:d===1?1+rnd(2):d===2?5+rnd(6):0,st:d===2?(Math.random()<.1?'st_light':['st_time','st_rain','st_earth','st_plenty','st_life'][rnd(5)]):null};
  return q}
 function chiefText(q){if(q.t==='c')return`${NAME[q.c]} ${q.need}개 갖다 주기`;if(q.t==='p')return`${NAME[q.c]} ${q.need}개 갖다 주기`;if(q.t==='m')return`${MATS[q.c][0]} ${q.need}개 갖다 주기`;if(q.ck)return q.tx;return`아무 작물이나 기준가보다 ${Math.round(q.thr*100)}% 넘게 오른 값에 ${q.need}개 팔기`}
 function chiefSay(q){if(q.t==='c')return`마을 잔치에 ${NAME[q.c]}${josa(NAME[q.c],'이','가')} 모자라서 그려.`;if(q.t==='p')return`읍내에 보낼 ${NAME[q.c]}${josa(NAME[q.c],'이','가')} 필요혀.`;if(q.t==='m')return`마을 길 손보는 데 쓸 거여.`;if(q.ck)return`젊은 사람 손이 좀 필요혀.`;return`장사 수완 좀 보자. 오를 때 팔아야 남는 거여.`}
@@ -2822,7 +2823,7 @@ function chiefFinish(b){const q=CHIEF.act;if(!q||!chiefDone(q))return;
  if(q.rw.st&&MATS[q.rw.st]){MATS[q.rw.st][1]++;gotPop(q.rw.st,1,'이장님이 덤으로 주셨어요')}
  CHIEF.act=null;if(b){const r=b.getBoundingClientRect();gainPop('+'+won(q.rw.m),r.left+r.width/2,r.top)}sfx('trade');hudDraw();saveGame&&saveGame()}
 const rwText=r=>[won(r.m),'경험치 '+r.xp.toLocaleString('ko-KR'),r.jd?'옥돌 '+r.jd:'',r.st?matName(r.st)+' 1':''].filter(Boolean).join(' · ');
-function chiefPage(pg){chiefTick();const a=CHIEF.act;let h=`<p class="q-h">이장님 부탁 · 날마다 새벽 5시에 새 부탁이 와요</p>`;
+function chiefPage(pg){chiefTick();const a=CHIEF.act;let h=`<div class="npc-say"><img src="${NPCFACE.chief}" alt=""><p><b>이장님</b>${a?'"부탁한 거 잘 돼 가?"':CHIEF.offers&&!CHIEF.taken?'"왔는가. 오늘 좀 도와줄 거 있는디."':'"오늘은 됐어. 고생혔어."'}<small>날마다 새벽 5시에 새 부탁이 와요</small></p></div>`;
  if(a){const v=Math.min(a.need,chiefHave(a)),ok=v>=a.need,left=Math.max(0,Math.ceil((a.until-Date.now())/6e4));
   h+=`<div class="gl ch-act"><b><span class="ch-d ch-d${a.d}">${DIFF[a.d]}</span>${chiefText(a)}</b><span class="gbar"><i style="width:${v/a.need*100}%"></i></span><small>${v.toLocaleString('ko-KR')} / ${a.need.toLocaleString('ko-KR')} · ${Math.floor(left/60)}시간 ${left%60}분 남음</small>${a.hint&&a.hint.length?`<small class="ch-hint">잘 오르는 작물: ${a.hint.map(c=>NAME[c]).join(', ')}</small>`:''}<span class="rw">${rwText(a.rw)}</span><button type="button" id="ch-fin" ${ok?'':'disabled'}>${a.t?'건네기':'받기'}</button></div>`}
  if(CHIEF.offers&&!CHIEF.taken){h+=`<p class="hs-note">"${a?'하던 부탁 마치면 이 중에 하나 골라 봐.':'오늘은 이 중에 하나만 골라서 해 줘.'}" 고른 때부터 24시간 안에 하면 돼요.</p>`+CHIEF.offers.map((q,i)=>`<div class="gl"><b><span class="ch-d ch-d${q.d}">${DIFF[q.d]}</span>${chiefText(q)}</b><small>"${chiefSay(q)}"${q.t?` · 지금 가진 것 ${chiefHave(q).toLocaleString('ko-KR')}`:''}</small>${q.hint&&q.hint.length?`<small class="ch-hint">잘 오르는 작물: ${q.hint.map(c=>NAME[c]).join(', ')}</small>`:''}<span class="rw">${rwText(q.rw)}</span><button type="button" class="ch-take" data-i="${i}" ${a?'disabled':''}>이걸로</button></div>`).join('')}
@@ -2854,10 +2855,11 @@ function merDraw(){const cur=holNow();if(!cur||!MER.on){document.getElementById(
  document.getElementById('mer-sub').textContent=cur.ahead?`${H.n}까지 ${cur.ahead}일 · 웃돈 +${Math.round(pm*100)}%`:`오늘이 ${H.n} · 웃돈 +${Math.round(pm*100)}% · 내일 떠나요`;
  document.getElementById('mer-tabs').innerHTML=[['buy','사 가요'],['sell','팔아요']].map(([k,l])=>`<button type="button" role="tab" data-k="${k}" aria-selected="${k===merTab}">${l}</button>`).join('');
  const pg=document.getElementById('mer-page');let h='';
- if(merTab==='buy'){h=`<p class="hs-note">"${H.n} 차례상에 올릴 거 있으면 넘겨. 시세보다 쳐 줄게." 명절에 가까울수록 웃돈이 붙어요. 대목마다 작물별로 ${merCap()}개까지 사 가요.</p>`;
+ const say=t=>`<div class="npc-say"><img src="${NPCFACE.mer}" alt=""><p><b>명절 상인</b>${t}</p></div>`;
+ if(merTab==='buy'){h=say(`"${H.n} 차례상에 올릴 거 있으면 넘겨요! 시세보다 쳐 드릴게요."`)+`<p class="hs-note">명절에 가까울수록 웃돈이 붙어요. 대목마다 작물별로 ${merCap()}개까지 사 가요.</p>`;
   h+=H.crops.filter(c=>NAME[c]&&HIST[c]).map(c=>{const have=STO[c]||0,left=Math.max(0,merCap()-(MER.sold[c]||0)),q=Math.min(have,left),p=Math.round(pr(c)*(1+pm));
    return`<div class="rc"><img src="${A[c+'_3']}" alt=""><div><b>${NAME[c]}</b><small>1개 ${won(p)} (상 등급 기준, 등급 따라 달라요) · 더 살 수 있는 양 ${left}개</small><span class="ing"><span>창고 ${have}개</span></span></div><span class="mer-bt">${(()=>{const B=[];if(q>10)B.push([10,'10개']);if(q>0)B.push([q,q>10?'전부':q+'개']);return B.map(([x,l])=>`<button type="button" class="mer-s" data-c="${c}" data-n="${x}">${l}</button>`).join('')||'<button type="button" disabled>없음</button>'})()}</span></div>`}).join('')}
- else{const jd=matHave('187');h=`<p class="hs-note">"이건 이맘때만 들고 다니는 거여." 가진 옥돌 ${jd}개</p>`;
+ else{const jd=matHave('187');h=say(`"이건 이맘때만 들고 다니는 거예요!"`)+`<p class="hs-note">가진 옥돌 ${jd}개</p>`;
   h+=H.goods.map(([k,p,lim])=>{const n=MER.got[k]||0,left=lim-n,ok=left>0&&jd>=p;return`<div class="rc"><img src="${goodIc(k)}" alt=""><div><b>${goodName(k)}</b><small>옥돌 ${p}개 · 이번 대목에 ${left}개 남음</small></div><button type="button" class="mer-g" data-k="${k}" ${ok?'':'disabled'}>사기</button></div>`}).join('');
   h+=`<p class="q-h">${H.n} 꾸미기</p>`+H.deco.map(([k,p])=>`<div class="rc"><img src="${PL.img[k]}" alt=""><div><b>${HDECO[k][0]}</b><small>${won(p)} · ${fxText(HDECO[k][2])}</small></div><button type="button" class="mer-d" data-k="${k}" data-p="${p}" ${money>=p?'':'disabled'}>놓기</button></div>`).join('')}
  pg.innerHTML=h;
@@ -2882,27 +2884,16 @@ const houseB=()=>BLD.find(b=>b[0]==='house')||['house',0,0,5,5];
 function npcSpots(){const hb=houseB(),fr=[hb[1]+hb[3],hb[2]+Math.floor(hb[4]/2)],fl=[hb[1]+Math.floor(hb[3]/2),hb[2]+hb[4]];
  const c=npcSpot(fr);const g=PLACED.find(o=>GATE[o.k]);const m=g?npcSpot([g.i,g.j],c):npcSpot(fl,c);return{chief:c,mer:m}}
 const NPCST={};let npcT0=0,npcReady=false;setTimeout(()=>npcReady=true,2500);
-function npcDraw(S){const now=performance.now(),dt=Math.min(.1,(now-(npcT0||now))/1000);npcT0=now;const sp=npcSpots();
- [['chief',chiefHere()],['mer',merHere()]].forEach(([k,on])=>{let st=NPCST[k];const s=sp[k];
-  if(on&&s){if(!st)st=NPCST[k]={i:npcReady?N+1.5:s.i+.5,j:s.j+.5,f:0};st.leave=false;st.ti=s.i+.5;st.tj=s.j+.5}
-  else if(st){st.leave=true;st.ti=N+2;st.tj=st.j}
-  if(!st)return;const dx=st.ti-st.i,dy=st.tj-st.j,d=Math.hypot(dx,dy),mv=d>.05;
-  if(mv){const m=Math.min(d,2.2*dt);st.i+=dx/d*m;st.j+=dy/d*m;st.f+=dt*8;st.flip=(dx-dy)<0}else{st.f=0;if(st.leave){delete NPCST[k];return}}
-  st.mv=mv;const t=T(st.i,st.j);S.push({k:st.i+st.j+.3,pt:[st.i,st.j],f(){npcFig(k,t.x,t.y+TH/2+6,st)}})})}
-function npcFig(k,x,y,st){const c=cx,w=st.mv?Math.sin(st.f)*5:0,bob=st.mv?Math.abs(Math.sin(st.f))*2:0;c.save();c.translate(x,y);
- c.fillStyle='rgba(30,20,10,.28)';c.beginPath();c.ellipse(0,-2,24,8,0,0,7);c.fill();
- if(k==='mer'&&!st.mv){const hb=HOL.find(h=>h.k===MER.h);c.save();c.translate(0,24);c.fillStyle='#d9b468';c.strokeStyle='#8a6a32';c.lineWidth=2;c.beginPath();c.moveTo(0,-26);c.lineTo(52,0);c.lineTo(0,26);c.lineTo(-52,0);c.closePath();c.fill();c.stroke();
-  if(hb){const a=PIMG[hb.deco[0][0]];if(a&&a.complete&&a.width){const hh=a.height*40/a.width;c.drawImage(a,-46,-6-hh,40,hh)}const fi=npcImg(hb.goods[3][0].split(':')[1]);if(fi&&fi.complete)c.drawImage(fi,4,-14,36,36)}c.restore()}
- c.translate(0,-bob);if(st.flip)c.scale(-1,1);
- const legC=k==='chief'?'#4a4e5a':'#6b4a2e',body=k==='chief'?'#e9e4d8':'#8a5a35',vest=k==='chief'?'#3f6b3a':'#7a4a28';
- c.fillStyle=legC;c.fillRect(-11+w,-30,9,28);c.fillRect(2-w,-30,9,28);c.fillStyle='#3a2a1a';c.fillRect(-12+w,-4,11,5);c.fillRect(1-w,-4,11,5);
- if(k==='mer'){c.fillStyle='#b8323a';c.beginPath();c.ellipse(-16,-62,15,17,0,0,7);c.fill();c.fillStyle='#e6c34a';c.fillRect(-20,-80,8,6)}
- c.fillStyle=body;c.beginPath();c.roundRect(-17,-76,34,k==='mer'?52:48,8);c.fill();
- c.fillStyle=vest;if(k==='chief'){c.fillRect(-17,-72,10,42);c.fillRect(7,-72,10,42)}else{c.fillRect(-4,-74,8,50)}
- c.fillStyle=body;c.fillRect(-23,-70+w/2,7,26);c.fillRect(16,-70-w/2,7,26);c.fillStyle='#f0c79a';c.fillRect(-23,-46+w/2,7,6);c.fillRect(16,-46-w/2,7,6);
- c.fillStyle='#f0c79a';c.beginPath();c.arc(0,-90,15,0,7);c.fill();c.fillStyle='#3a2a1a';c.fillRect(-7,-92,3,3);c.fillRect(4,-92,3,3);c.fillStyle='#b97a5a';c.fillRect(-4,-84,8,2);
- if(k==='chief'){c.fillStyle='#d8d4cc';c.fillRect(-15,-98,4,8);c.fillRect(11,-98,4,8);c.fillStyle='#4f8a3c';c.beginPath();c.arc(0,-98,15,Math.PI,0);c.fill();c.fillRect(-2,-101,22,5);c.fillStyle='#f2e9c0';c.fillRect(-4,-108,8,5)}
- else{c.fillStyle='#c9a35a';c.beginPath();c.moveTo(-28,-96);c.lineTo(28,-96);c.lineTo(10,-116);c.lineTo(-10,-116);c.closePath();c.fill();c.strokeStyle='#8a6a32';c.lineWidth=2;c.stroke();c.fillStyle='#3a2a1a';c.fillRect(-10,-100,20,3)}
+const NPCPIC={chief:'a/83abe2047dff.webp',mer:'a/f296df10f261.webp'},NPCFACE={chief:'a/74bc08dd5e9e.webp',mer:'a/76a94cb3d922.webp'},NPCH={chief:120,mer:126};
+const NPCIMG={};Object.entries(NPCPIC).forEach(([k,u])=>{const im=new Image();im.src=u;NPCIMG[k]=im});
+function npcDraw(S){const sp=npcSpots();
+ [['chief',chiefHere()],['mer',merHere()]].forEach(([k,on])=>{const s=sp[k];if(!on||!s){delete NPCST[k];return}
+  const st=NPCST[k]={i:s.i+.5,j:s.j+.5,mv:false},t=T(st.i,st.j);S.push({k:st.i+st.j+.3,pt:[st.i,st.j],f(){npcFig(k,t.x,t.y+TH/2+6)}})})}
+function npcFig(k,x,y){const c=cx,im=NPCIMG[k];c.save();c.translate(x,y);
+ c.fillStyle='rgba(30,20,10,.28)';c.beginPath();c.ellipse(0,-2,26,9,0,0,7);c.fill();
+ if(k==='mer'){const hb=HOL.find(h=>h.k===MER.h);c.save();c.translate(0,26);c.fillStyle='#d9b468';c.strokeStyle='#8a6a32';c.lineWidth=2;c.beginPath();c.moveTo(0,-26);c.lineTo(52,0);c.lineTo(0,26);c.lineTo(-52,0);c.closePath();c.fill();c.stroke();
+  if(hb){const a=PIMG[hb.deco[0][0]];if(a&&a.complete&&a.width){const hh=a.height*40/a.width;c.drawImage(a,-48,-4-hh,40,hh)}const fi=npcImg(hb.goods[3][0].split(':')[1]);if(fi&&fi.complete)c.drawImage(fi,8,-12,34,34)}c.restore()}
+ if(im&&im.complete&&im.width){const h=NPCH[k],w=im.width*h/im.height;c.drawImage(im,-w/2,-h+4,w,h)}
  c.restore()}
 const NPCIM={};function npcImg(k){if(!KIT.ic[k])return null;if(!NPCIM[k]){NPCIM[k]=new Image();NPCIM[k].src=KIT.ic[k]}return NPCIM[k]}
 const NMK={};
