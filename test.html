@@ -2621,12 +2621,13 @@ function fenceLine(a,b,n){const H=15;const P=[];for(let k=0;k<=n;k++)P.push({x:a
  P.forEach(p=>{cx.fillStyle='#5a3a1c';cx.fillRect(p.x-3,p.y-H-3,6,H+4);cx.fillStyle='#c08b52';cx.fillRect(p.x-1.8,p.y-H-2,3.6,H+2);cx.fillStyle='#e0b47c';cx.fillRect(p.x-1.8,p.y-H-2,3.6,1.5);cx.fillStyle='rgba(0,0,0,.18)';cx.fillRect(p.x-3,p.y,7,2)});cx.restore()}
 function fenceBack(){fenceLine(T(0,0),T(N,0),N);fenceLine(T(0,0),T(0,N),N)}
 function fenceFront(){fenceLine(T(N,0),T(N,N),N);fenceLine(T(0,N),T(N,N),N)}
-function bgTrees(S,vis){if(!BGI.tree.length)return;const R=22;
+const BGT={b:[],f:[]};
+function bgTrees(S,vis){BGT.b.length=0;BGT.f.length=0;if(!BGI.tree.length)return;const R=22;
  for(let i=-R;i<N+R;i++)for(let j=-R;j<N+R;j++){const d=bgDist(i,j);if(d<4)continue;const t=T(i+.5,j+.5);if(!vis(t.x,t.y,260))continue;
   const front=i>=N||j>=N,near=front?d<6:d<5,dens=near?.08:Math.min(.62,.14+(d-4)*.09);const r=bgH(i,j,1);if(r>dens)continue;
   let ix;if(near||(front&&d<8))ix=8+Math.floor(bgH(i,j,2)*4);else ix=Math.floor(bgH(i,j,3)*8);if(front&&d<8&&ix<8)ix=8;
   const im=BGI.tree[ix];if(!im||!im.complete)continue;const ox=(bgH(i,j,4)-.5)*30,oy=(bgH(i,j,5)-.5)*14;
-  S.push({k:i+j+1,pt:[i+.5,j+.5],f(){cx.drawImage(im,t.x+ox-im.width/2,t.y+oy+18-im.height)}})}}
+  (front?BGT.f:BGT.b).push([im,t.x+ox-im.width/2,t.y+oy+18-im.height,i+j])}BGT.b.sort((a,b)=>a[3]-b[3]);BGT.f.sort((a,b)=>a[3]-b[3])}
 // 임시 비닐하우스: 그림 속 작물이 없는 터널을 코드로 그림
 const GHI={};['gh0','gh1','gh2'].forEach(k=>{const im=new Image();im.src=GHD[k].img;GHI[k]=im});
 // 건물은 자리 안쪽으로 조금 줄여 그리고(울타리·옆 건물과 안 겹치게), 안의 밭은 벽 안쪽에 맞게 줄여 그림
@@ -2698,7 +2699,7 @@ function draw(){cx.setTransform(DPR,0,0,DPR,0,0);cx.fillStyle='#7da23e';cx.fillR
  const items=S.filter(x=>!x.box).sort((a,b)=>a.k-b.k),blds=S.filter(x=>x.box).sort((a,b)=>a.k-b.k);
  const done=[];blds.forEach(bd=>{let last=-1,first=items.length;for(let n=0;n<items.length;n++){const f=front(items[n],bd);if(f<0||(f===0&&items[n].k<=bd.k))last=n;else if(first===items.length)first=n}let at=last+1;
   done.forEach(o=>{if(bd.box[1]-bd.box[2]<o.box[0]-o.box[3]-.5||o.box[1]-o.box[2]<bd.box[0]-bd.box[3]-.5)return;const behind=bd.box[1]<=o.box[0]||bd.box[3]<=o.box[2];if(!behind){const ix=items.indexOf(o);if(ix>=at)at=ix+1}});items.splice(at,0,bd);done.push(bd)});
- items.forEach(s=>s.f());fenceFront();
+ BGT.b.forEach(a=>cx.drawImage(a[0],a[1],a[2]));items.forEach(s=>s.f());BGT.f.forEach(a=>cx.drawImage(a[0],a[1],a[2]));fenceFront();
  FL.forEach(f=>{f.age+=1/60;if(f.age<0)return;const t=T(f.x,f.y),a=Math.max(0,1-f.age/1.3);cx.save();cx.globalAlpha=a;cx.font='400 30px "Do Hyeon",sans-serif';cx.textAlign='center';cx.lineWidth=5;cx.strokeStyle='rgba(40,25,10,.9)';
   const y=t.y-120-f.age*40;cx.strokeText(f.t,t.x+(FL.indexOf(f)%2?26:-26),y);cx.fillStyle=f.col;cx.fillText(f.t,t.x+(FL.indexOf(f)%2?26:-26),y);cx.restore()});
  for(let k=FL.length-1;k>=0;k--)if(FL[k].age>1.3)FL.splice(k,1);
