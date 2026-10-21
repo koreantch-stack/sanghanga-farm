@@ -649,7 +649,7 @@ const MAILIC='a/6754b97e29a8.png';const GHD={"gh0": {"img": "a/527c9de2d641.webp
 const IMG={};let loaded=0;const keys=Object.keys(A);
 keys.forEach(k=>{const im=new Image();im.onload=()=>{++loaded;window.__intro.p=loaded/keys.length*.95;if(loaded===keys.length){start();window.__intro.p=1;window.__intro.ready=true}};im.src=A[k];IMG[k]=im});
 let N=12;const TW=128,TH=64;
-const cv=document.getElementById('c'),cx=cv.getContext('2d');
+const cv=document.getElementById('c');let cx=cv.getContext('2d');
 let W=0,H=0,DPR=1,zoom=0.9,cam={x:0,y:0};
 function resize(){W=innerWidth;H=innerHeight;DPR=Math.max(1,Math.min(2,window.devicePixelRatio||1,Math.sqrt(1.7e6/(W*H))));cv.width=W*DPR;cv.height=H*DPR}
 addEventListener('resize',resize);resize();
@@ -1434,19 +1434,20 @@ function decoMode(v){deco.buy=null;deco.last=null;if(v&&(hero.act||hero.job||Q.l
 function pDraw(im,k,i,j,w,h,rot){if(k==='greenhouse'){drawGH(i,j,w,h,rot,deco.mv&&deco.mv.ref?deco.mv.ref[6]||0:0,1);return}if(k==='plot'){const t=T(i,j);cx.drawImage(IMG.plot_wild,t.x-128,t.y);return}if(isB(k)){const f=T(i+w-1,j+h-1);cx.drawImage(im,f.x-im.width/2,f.y+64-im.height+4);return}const f=T(i+w,j+h),cxp=(i-j+(w-h)/2)*TW/2;
  if(isG(k)){const t=T(i,j);cx.drawImage(im,t.x-65,t.y-1,130,66);return}
  if(rot){cx.save();cx.translate(cxp,0);cx.scale(-1,1);cx.drawImage(im,-im.width/2,f.y-im.height+4);cx.restore()}else cx.drawImage(im,cxp-im.width/2,f.y-im.height+4)}
-function decoGround(){PLACED.forEach(o=>{if(isG(o.k))pDraw(PIMG[o.k],o.k,o.i,o.j,1,1,0)})}
+let VIS=()=>true;
+function decoGround(){PLACED.forEach(o=>{if(!isG(o.k))return;const t=T(o.i,o.j);if(VIS(t.x,t.y))pDraw(PIMG[o.k],o.k,o.i,o.j,1,1,0)})}
 const famOf=k=>FAM[k]||GATE[k]||null;
 function fenceDraw(S){const M=new Map();PLACED.forEach(o=>{const f=famOf(o.k);if(f)M.set(o.i+','+o.j,{f,o,g:!!GATE[o.k]})});if(!M.size)return;const at=(i,j)=>M.get(i+','+j),E=6;
  const ctr=(i,j)=>{const t=T(i+.5,j+.5);return{x:t.x,y:t.y+6}};
  const panel=(f,ax,i,j,half)=>{// ax 'ne': (i,j)→(i,j-1), 'nw': (i,j)→(i-1,j). half: 0 전체, 1 (i,j) 쪽 절반, 2 반대쪽 절반
   const im=FZI[f][ax];if(!im.complete||!im.naturalWidth)return;const a=ctr(i,j),x0=ax==='ne'?a.x-E:a.x+E-im.width,y0=a.y+E*.5-im.height,mx=ax==='ne'?a.x+32:a.x-32;
   S.push({k:i+j+(ax==='ne'?0:0)+.48,f(){cx.save();if(half){cx.beginPath();const L=ax==='ne'?(half===1?[x0-2,mx]:[mx,x0+im.width+2]):(half===1?[mx,x0+im.width+2]:[x0-2,mx]);cx.rect(L[0],y0-50,L[1]-L[0],im.height+100);cx.clip()}cx.drawImage(im,x0,y0);cx.restore()}})};
- M.forEach(({f,o,g},key)=>{const i=o.i,j=o.j;
+ M.forEach(({f,o,g},key)=>{const i=o.i,j=o.j;{const t=T(i,j);if(!VIS(t.x,t.y,260))return}
   [['ne',i,j-1],['nw',i-1,j]].forEach(([ax,a,b])=>{const n=at(a,b);if(!n||n.f!==f||(g&&n.g))return;panel(f,ax,i,j,g?2:n.g?1:0)});
   if(g){const ne=(at(i,j-1)&&at(i,j-1).f===f)||(at(i,j+1)&&at(i,j+1).f===f),nw=(at(i-1,j)&&at(i-1,j).f===f)||(at(i+1,j)&&at(i+1,j).f===f),ax=ne||!nw?'ne':'nw',im=FZI[f].gate,c=ctr(i,j);
    S.push({k:i+j+.98,box:[i,i+1,j,j+1],f(){if(!im.naturalWidth)return;cx.save();if(ax==='nw'){cx.translate(c.x,0);cx.scale(-1,1);cx.translate(-c.x,0)}cx.drawImage(im,c.x-32-E,c.y+16+E*.5-im.height);cx.restore()}})}
   else{const im=FZI[f].post,c=ctr(i,j);S.push({k:i+j+.98,box:[i,i+1,j,j+1],f(){if(im.naturalWidth)cx.drawImage(im,c.x-im.width/2,c.y+4-im.height)}})}})}
-function decoDraw(S){fenceDraw(S);PLACED.forEach(o=>{if(isG(o.k)||famOf(o.k))return;const im=PIMG[o.k];const f=T(o.i+o.w,o.j+o.h),cxp=(o.i-o.j+(o.w-o.h)/2)*TW/2;const sel=deco.on&&deco.pick===o.id;
+function decoDraw(S){fenceDraw(S);PLACED.forEach(o=>{if(isG(o.k)||famOf(o.k))return;const im=PIMG[o.k];const f=T(o.i+o.w,o.j+o.h),cxp=(o.i-o.j+(o.w-o.h)/2)*TW/2;if(!VIS(cxp,f.y-200,500))return;const sel=deco.on&&deco.pick===o.id;
   S.push({k:o.i+o.j+o.w+o.h-1.02,box:[o.i,o.i+o.w,o.j,o.j+o.h],f(){if(sel){cx.save();cx.filter='brightness(1.25) drop-shadow(0 0 6px #ffe27a)'}pDraw(im,o.k,o.i,o.j,o.w,o.h,o.rot);if(sel)cx.restore()}})})}
 function decoGhost(){if(!deco.on)return;
  if(deco.on){cx.save();cx.strokeStyle='rgba(255,255,255,.18)';cx.lineWidth=1;for(let i=0;i<=N;i++){const a=T(i,0),b=T(i,N);cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y);cx.stroke();const c=T(0,i),d=T(N,i);cx.beginPath();cx.moveTo(c.x,c.y);cx.lineTo(d.x,d.y);cx.stroke()}cx.restore()}
@@ -1514,12 +1515,12 @@ const obsOn=(i,j)=>OBS.find(o=>o.i===i&&o.j===j);
 function freeTile(i,j){if(i<0||j<0||i>=N||j>=N)return false;if(BLD.some(([n,a,b,w,h])=>i>=a-1&&i<a+w+1&&j>=b-1&&j<b+h+1))return false;if(plotAt(i,j)||plotAt(i-1,j)||plotAt(i,j-1))return false;if(obsOn(i,j))return false;if(typeof PLACED!=='undefined'&&PLACED.some(o=>!isG(o.k)&&i>=o.i-1&&i<=o.i+o.w&&j>=o.j-1&&j<=o.j+o.h))return false;if(Math.floor(hero.i)===i&&Math.floor(hero.j)===j)return false;return true}
 const obsOk=t=>G.lv>=TIERS[OTYPE[t][2]][1];// 그 장애물을 치울 농기구 단계가 열리는 레벨부터 나옴
 function spawnObs(type){if(!obsOk(type))return false;for(let tries=0;tries<60;tries++){const i=Math.floor(Math.random()*N),j=Math.floor(Math.random()*N);if(freeTile(i,j)){OBS.push({id:++obN,t:type,i,j});return true}}return false}
-function initObs(){if(N>12){landBand(12);return}const pool=['weed','weed','weed','weed','pebble','pebble','stone','stone','rock','boulder','bush','bush','stump_s','stump','bigrock','stump_b','slab','roots'];for(let k=0;k<14;k++)spawnObs(pool[k%pool.length]);rebuildBlocked()}
+function initObs(){if(SAMPLE)return;if(N>12){landBand(12);return}const pool=['weed','weed','weed','weed','pebble','pebble','stone','stone','rock','boulder','bush','bush','stump_s','stump','bigrock','stump_b','slab','roots'];for(let k=0;k<14;k++)spawnObs(pool[k%pool.length]);rebuildBlocked()}
 // 새 장애물: 게임 하루에 많아야 5개, 사흘 동안 하나도 안 나오면 반드시 하나. 농장 전체 60개가 넘으면 더 안 나옴
 let OBSDAY={d:'',n:0};const OBSMAX=5;
 // 자리 비운 동안 밀린 날을 한꺼번에 넘길 때는 장애물을 5~8개까지만 새로 깔아요
 let CATCH=false,CATCHN=0,CATCHMAX=6;
-function obsDaily(){if(OWN.autotractor>0&&!CATCH)setTimeout(()=>machClear(true),50);STAT.obsGap=(STAT.obsGap||0)+1;if(OBS.length>=60)return;if(CATCH&&CATCHN>=CATCHMAX)return;let n=0;
+function obsDaily(){if(SAMPLE)return;if(OWN.autotractor>0&&!CATCH)setTimeout(()=>machClear(true),50);STAT.obsGap=(STAT.obsGap||0)+1;if(OBS.length>=60)return;if(CATCH&&CATCHN>=CATCHMAX)return;let n=0;
  const put=t=>{if(n<OBSMAX&&spawnObs(t))n++};
  if(Math.random()<.35*(1-fxG('obs')/100)&&OBS.filter(o=>o.t==='weed').length<35)put('weed');if(Math.random()<.12*(1-fxG('obs')/100))put(['pebble','stone','bush','stump_s'][Math.floor(Math.random()*4)]);
  if(!n&&STAT.obsGap>=3)for(const t of ['weed','pebble','stone','bush','stump_s']){if(t==='weed'&&OBS.filter(o=>o.t==='weed').length>=35)continue;put(t);if(n)break}
@@ -2664,11 +2665,17 @@ function drawTunnel(i,j,w,h){const H=96,a=ghAlpha;const P=(u,v,z)=>{const t=T(u,
  // 바닥 나무 틀
  cx.lineWidth=5;cx.strokeStyle='rgba(150,100,55,0.95)';const c=[P(i,j,0),P(i+w,j,0),P(i+w,j+h,0),P(i,j+h,0)];cx.beginPath();c.forEach((p,k)=>k?cx.lineTo(p[0],p[1]):cx.moveTo(p[0],p[1]));cx.closePath();cx.stroke();
  cx.restore()}
+// ---- 멀리 볼 때: 바닥 타일과 바닥 꾸미기를 한 장으로 미리 그려 둠
+let GC=null,GCk='';
+function baseTiles(vis){for(let i=0;i<N;i++)for(let j=0;j<N;j++){const t=T(i,j);if(vis&&!vis(t.x,t.y))continue;cx.drawImage(((i>=5&&i<10&&j<6)||(i<5&&j<5&&!(i<hSize()&&j<hSize())))?IMG.dirt:IMG.grass,t.x-65,t.y-1,130,66)}}
+function groundCache(){if(!IMG.grass.complete||!IMG.dirt.complete)return null;let h=N*7+hSize();for(const o of PLACED)if(isG(o.k)){const im=PIMG[o.k];if(!im||!im.complete)return null;h=(h*31+o.i*97+o.j*13+o.k.length*7+o.k.charCodeAt(o.k.length-1))|0}
+ const k=String(h);if(GC&&GCk===k)return GC;
+ const sc=.5,x0=T(0,N).x-70,x1=T(N,0).x+70,y0=T(0,0).y-6,y1=T(N,N).y+72;const c=document.createElement('canvas');c.width=Math.ceil((x1-x0)*sc);c.height=Math.ceil((y1-y0)*sc);const g=c.getContext('2d');if(!g)return null;g.setTransform(sc,0,0,sc,-x0*sc,-y0*sc);g.imageSmoothingEnabled=true;
+ const keep=cx,kv=VIS;cx=g;VIS=()=>true;try{baseTiles(null);decoGround()}finally{cx=keep;VIS=kv}GC={c,x0,y0,sc};GCk=k;return GC}
 function draw(){cx.setTransform(DPR,0,0,DPR,0,0);cx.fillStyle='#7da23e';cx.fillRect(0,0,W,H);
  cx.setTransform(DPR*zoom,0,0,DPR*zoom,DPR*(W/2-cam.x*zoom),DPR*(H/2-cam.y*zoom));cx.imageSmoothingEnabled=true;
- const VW=screenToWorld(0,0),VE=screenToWorld(W,H),vis=(x,y,m=160)=>x>VW.x-m&&x<VE.x+m&&y>VW.y-m&&y<VE.y+m*2;bgGround(vis);
- for(let i=0;i<N;i++)for(let j=0;j<N;j++){const t=T(i,j);if(!vis(t.x,t.y))continue;const out=false;cx.drawImage(!out&&((i>=5&&i<10&&j<6)||(i<5&&j<5&&!(i<hSize()&&j<hSize())))?IMG.dirt:IMG.grass,t.x-65,t.y-1,130,66)}
- decoGround();fenceBack();
+ const VW=screenToWorld(0,0),VE=screenToWorld(W,H),vis=(x,y,m=160)=>x>VW.x-m&&x<VE.x+m&&y>VW.y-m&&y<VE.y+m*2;VIS=vis;bgGround(vis);
+ if(zoom<.75&&groundCache()){const g=GC;cx.drawImage(g.c,g.x0,g.y0,g.c.width/g.sc,g.c.height/g.sc)}else{baseTiles(vis);decoGround()}fenceBack();
  PLOTS.forEach(p=>{if(hiddenPlot(p))return;const t=T(p.i,p.j);ghWrap(p,()=>cx.drawImage(IMG[soilImg(p)],t.x-128,t.y))});
  PLOTS.forEach(p=>{if(hiddenPlot(p))return;const t=pT(p);if(!t[5])return;ghWrap(p,()=>{const a=T(p.i,p.j),b=T(p.i+2,p.j),c=T(p.i+2,p.j+2),d=T(p.i,p.j+2);cx.save();cx.lineJoin='round';cx.beginPath();[a,b,c,d].forEach((q,n)=>n?cx.lineTo(q.x,q.y+1):cx.moveTo(q.x,q.y+1));cx.closePath();cx.lineWidth=t[6]+4;cx.strokeStyle='rgba(40,25,10,.55)';cx.stroke();cx.lineWidth=t[6];cx.strokeStyle=t[5];cx.stroke();cx.lineWidth=1.5;cx.strokeStyle='rgba(255,255,255,.35)';cx.stroke();cx.restore()})});
  mSelDraw();if(sel)ghWrap(sel,()=>{const t=T(sel.i,sel.j);cx.save();cx.strokeStyle='rgba(255,226,120,'+(.6+.4*Math.sin(performance.now()/200))+')';cx.lineWidth=4;cx.beginPath();cx.moveTo(t.x,t.y);cx.lineTo(t.x+128,t.y+64);cx.lineTo(t.x,t.y+128);cx.lineTo(t.x-128,t.y+64);cx.closePath();cx.stroke();cx.restore()})
@@ -2688,7 +2695,7 @@ function draw(){cx.setTransform(DPR,0,0,DPR,0,0);cx.fillStyle='#7da23e';cx.fillR
   if(a.box&&b.box)return a.box[0]>=b.box[1]||a.box[2]>=b.box[3]?1:(b.box[0]>=a.box[1]||b.box[2]>=a.box[3]?-1:0);return 0};
  const items=S.filter(x=>!x.box).sort((a,b)=>a.k-b.k),blds=S.filter(x=>x.box).sort((a,b)=>a.k-b.k);
  const done=[];blds.forEach(bd=>{let last=-1,first=items.length;for(let n=0;n<items.length;n++){const f=front(items[n],bd);if(f<0||(f===0&&items[n].k<=bd.k))last=n;else if(first===items.length)first=n}let at=last+1;
-  done.forEach(o=>{const behind=bd.box[1]<=o.box[0]||bd.box[3]<=o.box[2];if(!behind){const ix=items.indexOf(o);if(ix>=at)at=ix+1}});items.splice(at,0,bd);done.push(bd)});
+  done.forEach(o=>{if(bd.box[1]-bd.box[2]<o.box[0]-o.box[3]-.5||o.box[1]-o.box[2]<bd.box[0]-bd.box[3]-.5)return;const behind=bd.box[1]<=o.box[0]||bd.box[3]<=o.box[2];if(!behind){const ix=items.indexOf(o);if(ix>=at)at=ix+1}});items.splice(at,0,bd);done.push(bd)});
  items.forEach(s=>s.f());fenceFront();
  FL.forEach(f=>{f.age+=1/60;if(f.age<0)return;const t=T(f.x,f.y),a=Math.max(0,1-f.age/1.3);cx.save();cx.globalAlpha=a;cx.font='400 30px "Do Hyeon",sans-serif';cx.textAlign='center';cx.lineWidth=5;cx.strokeStyle='rgba(40,25,10,.9)';
   const y=t.y-120-f.age*40;cx.strokeText(f.t,t.x+(FL.indexOf(f)%2?26:-26),y);cx.fillStyle=f.col;cx.fillText(f.t,t.x+(FL.indexOf(f)%2?26:-26),y);cx.restore()});
