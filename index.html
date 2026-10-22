@@ -616,7 +616,17 @@ body:has(.bag-win:not([hidden])) #qslots,body:has(.mk-win:not([hidden])) #qslots
 .mk.npcmk img{width:70%;height:70%}
 .npc-say{display:flex;gap:10px;align-items:center;background:#fff8e6;border:2px solid #e2cfa4;border-radius:12px;padding:8px 10px;margin:4px 0 10px}.npc-say img{width:64px;height:64px;object-fit:cover;object-position:top;border-radius:50%;background:#f2e3bf;flex:none}.npc-say p{margin:0;font:500 .9rem/1.4 var(--f-b);color:#3a2a1a}.npc-say b{display:block;font-size:.8rem;color:#7a5a2e}.npc-say small{display:block;color:#8a7a62;font-size:.75rem}
 </style>
-</section><section class="bag-win" id="setwin" hidden role="dialog" aria-label="설정">
+</section><section id="ctwin" hidden role="dialog" aria-label="이장님"><div class="ct-box"><img class="ct-face" src="a/74bc08dd5e9e.webp" alt=""><div class="ct-main"><b class="ct-name">이장님</b><p id="ct-tx"></p><small id="ct-sub"></small><div id="ct-btns"></div></div></div>
+<style>
+#ctwin{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;padding:12px;background:rgba(20,15,5,.25)}#ctwin[hidden]{display:none}
+.ct-box{position:relative;display:flex;gap:12px;align-items:flex-end;width:min(720px,100%);background:#fff8e6;border:3px solid #8a6a32;border-radius:16px;padding:12px 14px 14px;box-shadow:0 6px 0 rgba(60,40,10,.35)}
+.ct-face{width:min(140px,28vw);height:auto;margin-top:-70px;flex:none;filter:drop-shadow(0 3px 0 rgba(60,40,10,.25))}
+.ct-main{flex:1;min-width:0}.ct-name{display:inline-block;background:#3f6b3a;color:#fff;font:700 .85rem/1 var(--f-b);padding:5px 10px;border-radius:8px;margin-bottom:6px}
+#ct-tx{margin:0 0 4px;font:500 1rem/1.5 var(--f-b);color:#3a2a1a;min-height:3em;cursor:pointer}#ct-sub{display:block;color:#7a5a2e;font-size:.8rem;margin-bottom:6px}
+#ct-btns{display:flex;flex-direction:column;gap:6px}.ct-b{border:2px solid #d8c49a;background:#fff;border-radius:10px;padding:8px 10px;text-align:left;font:600 .9rem/1.3 var(--f-b);color:#3a2a1a}.ct-b small{display:block;font-weight:500;color:#8a7a62;font-size:.75rem;margin-top:2px}
+.ct-b.go{background:#3f8a3c;border-color:#2e6a2c;color:#fff;text-align:center}
+.mk.npcmk .npclb{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);white-space:nowrap;background:#fff8e6;border:2px solid #8a6a32;border-radius:8px;padding:2px 6px;font:700 .72rem/1.2 var(--f-b);color:#3a2a1a;margin-bottom:2px}
+</style></section><section class="bag-win" id="setwin" hidden role="dialog" aria-label="설정">
  <div class="bag-box set-box">
   <div class="bag-head"><b>설정</b><button type="button" class="mk-x bx" id="set-x" aria-label="닫기" style="margin-left:auto">×</button></div>
   <div class="set-page" id="set-page"></div>
@@ -670,7 +680,7 @@ addEventListener('resize',resize);resize();
 const T=(i,j)=>({x:(i-j)*TW/2,y:(i+j)*TH/2});
 const BLD=[['house',0,0,5,5],['storage',6,0,2,2],['shipbox',8,0,1,1],['tap',8,1,1,1],['compost',6,3,2,2]];
 const ghAt=(i,j)=>BLD.find(b=>b[0]==='greenhouse'&&i>=b[1]&&i<b[1]+b[3]&&j>=b[2]&&j<b[2]+b[4]);const inGH=(i,j)=>!!ghAt(i,j);
-function ghDoor(a,b,c,d){const g=ghAt(a,b)||ghAt(c,d);if(!g)return false;if(g[3]===g[4]){const fj=g[2]+g[4]-1;return a===c&&(a===g[1]||a===g[1]+1)&&((b===fj&&d===fj+1)||(d===fj&&b===fj+1))}
+function ghDoor(a,b,c,d,G_){const g=G_||ghAt(a,b)||ghAt(c,d);if(!g)return false;if(g[3]===g[4]){const fj=g[2]+g[4]-1;return a===c&&(a===g[1]||a===g[1]+1)&&((b===fj&&d===fj+1)||(d===fj&&b===fj+1))}
  const m=x=>(Math.min(g[3],g[4])===2?[0,1]:[1,2]).includes(x);if(!g[5]){const fj=g[2]+g[4]-1,bj=g[2];return a===c&&m(a-g[1])&&(Math.min(b,d)===fj||Math.max(b,d)===bj)&&Math.abs(b-d)===1}const fi=g[1]+g[3]-1,bi=g[1];return b===d&&m(b-g[2])&&(Math.min(a,c)===fi||Math.max(a,c)===bi)&&Math.abs(a-c)===1}
 
 const blocked=new Set();BLD.forEach(([n,i,j,w,h])=>{if(n==='greenhouse')return;for(let a=i;a<i+w;a++)for(let b=j;b<j+h;b++)blocked.add(a+','+b)});
@@ -881,7 +891,7 @@ function topPick(p){if(!TOPF.some(T=>FINV[T[0]]>0)){toast('덧거름이 없어�
 // 화면 위 정보 줄
 const need=n=>Math.round((40+25*n+2.5*n*n)/10)*10;
 const G={lv:MYLV,xp:620,hp:100+5*(MYLV-1),day:6,month:MONTH,dayT:0};
-const maxHp=()=>100+5*(G.lv-1)+(typeof wearHp==='function'?wearHp():0);
+const maxHp=()=>100+5*(G.lv-1);
 const COSTHP={hoe:4,base:2,plant:3,water:2,top:2,harvest:2,plow:4};
 function hudFit(){const h=document.getElementById('hud');if(!h)return;h.classList.remove('t1','t2','t3');const over=()=>h.scrollWidth>h.clientWidth+1||[...h.querySelectorAll('.hb')].some(b=>b.scrollWidth>b.clientWidth+1);for(const c of ['t1','t2','t3']){if(!over())break;h.classList.add(c)}}addEventListener('resize',()=>setTimeout(hudFit,50));document.fonts&&document.fonts.ready.then(()=>setTimeout(hudFit,0));
 function hudDraw(){setTimeout(hudFit,0);hudH&&setTimeout(hudH,0);document.getElementById('h-lv').textContent='Lv '+G.lv;document.getElementById('h-xp').style.width=Math.min(100,G.xp/need(G.lv)*100)+'%';
@@ -2021,7 +2031,12 @@ hero.i=6;hero.j=6;rebuildBlocked&&rebuildBlocked();
 return {N,placed:PLACED.length,plots:PLOTS.length};
 }
 // ---- 공지사항: 접속하면 뜸, 오늘 하루 안 보기
-const NOTICES=[{id:'2026-10-21npc',date:'2026-10-21',title:'이장님 부탁 · 명절 상인',body:`이장님 부탁
+const NOTICES=[{id:'2026-10-22chief',date:'2026-10-22',title:'이장님 대화 · 온실 문',body:`이장님
+- 이장님을 누르면 이제 대화창이 떠요. 이장님이 직접 말로 부탁해요.
+- 부탁을 받고 하는 동안에도 이장님이 집 앞에 서 있어요. 머리 위에 무엇을 얼마나 했는지 보여요.
+- 다 하면 머리 위에 느낌표가 뜨고, 누르면 바로 건넬 수 있어요.
+온실
+- 온실은 앞뒤 문으로만 드나들 수 있어요. 옆면은 벽이라 못 지나가고, 붙어 있는 온실끼리도 넘어 다닐 수 없어요.`},{id:'2026-10-21npc',date:'2026-10-21',title:'이장님 부탁 · 명절 상인',body:`이장님 부탁
 - 날마다 새벽 5시에 이장님이 집 앞에 찾아와요. 머리 위 표시를 누르면 부탁 세 가지(쉬움·보통·어려움)가 나와요.
 - 그중 하나를 고르면, 고른 때부터 24시간 안에 하면 돼요. 수첩의 "이장님 부탁" 탭에서도 볼 수 있어요.
 - 작물·가공품·재료 갖다 주기, 밭일, 시설 만들기, 오른 값에 팔기 같은 부탁이 와요. 지금 할 수 있는 것만 부탁해요.
@@ -2528,7 +2543,7 @@ let pickMode='seed';
 const hero={i:5.5,j:4.5,path:[],dir:0,flip:false,frame:0,ft:0,act:null,job:null};
 let ghAlpha=1;
 function canStep(a,b,c,d){if(c<0||d<0||c>=N||d>=N)return false;if(blocked.has(c+','+d))return false;
- if(inGH(a,b)!==inGH(c,d))return ghDoor(a,b,c,d);return true}
+ const g1=ghAt(a,b),g2=ghAt(c,d);if(g1!==g2){if(g1&&!ghDoor(a,b,c,d,g1))return false;if(g2&&!ghDoor(a,b,c,d,g2))return false}return true}
 function bfs(si,sj,goal){// 꺾는 횟수가 적은 길을 고름 (ㄱ자로 걷게)
  const D=[[1,0],[-1,0],[0,1],[0,-1]],key=(i,j,d)=>i*1000+j*10+d,best=new Map(),prev=new Map();let q=[[0,si,sj,4]];best.set(key(si,sj,4),0);let end=null;
  while(q.length){q.sort((a,b)=>a[0]-b[0]);const [c,i,j,d]=q.shift();if(c>(best.get(key(i,j,d))??1e9))continue;if(goal(i,j)&&!(i===si&&j===sj&&false)){end=[i,j,d];break}
@@ -2741,7 +2756,7 @@ function draw(){cx.setTransform(DPR,0,0,DPR,0,0);cx.fillStyle='#7da23e';cx.fillR
  const hp=T(hero.i,hero.j);S.push({k:hero.i+hero.j+.3,pt:[hero.i,hero.j],f(){
   const an=hero.act?hero.act.name:'walk',fi=hero.act?hero.act.frame%HM[an][0].length:hero.frame,m=HM[an][hero.dir][fi];
   const idle=!hero.act&&!hero.path.length&&IDLE.front.complete;
-  cx.save();cx.translate(hp.x,hp.y+TH/2+6);{const k=SK('hero');cx.scale(k,k)}const WO=typeof WEARON==='function'&&WEARON()&&wearReady();if(idle){const im=hero.dir?IDLE.back:IDLE.front,hh=hero.dir?116:118,ww=im.width*hh/im.height;if(hero.flip!==(hero.dir===1))cx.scale(-1,1);if(WO)wearStand(cx,hero.dir?1:0,hh,0,4);else cx.drawImage(im,-ww/2,-hh+4,ww,hh)}else{if(hero.flip)cx.scale(-1,1);if(WO&&an==='cheer')wearStand(cx,2+hero.dir*4+fi%4,112,0,4);else if(WO)wearMotion(an,hero.dir,fi);else cx.drawImage(an==='cheer'?CHIMG:IMG.hero,m.x,m.y,m.w,m.h,-m.ax,-m.ay,m.w,m.h)}cx.restore()}});
+  cx.save();cx.translate(hp.x,hp.y+TH/2+6);{const k=SK('hero');cx.scale(k,k)}if(idle){const im=hero.dir?IDLE.back:IDLE.front,hh=hero.dir?116:118,ww=im.width*hh/im.height;if(hero.flip!==(hero.dir===1))cx.scale(-1,1);cx.drawImage(im,-ww/2,-hh+4,ww,hh)}else{if(hero.flip)cx.scale(-1,1);cx.drawImage(an==='cheer'?CHIMG:IMG.hero,m.x,m.y,m.w,m.h,-m.ax,-m.ay,m.w,m.h)}cx.restore()}});
  const front=(a,b)=>{if(b.box&&a.pt)return a.pt[0]>=b.box[1]||a.pt[1]>=b.box[3]?1:(a.pt[0]<b.box[0]||a.pt[1]<b.box[2]?-1:0);if(a.box&&b.pt)return -front(b,a);
   if(a.box&&b.box)return a.box[0]>=b.box[1]||a.box[2]>=b.box[3]?1:(b.box[0]>=a.box[1]||b.box[2]>=a.box[3]?-1:0);return 0};
  const items=S.filter(x=>!x.box).sort((a,b)=>a.k-b.k),blds=S.filter(x=>x.box).sort((a,b)=>a.k-b.k);
@@ -2811,13 +2826,16 @@ function chiefMake(d){const crops=growable(),lvk=1+G.lv/50,kinds=[];
  q.rw={xp:Math.max(10,Math.round(need(G.lv)*DXP[d])),m:q.t?Math.max(100,Math.round(val*DMUL[d]/100)*100):qMoney(G.lv,DQM[d]),jd:d===1?1+rnd(2):d===2?5+rnd(6):0,st:d===2?(Math.random()<.1?'st_light':['st_time','st_rain','st_earth','st_plenty','st_life'][rnd(5)]):null};
  return q}
 function chiefText(q){if(q.t==='c')return`${NAME[q.c]} ${q.need}개 갖다 주기`;if(q.t==='p')return`${NAME[q.c]} ${q.need}개 갖다 주기`;if(q.t==='m')return`${MATS[q.c][0]} ${q.need}개 갖다 주기`;if(q.ck)return q.tx;return`아무 작물이나 기준가보다 ${Math.round(q.thr*100)}% 넘게 오른 값에 ${q.need}개 팔기`}
-function chiefSay(q){if(q.t==='c')return`마을 잔치에 ${NAME[q.c]}${josa(NAME[q.c],'이','가')} 모자라서 그려.`;if(q.t==='p')return`읍내에 보낼 ${NAME[q.c]}${josa(NAME[q.c],'이','가')} 필요혀.`;if(q.t==='m')return`마을 길 손보는 데 쓸 거여.`;if(q.ck)return`젊은 사람 손이 좀 필요혀.`;return`장사 수완 좀 보자. 오를 때 팔아야 남는 거여.`}
+const CKSAY={a_hoe:n=>`젊은 사람이 밭 좀 갈아 봐. ${n}번이면 되여.`,a_water:n=>`요새 가물어서 그려. 물 ${n}번만 줘 봐.`,a_plant:n=>`씨 좀 넉넉히 뿌려 봐. ${n}번이여.`,cleared:n=>`밭 언저리 돌이며 덤불 좀 치워 줘. ${n}개면 되여.`,hvAll:n=>`올해 농사 워떤가 보자고. ${n}개만 거둬 봐.`,made:n=>`시설 놀리지 말고 ${n}개만 맹글어 봐.`,cooked:n=>`새참 ${n}번만 맹글어 봐. 동네 어르신들 드리게.`};
+const CKSHORT={a_hoe:'밭 갈기',a_water:'물 주기',a_plant:'심기',cleared:'치우기',hvAll:'거두기',made:'가공',cooked:'새참'};
+function chiefSay(q){const n=q.need.toLocaleString('ko-KR');if(q.t==='c')return`마을 잔치에 ${NAME[q.c]}${josa(NAME[q.c],'이','가')} 모자라서 그려. ${n}개만 구해 줘.`;if(q.t==='p')return`읍내 장에 낼 ${NAME[q.c]} ${n}개만 맹글어 줘.`;if(q.t==='m')return`마을 길 손볼라는디 ${MATS[q.c][0]} 좀 모아 줘. ${n}개면 되여.`;if(q.ck)return(CKSAY[q.ck]||(x=>`일손이 좀 필요혀.`))(n);return`장사는 오를 때 팔아야 남는 거여. ${Math.round(q.thr*100)}% 넘게 올랐을 때 ${n}개만 팔아 봐.`}
+function chiefShort(q){const v=Math.min(q.need,chiefHave(q)),n=q.need;if(q.t)return`${q.t==='m'?MATS[q.c][0]:NAME[q.c]} ${v}/${n}`;if(q.ck)return`${CKSHORT[q.ck]||'일'} ${v}/${n}`;return`오른 값 팔기 ${v}/${n}`}
 function chiefHave(q){if(q.t==='m')return MATS[q.c]?MATS[q.c][1]:0;if(q.t)return STO[q.c]||0;if(q.ck)return Math.max(0,(STAT[q.ck]||0)-q.base);return q.prog||0}
 const chiefDone=q=>chiefHave(q)>=q.need;
 function chiefTick(){const k=kday();if(CHIEF.day!==k){CHIEF.day=k;CHIEF.taken=false;CHIEF.offers=[0,1,2].map(chiefMake)}
  const a=CHIEF.act;if(a&&a.until<Date.now()){CHIEF.act=null;if(!(typeof OFFLINE!=='undefined'&&OFFLINE))toast('이장님 부탁 기한이 지났어요')}}
-const chiefHere=()=>(CHIEF.offers&&!CHIEF.taken&&!CHIEF.act)||(CHIEF.act&&chiefDone(CHIEF.act));
-const chiefDot=()=>!!chiefHere();
+const chiefHere=()=>!!CHIEF.act||!!(CHIEF.offers&&!CHIEF.taken);
+const chiefDot=()=>!!((CHIEF.offers&&!CHIEF.taken&&!CHIEF.act)||(CHIEF.act&&chiefDone(CHIEF.act)));
 function chiefTake(i){if(CHIEF.act){toast('하던 부탁부터 마쳐 주세요');return}const q=CHIEF.offers[i];if(!q)return;
  if(q.ck)q.base=STAT[q.ck]||0;if(q.thr)q.prog=0;q.until=Date.now()+864e5;CHIEF.act=q;CHIEF.taken=true;CHIEF.offers=null;sfx('menu');toast('부탁을 받았어요. 24시간 안에 해 주세요');saveGame&&saveGame()}
 function chiefFinish(b){const q=CHIEF.act;if(!q||!chiefDone(q))return;
@@ -2827,7 +2845,7 @@ function chiefFinish(b){const q=CHIEF.act;if(!q||!chiefDone(q))return;
  if(q.rw.st&&MATS[q.rw.st]){MATS[q.rw.st][1]++;gotPop(q.rw.st,1,'이장님이 덤으로 주셨어요')}
  CHIEF.act=null;if(b){const r=b.getBoundingClientRect();gainPop('+'+won(q.rw.m),r.left+r.width/2,r.top)}sfx('trade');hudDraw();saveGame&&saveGame()}
 const rwText=r=>[won(r.m),'경험치 '+r.xp.toLocaleString('ko-KR'),r.jd?'옥돌 '+r.jd:'',r.st?matName(r.st)+' 1':''].filter(Boolean).join(' · ');
-function chiefPage(pg){chiefTick();const a=CHIEF.act;let h=`<div class="npc-say"><img src="${NPCFACE.chief}" alt=""><p><b>이장님</b>${a?'"부탁한 거 잘 돼 가?"':CHIEF.offers&&!CHIEF.taken?'"왔는가. 오늘 좀 도와줄 거 있는디."':'"오늘은 됐어. 고생혔어."'}<small>날마다 새벽 5시에 새 부탁이 와요</small></p></div>`;
+function chiefPage(pg){chiefTick();const a=CHIEF.act;let h=`<div class="npc-say"><img src="${NPCFACE.chief}" alt=""><p><b>이장님</b>${a?'"아직이여? 천천히 혀."':CHIEF.offers&&!CHIEF.taken?'"왔는가. 오늘 자네헌티 부탁헐 게 좀 있어."':'"오늘은 됐어. 욕봤구먼."'}<small>날마다 새벽 5시에 새 부탁이 와요</small></p></div>`;
  if(a){const v=Math.min(a.need,chiefHave(a)),ok=v>=a.need,left=Math.max(0,Math.ceil((a.until-Date.now())/6e4));
   h+=`<div class="gl ch-act"><b><span class="ch-d ch-d${a.d}">${DIFF[a.d]}</span>${chiefText(a)}</b><span class="gbar"><i style="width:${v/a.need*100}%"></i></span><small>${v.toLocaleString('ko-KR')} / ${a.need.toLocaleString('ko-KR')} · ${Math.floor(left/60)}시간 ${left%60}분 남음</small>${a.hint&&a.hint.length?`<small class="ch-hint">잘 오르는 작물: ${a.hint.map(c=>NAME[c]).join(', ')}</small>`:''}<span class="rw">${rwText(a.rw)}</span><button type="button" id="ch-fin" ${ok?'':'disabled'}>${a.t?'건네기':'받기'}</button></div>`}
  if(CHIEF.offers&&!CHIEF.taken){h+=`<p class="hs-note">"${a?'하던 부탁 마치면 이 중에 하나 골라 봐.':'오늘은 이 중에 하나만 골라서 해 줘.'}" 고른 때부터 24시간 안에 하면 돼요.</p>`+CHIEF.offers.map((q,i)=>`<div class="gl"><b><span class="ch-d ch-d${q.d}">${DIFF[q.d]}</span>${chiefText(q)}</b><small>"${chiefSay(q)}"${q.t?` · 지금 가진 것 ${chiefHave(q).toLocaleString('ko-KR')}`:''}</small>${q.hint&&q.hint.length?`<small class="ch-hint">잘 오르는 작물: ${q.hint.map(c=>NAME[c]).join(', ')}</small>`:''}<span class="rw">${rwText(q.rw)}</span><button type="button" class="ch-take" data-i="${i}" ${a?'disabled':''}>이걸로</button></div>`).join('')}
@@ -2848,7 +2866,7 @@ const merCap=()=>20+G.lv*2;
 function merTick(){const cur=holNow(),now=Date.now();
  if(!cur){if(MER.on)MER.on=false;return}
  if(!MER.on||MER.h!==cur.h.k||now-(MER.last||0)>30*6e4){MER={on:true,h:cur.h.k,sold:{},got:{},last:now};
-  if(!(typeof OFFLINE!=='undefined'&&OFFLINE))toast(`이장님: ${cur.h.n} 대목이라 장사꾼이 왔다더라. 대문 앞에 가 봐`)}
+  if(!(typeof OFFLINE!=='undefined'&&OFFLINE))toast(`이장님: ${cur.h.n} 대목이라 장사꾼이 왔다더라. 대문 앞에 한번 가 봐.`)}
  MER.last=now}
 const merHere=()=>MER.on&&!!holNow();
 const goodName=k=>{const [t,id]=k.split(':');return t==='food'?FOODS[id][0]:qName(k)};
@@ -2905,52 +2923,27 @@ function npcMarks(){const hide=deco.on||(typeof LINK!=='undefined'&&LINK);[['chi
   if(hide||!on||!st||st.mv){if(e)e.hidden=true;return}
   if(!e){e=NMK[k]=document.createElement('button');e.type='button';e.className='mk ripe fmk npcmk';e.innerHTML='<img alt="">';marks.appendChild(e)}
   if(k==='mer'){const hb=HOL.find(h=>h.k===MER.h);src=hb?SIC[hb.ic]||PL.img[hb.ic]:src}
-  e.hidden=false;e.dataset.n=k==='chief'?'!':'';const t=T(st.i,st.j);e.style.left=((t.x-cam.x)*zoom+W/2)+'px';e.style.top=((t.y-130-cam.y)*zoom+H/2)+'px';const im=e.querySelector('img');if(src&&im.getAttribute('src')!==src)im.src=src;
+  e.hidden=false;let lb=e.querySelector('.npclb');if(k==='chief'){const a=CHIEF.act,dn=a&&chiefDone(a);e.dataset.n=(!a||dn)?'!':'';if(a&&!dn){if(!lb){lb=document.createElement('span');lb.className='npclb';e.appendChild(lb)}const t_=chiefShort(a);if(lb.textContent!==t_)lb.textContent=t_}else if(lb)lb.remove()}else e.dataset.n='';const t=T(st.i,st.j);e.style.left=((t.x-cam.x)*zoom+W/2)+'px';e.style.top=((t.y-130-cam.y)*zoom+H/2)+'px';const im=e.querySelector('img');if(src&&im.getAttribute('src')!==src)im.src=src;
   e.setAttribute('aria-label',k==='chief'?'이장님 부탁 보기':'명절 상인 좌판 열기');
-  e.onclick=ev=>{ev.stopPropagation();if(sheet.classList.contains('on'))closeSheet();if(k==='chief'){nbMode='note';nbTab='chief';nbShow(true)}else merOpen()}})}
+  e.onclick=ev=>{ev.stopPropagation();if(sheet.classList.contains('on'))closeSheet();if(k==='chief')chiefTalk();else merOpen()}})}
+
+// ===== 이장님 대화창
+let CTT=null;
+function chiefTalk(){chiefTick();const a=CHIEF.act;
+ if(a&&chiefDone(a))return ctShow('아이고 고맙구먼. 이거 받어, 얼마 안 되여.',[[a.t?'건네기':'받기',b=>{chiefFinish(b);ctShow('오늘은 됐어. 욕봤구먼. 내일 또 올게.',[['닫기',ctClose]])},'go']],rwText(a.rw));
+ if(a){const left=Math.max(0,Math.ceil((a.until-Date.now())/6e4));return ctShow(`아직이여? 천천히 혀. ${chiefSay(a)}`,[['수첩에서 보기',()=>{ctClose();nbMode='note';nbTab='chief';nbShow(true)}],['닫기',ctClose]],`${chiefShort(a)} · ${Math.floor(left/60)}시간 ${left%60}분 남음`)}
+ if(CHIEF.offers&&!CHIEF.taken)return ctShow('왔는가. 오늘 자네헌티 부탁헐 게 좀 있어. 한번 들어 볼텨?',CHIEF.offers.map((q,i)=>[`<span class="ch-d ch-d${q.d}">${DIFF[q.d]}</span>${chiefText(q)}<small>${rwText(q.rw)}</small>`,()=>{chiefTake(i);const q_=CHIEF.act;ctShow(`그려, 고마워. ${chiefSay(q_)} 내일 이맘때까지만 허면 되여.`,[['알겠어요',ctClose]])},'opt']).concat([['다음에요',ctClose]]));
+ ctShow('오늘은 됐어. 욕봤구먼. 내일 새벽에 또 올게.',[['닫기',ctClose]])}
+function ctShow(text,btns,sub){const w=document.getElementById('ctwin');w.hidden=false;if(typeof closeSheet==='function'&&sheet.classList.contains('on'))closeSheet();
+ const tx=document.getElementById('ct-tx'),bx=document.getElementById('ct-btns');document.getElementById('ct-sub').textContent=sub||'';bx.innerHTML='';tx.textContent='';clearInterval(CTT);let n=0;
+ const done=()=>{clearInterval(CTT);CTT=null;tx.textContent=text;bx.innerHTML=btns.map(([l,f,c],i)=>`<button type="button" class="ct-b ${c||''}" data-i="${i}">${l}</button>`).join('');bx.querySelectorAll('button').forEach(b=>b.onclick=()=>{sfx('menu');btns[+b.dataset.i][1](b)})};
+ CTT=setInterval(()=>{n+=1;tx.textContent=text.slice(0,n);if(n>=text.length)done()},28);tx.onclick=()=>{if(CTT)done()};sfx('menu')}
+function ctClose(){clearInterval(CTT);CTT=null;document.getElementById('ctwin').hidden=true}
+document.getElementById('ctwin').onclick=e=>{if(e.target.id==='ctwin')ctClose()};
 {const _dm=drawMarks;drawMarks=function(){_dm.apply(this,arguments);npcMarks()}}
 function npcTick(){try{chiefTick();merTick()}catch(e){console.log('npc',e)}}
 npcTick();setInterval(npcTick,1000);
 </script>
-<script id="wear-js">
-// ===== 옷 입히기 (시험판만): 기본 몸 + 하의 + 상의 + 모자 층을 겹쳐 그림
-const WEARON=()=>!USER;
-const WEAR={"items":[["t_white","흰 티","top"],["t_flannel","체크 남방","top"],["t_vest","작업 조끼","top"],["t_shirt","와이셔츠","top"],["t_jeogori","한복 저고리","top"],["t_panda","판다 티","top"],["b_overall","청멜빵","bot"],["b_mombbae","꽃무늬 몸빼","bot"],["b_jeans","청바지","bot"],["b_suit","정장 바지","bot"],["b_baji","한복 바지","bot"],["b_panda","판다 바지","bot"],["h_straw","밀짚모자","hat"],["h_cap","야구모자","hat"],["h_beanie","털모자","hat"],["h_towel","머릿수건","hat"],["h_bokgeon","복건","hat"],["h_lincoln","링컨 모자","hat"],["h_panda","판다 모자","hat"]],"sf":[[26,0,167,423],[228,0,169,422],[420,33,121,200],[535,35,112,199],[648,33,107,199],[755,26,117,207],[419,219,112,195],[529,222,116,194],[643,219,117,195],[760,220,117,197]],"mm":{"walk":[[{"x":0,"y":0,"w":68,"h":120,"ax":34,"ay":120},{"x":70,"y":0,"w":69,"h":120,"ax":34,"ay":118},{"x":141,"y":0,"w":70,"h":123,"ax":33,"ay":121},{"x":213,"y":0,"w":69,"h":121,"ax":32,"ay":119},{"x":284,"y":0,"w":68,"h":119,"ax":31,"ay":117},{"x":284,"y":0,"w":68,"h":119,"ax":31,"ay":117}],[{"x":427,"y":0,"w":68,"h":120,"ax":33,"ay":118},{"x":497,"y":0,"w":66,"h":119,"ax":33,"ay":116},{"x":565,"y":0,"w":68,"h":122,"ax":34,"ay":120},{"x":635,"y":0,"w":69,"h":123,"ax":34,"ay":121},{"x":706,"y":0,"w":71,"h":119,"ax":38,"ay":116},{"x":779,"y":0,"w":69,"h":120,"ax":34,"ay":119}]],"hoe":[[{"x":850,"y":0,"w":96,"h":133,"ax":56,"ay":129},{"x":948,"y":0,"w":118,"h":116,"ax":50,"ay":112},{"x":1068,"y":0,"w":106,"h":118,"ax":53,"ay":113},{"x":1176,"y":0,"w":102,"h":121,"ax":55,"ay":121}],[{"x":1280,"y":0,"w":85,"h":136,"ax":38,"ay":133},{"x":0,"y":138,"w":109,"h":120,"ax":57,"ay":117},{"x":111,"y":138,"w":101,"h":118,"ax":54,"ay":115},{"x":214,"y":138,"w":100,"h":120,"ax":53,"ay":115}]],"plant":[[{"x":316,"y":138,"w":90,"h":122,"ax":53,"ay":120},{"x":408,"y":138,"w":93,"h":123,"ax":52,"ay":122},{"x":503,"y":138,"w":88,"h":124,"ax":53,"ay":122},{"x":593,"y":138,"w":90,"h":124,"ax":52,"ay":121}],[{"x":685,"y":138,"w":89,"h":117,"ax":43,"ay":116},{"x":776,"y":138,"w":102,"h":118,"ax":58,"ay":116},{"x":880,"y":138,"w":95,"h":115,"ax":46,"ay":116},{"x":977,"y":138,"w":93,"h":116,"ax":48,"ay":115}]],"water":[[{"x":1072,"y":138,"w":83,"h":125,"ax":46,"ay":124},{"x":1157,"y":138,"w":92,"h":126,"ax":55,"ay":122},{"x":1251,"y":138,"w":94,"h":123,"ax":55,"ay":121},{"x":0,"y":266,"w":85,"h":127,"ax":46,"ay":126}],[{"x":87,"y":266,"w":108,"h":127,"ax":46,"ay":126},{"x":197,"y":266,"w":92,"h":129,"ax":43,"ay":127},{"x":291,"y":266,"w":110,"h":130,"ax":43,"ay":128},{"x":403,"y":266,"w":92,"h":128,"ax":42,"ay":125}]],"pull":[[{"x":497,"y":266,"w":91,"h":98,"ax":14,"ay":96},{"x":590,"y":266,"w":85,"h":124,"ax":28,"ay":120},{"x":677,"y":266,"w":87,"h":128,"ax":32,"ay":126}],[{"x":766,"y":266,"w":91,"h":112,"ax":45,"ay":108},{"x":859,"y":266,"w":93,"h":123,"ax":65,"ay":120},{"x":954,"y":266,"w":86,"h":126,"ax":60,"ay":123}]]}};
-const WNAME={},WSLOT={};WEAR.items.forEach(([k,n,s])=>{WNAME[k]=n;WSLOT[k]=s});
-const WFX={t_flannel:[20,5],b_mombbae:[10,5],t_vest:[30,5],b_jeans:[15,5],t_shirt:[40,10],b_suit:[20,10],t_jeogori:[50,15],b_baji:[25,15],t_panda:[30,10],b_panda:[15,10],h_panda:[10,5]};
-const WSET=[[['t_shirt','b_suit'],10,'증권맨 세트'],[['t_jeogori','b_baji'],10,'한복 세트'],[['t_panda','b_panda','h_panda'],15,'판다 세트']];
-if(!G.wear)G.wear={top:'t_white',bot:'b_overall',hat:'h_straw'};
-const WIM={m:{},s:{}};const wim=(kd,k)=>{const c=WIM[kd];if(!c[k]){c[k]=new Image();c[k].src=`a/wear/${kd==='m'?'m2':kd}/${k}.webp`}return c[k]};
-function wearList(){const w=G.wear||{},L=['base_body'];if(w.bot&&w.bot!=='b_overall')L.push(w.bot);if(w.top)L.push(w.top);if(w.bot==='b_overall')L.push(w.bot);L.push(w.hat||'base_head');return L}
-function wearReady(){return wearList().every(k=>{const a=wim('m',k),b=wim('s',k);return a.complete&&a.width&&b.complete&&b.width})}
-function wearSets(){const on=Object.values(G.wear||{});return WSET.filter(s=>s[0].every(k=>on.includes(k)))}
-function wearHp(){if(!WEARON())return 0;return Object.values(G.wear||{}).reduce((a,k)=>a+((WFX[k]||[0])[0]),0)}
-function wearRegen(){if(!WEARON())return 0;const v=Object.values(G.wear||{}).reduce((a,k)=>a+((WFX[k]||[0,0])[1]),0)+wearSets().reduce((a,s)=>a+s[1],0);return Math.min(40,v)/100}
-{const _hm=hpMul;window.hpMul=function(){return _hm()*(1+wearRegen())}}
-// 그리기: 움직임(45장)
-function wearMotion(an,d,fi){const F=WEAR.mm[an]&&WEAR.mm[an][d],m=F&&F[fi%F.length];if(!m)return;wearList().forEach(k=>{const im=wim('m',k);if(im.width)cx.drawImage(im,m.x,m.y,m.w,m.h,-m.ax,-m.ay,m.w,m.h)})}
-// 그리기: 서기(0 앞, 1 뒤)·기뻐하기(2~9). 높이 hh에 맞춰 발밑 기준
-function wearStand(g,i,hh,x,y){const f=WEAR.sf[i],dh=hh/.86,dw=dh*f[2]/f[3];wearList().forEach(k=>{const im=wim('s',k);if(im.width)g.drawImage(im,f[0],f[1],f[2],f[3],x-dw/2,y-dh,dw,dh)})}
-// 상태창 그림
-{const _sw=swHero;window.swHero=swHero=function(){if(!WEARON())return _sw();const cv=document.getElementById('sw-cv');if(!cv)return;const g=cv.getContext('2d');g.clearRect(0,0,cv.width,cv.height);g.imageSmoothingEnabled=true;g.fillStyle='rgba(120,90,50,.18)';g.beginPath();g.ellipse(100,282,70,14,0,0,7);g.fill();
- const go=()=>wearStand(g,0,250,100,290);if(wearReady())go();else setTimeout(()=>{if(document.getElementById('sw-cv')===cv)swHero()},300)}}
-// 상태창 옷 탭
-const WSLN={hat:'모자',top:'상의',bot:'하의'};let wSel='top';
-{const _sd=statDraw;window.statDraw=statDraw=function(){_sd();if(!WEARON()||statTab!=='wear')return;
- const w=G.wear,tile=s=>`<button type="button" class="u-t sw-eq" data-s="${s}" aria-pressed="${s===wSel}"><b>${WSLN[s]}</b><span class="pz">${w[s]?WNAME[w[s]]:'안 입음'}</span></button>`;
- const fx=k=>WFX[k]?`체력 +${WFX[k][0]} · 회복 +${WFX[k][1]}%`:'효과 없음';
- const sets=wearSets();
- document.getElementById('stat-page').innerHTML=`<div class="u2"><div class="sw-stage"><div class="sw-col">${['hat','top','bot'].map(tile).join('')}</div><div class="sw-fig"><canvas id="sw-cv" width="200" height="300"></canvas><b>${G.name||'이름 없음'}</b><small>Lv ${G.lv}</small></div></div>
- <div class="u-det"><div class="u-dh"><div><h2>${WSLN[wSel]}</h2><small>${w[wSel]?WNAME[w[wSel]]+' · '+fx(w[wSel]):'안 입음'}</small></div></div>
- <div class="wr-list">${WEAR.items.filter(([k,n,s])=>s===wSel).map(([k,n])=>`<button type="button" class="wr-it" data-k="${k}" aria-pressed="${w[wSel]===k}"><b>${n}</b><small>${fx(k)}</small></button>`).join('')}<button type="button" class="wr-it" data-k="" aria-pressed="${!w[wSel]}"><b>벗기</b><small>기본 회색 옷</small></button></div>
- <div class="u-row"><span>옷 효과 합계</span><b>최대 체력 +${wearHp()} · 회복 +${Math.round(wearRegen()*100)}%</b></div>
- ${sets.length?`<div class="u-row"><span>세트</span><b>${sets.map(s=>s[2]+' 회복 +'+s[1]+'%').join(', ')}</b></div>`:''}
- <p class="u-hint" style="margin:6px 0;text-align:left">시험판에서만 보이는 옷장이에요. 모든 옷을 가진 걸로 해 두었어요. 회복 효과는 최대 +40%까지예요.</p></div></div>`;
- swHero();
- document.querySelectorAll('#stat-page .sw-eq').forEach(b=>b.onclick=()=>{wSel=b.dataset.s;sfx('act');statDraw()});
- document.querySelectorAll('#stat-page .wr-it').forEach(b=>b.onclick=()=>{G.wear[wSel]=b.dataset.k||null;G.hp=Math.min(G.hp,maxHp());sfx('act');hudDraw();statDraw();saveGame&&saveGame()})}}
-if(WEARON())wearList().forEach(k=>{wim('m',k);wim('s',k)});
-</script>
-<style>.wr-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;margin:8px 0}.wr-it{border:2px solid #e2cfa4;background:#fff8e6;border-radius:10px;padding:6px 8px;text-align:left;font:500 .85rem/1.3 var(--f-b);color:#3a2a1a}.wr-it small{display:block;color:#8a7a62;font-size:.72rem}.wr-it[aria-pressed="true"]{border-color:#3f8a3c;background:#e9f6e2}</style>
+
 <script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))</script>
 </body></html>
