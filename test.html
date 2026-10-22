@@ -697,7 +697,7 @@ const GHONLY=['strawberry','paprika','melon'];
 const TEMP={lettuce:[15,20],potato:[15,20],napa:[15,20],radish:[15,20],tomato:[20,25],strawberry:[17,23],paprika:[20,25],melon:[25,30]};
 const SOW={lettuce:[3,4,5,8,9],potato:[3,8],napa:[3,4,8],radish:[3,4,8,9],tomato:[4,5],strawberry:[],paprika:[],melon:[]};
 const HOW={lettuce:'both',potato:'seed',napa:'both',radish:'seed',tomato:'both',strawberry:'seedling',paprika:'both',melon:'both'};
-const MYLV=99,MONTH=4;
+const MYLV=USER?1:99,MONTH=4;
 const COST={lettuce:100,potato:200,napa:300,radish:200,tomato:500,strawberry:600,paprika:900,melon:1200};
 const buyPrice=(c,sl)=>sl?COST[c]*3:COST[c];
 const INV={seed:{lettuce:12,potato:8,napa:5,radish:9,tomato:3,paprika:0,melon:0},seedling:{lettuce:4,napa:6,tomato:2,strawberry:5,paprika:0,melon:0}};
@@ -707,7 +707,7 @@ let fLv=true,fSeason=false;
 const PLOTS=[{i:1,j:6,soil:'wild'},{i:3,j:6,soil:'wild'},{i:1,j:8,soil:'tilled'},{i:3,j:8,soil:'wet',crop:{c:'napa',st:2,t:0}},{i:1,j:10,soil:'wet',crop:{c:'lettuce',st:3,t:0}},{i:3,j:10,soil:'wet',crop:{c:'radish',st:3,t:0}}];// 처음엔 바깥 밭 6개만, 온실 없음// 온실 3채(2×4, 2×4, 돌린 4×2)
 PLOTS.forEach(p=>{p.gh=inGH(p.i,p.j)});
 const plotAt=(i,j)=>PLOTS.find(p=>i>=p.i&&i<p.i+2&&j>=p.j&&j<p.j+2);
-let money=90000000000;
+let money=USER?30000:90000000000;
 const DAYS={lettuce:3,potato:5,napa:7,radish:6,strawberry:6,tomato:10,paprika:14,melon:20};
 const NEED={lettuce:310,potato:310,napa:370,radish:430,strawberry:850,tomato:790,paprika:1510,melon:1750};
 // ---- 밭 단계: [이름, 레벨, 값, 기본 양분, 최대 양분, 테두리 색, 테두리 두께]
@@ -2397,23 +2397,26 @@ const foodIc=f=>KIT.ic[f]||A[(FOODIMG[f]||'')+'_3']||'';
 Object.assign(FOODSELL,{f_corn:200,f_cuc:300,f_swp:500,f_tom:500,f_str:800,f_wm:1200,f_pump:1500,f_gin:30000,f_jj:5000});
 RECIPES.length=0;RECIPES.push(['163',[['potato',4]],'감자를 갈아 부쳐요',1],['165',[['lettuce',3],['radish',2]],'나물 얹어 비벼요',3],['f_cuc',[['cucumber',3]],'시원하게 말아요',5],['f_corn',[['corn',3]],'솥에 쪄요',6],['f_swp',[['sweetpotato',4]],'튀겨서 조청 버무려요',8],['166',[['radish',3],['napa',3],['potato',2]],'푹 고아요. 체력이 가득 차요',8],['f_tom',[['tomato',4]],'갈아서 마셔요',9],['f_str',[['strawberry',4]],'얼음 띄워요',10],['f_wm',[['watermelon',2]],'큰 그릇에 띄워요',16],['f_pump',[['kabocha',3]],'곱게 쑤어요',19],['f_gin',[['ginseng',2]],'진하게 달여요. 체력이 가득 차요',45],['f_jj',[['jujube',5]],'오래 달여요',62]);
 // ---- 저장: 이 기기에 자동 저장
-const SAVEKEY=USER?'shg-user-1':'shg-save-1';let noSave=false;const SAMPLE=/[?&]sample/.test(location.search);
+const SAVEKEY=USER?'shg-user-1':'shg-save-1';let noSave=false;
+// 켜질 때 저장이 있었는지 · 핵심 내용을 불러왔는지. 저장이 있는데 못 불러왔으면 절대 덮어쓰지 않음
+let BOOTSAVE=false,LOADOK=false,LOADFAIL='';try{BOOTSAVE=!!localStorage.getItem(SAVEKEY)}catch(_){}
+function saveSafe(){return !(BOOTSAVE&&!LOADOK&&!SAMPLE)}const SAMPLE=/[?&]sample/.test(location.search);
 // 시세 기록은 소수점을 줄여 저장(저장 크기·시간 줄이기)
 let MKC='',MKK='';
 function mkStr(){const k=MKV+'.'+NEWS.length+'.'+(NEWS[0]&&NEWS[0].t);if(k===MKK&&MKC)return MKC;const r1=v=>Math.round(v*10)/10,H={},C={},X={};for(const c in HIST)H[c]=HIST[c].map(r1);for(const c in CANDLE)C[c]=CANDLE[c].map(o=>({b:r1(o.b),o:r1(o.o),h:r1(o.h),l:r1(o.l),c:r1(o.c),lim:o.lim}));for(const c in XS)X[c]=Math.round(XS[c]*1e4)/1e4;MKC=JSON.stringify({XS:X,HIST:H,HIT,TREND,NEWS,CANDLE:C});MKK=k;return MKC}
-function saveGame(){if(noSave||SAMPLE)return;SVT=Date.now();try{const d={v:1,ts:Date.now(),money,G:{...G},hero:{i:hero.i,j:hero.j},
+function saveGame(){if(noSave||SAMPLE||!saveSafe())return;SVT=Date.now();try{const d={v:1,ts:Date.now(),money,G:{...G},hero:{i:hero.i,j:hero.j},
  reqs:REQS,reqN,chief:CHIEF,mer:MER,hpb:HPB,newsfx:NEWSFX,obsfix:1,obsday:OBSDAY,ship:SHIP,mset:MSET,trails:TRAILS,wxq:WXQ,nextn:NEXTN,wx:WX,can:CAN.left,QDAY,LETTERS,landLv,OBS,obN,FJOB,BLD:BLD.map(b=>[...b]),plots:PLOTS.map(p=>({tier:p.tier||0,i:p.i,j:p.j,no:p.no,gh:p.gh,soil:p.soil,crop:p.crop,nut:p.nut,water:p.water,base:p.base,topD:p.topD})),
  INV,FINV,mats:Object.fromEntries(Object.entries(MATS).map(([k,v])=>[k,v[1]])),FOODINV,LOTS,lotN,stoLv,bagLv,TOOLT,OWN,PLACED,plN,STAT,GOT,
  };localStorage.setItem(SAVEKEY,JSON.stringify(d).slice(0,-1)+',"mk":'+mkStr()+'}')}catch(_){}}
-function loadGame(){let d;try{d=JSON.parse(localStorage.getItem(SAVEKEY)||'null')}catch(_){return}if(!d||d.v!==1)return;LASTTS=d.ts||0;
+function loadGame(){let d;try{d=JSON.parse(localStorage.getItem(SAVEKEY)||'null')}catch(e){LOADFAIL='json:'+e.message;return}if(!d){if(!BOOTSAVE)LOADOK=true;return}if(d.v!==1){LOADFAIL='ver';return}LASTTS=d.ts||0;
  try{landLv=d.landLv!=null?d.landLv:3;N=LAND[landLv][1];money=d.money;Object.assign(G,d.G);hero.i=d.hero.i;hero.j=d.hero.j;hero.path=[];
-  if(d.plots.length&&d.plots[0].i!=null){MK.forEach(m=>m.remove());MK.clear();PLOTS.length=0;d.plots.forEach(s=>PLOTS.push({...s}))}else d.plots.forEach((s,k)=>{if(PLOTS[k])Object.assign(PLOTS[k],s)});if(d.BLD){BLD.length=0;d.BLD.forEach(b=>BLD.push(b))}
+  if(d.plots.length&&d.plots[0].i!=null){MK.forEach(m=>m.remove());MK.clear();PLOTS.length=0;d.plots.forEach(s=>PLOTS.push({...s}))}else d.plots.forEach((s,k)=>{if(PLOTS[k])Object.assign(PLOTS[k],s)});if(d.BLD){BLD.length=0;d.BLD.forEach(b=>BLD.push(b))}if(money===d.money&&G.lv===d.G.lv)LOADOK=true;
   const sub=(dst,src)=>{Object.keys(dst).forEach(k=>delete dst[k]);Object.assign(dst,src)};
   sub(INV.seed,d.INV.seed);sub(INV.seedling,d.INV.seedling);invFill();sub(FINV,d.FINV);Object.entries(d.mats).forEach(([k,n])=>{if(MATS[k])MATS[k][1]=n});sub(FOODINV,d.FOODINV);
   LOTS.length=0;LOTS.push(...d.LOTS);lotN=d.lotN;stoSync();stoLv=d.stoLv;bagLv=d.bagLv;sub(TOOLT,d.TOOLT);sub(OWN,d.OWN);
   PLACED.length=0;PLACED.push(...d.PLACED);plN=d.plN;rebuildBlocked();sub(STAT,d.STAT);if(d.FJOB)sub(FJOB,d.FJOB);if(d.QDAY)QDAY=d.QDAY;if(d.can!=null)CAN.left=d.can;if(d.wx)WX=d.wx;if(d.reqs){REQS=d.reqs;reqN=d.reqN||0}if(d.chief)CHIEF=d.chief;if(d.mer)MER=d.mer;if(d.hpb)HPB=d.hpb;if(d.newsfx)NEWSFX=d.newsfx;if(d.obsday)OBSDAY=d.obsday;if(d.ship){SHIP.length=0;SHIP.push(...d.ship)}if(d.mset)Object.assign(MSET,d.mset);if(d.trails)Object.assign(TRAILS,d.trails);if(d.wxq)WXQ=d.wxq;if(d.nextn)NEXTN=d.nextn;if(d.LETTERS){LETTERS.length=0;LETTERS.push(...d.LETTERS)}if(d.OBS){OBS=d.OBS;obN=d.obN||0}if(!d.obsfix){OBS.length=0}sub(GOT,d.GOT);
   ['XS','HIST','HIT','TREND'].forEach(k=>sub({XS,HIST,HIT,TREND}[k],d.mk[k]));sub(CANDLE,d.mk.CANDLE||{});Object.keys(PRICE).forEach(c=>{if(!HIST[c])priceInit(c);else if(!CANDLE[c]||CANDLE[c].length!==HIST[c].length)candleFromHist(c);XS[c]=Math.log(HIST[c].at(-1)/PRICE[c]);if(TREND[c]==null)TREND[c]=0});NEWS.length=0;NEWS.push(...d.mk.NEWS);
- }catch(e){console.log('load fail',e)}}
+ }catch(e){console.log('load fail',e);if(!LOADOK)LOADFAIL='load:'+(e&&e.message)}}
 let SVT=Date.now();setInterval(()=>{const mv=hero.path.length||hero.act;if(mv&&Date.now()-SVT<30000)return;(window.requestIdleCallback||(f=>setTimeout(f,0)))(()=>saveGame(),{timeout:1500})},5000);addEventListener('pagehide',saveGame);
 // ---- 계정 동기화 (구글 로그인 + 파이어베이스). 게임판에서만
 const FBCFG={apiKey:"AIzaSyB-nMHPbHBSnV2EgJpgUM1Tq7c2UH0tiz4",authDomain:"sanghanga-farm.firebaseapp.com",projectId:"sanghanga-farm",storageBucket:"sanghanga-farm.firebasestorage.app",messagingSenderId:"448777625232",appId:"1:448777625232:web:b139bcf16ab5d81e8f8215"};
@@ -2446,13 +2449,20 @@ async function syPull(snap,why){const rd=snap.data();const rstr=await gunz(rd.da
 async function syCheck(){if(!SY.user||SY.busy||noSave||!SY.joined)return false;try{const snap=await fdoc(SY.user.uid).get();if(snap.exists&&snap.data().sid&&snap.data().sid!==SY.sid){syKick();return true}if(snap.exists&&(snap.data().ts||0)>syBase()+1000){SY.busy=true;await syPull(snap);return true}}catch(e){SY.err='chk:'+(e.code||e.message)}return false}
 // 올리기 전 확인: 접속 표시 문서(작음)만 읽고, 다른 기기가 더 새로 저장했을 때만 농장 전체를 읽음
 async function syLight(){if(!SY.joined)return false;const d=await prGet();if(!SY.prOK)return await syCheck();if(d&&d.sid&&d.sid!==SY.sid){syKick();return true}if(d&&(d.ts||0)>syBase()+1000)return await syCheck();return false}
-async function syUp(force){if(!SY.user||SY.busy||noSave)return;if(!force&&SY.act<=SY.upAt)return;if(!force&&await syLight())return;saveGame();const str=lsG(SAVEKEY);if(!str)return;const h=str.length+':'+str.slice(-64);if(!force&&h===SY.hash)return;SY.busy=true;const t0=Date.now();
- try{const sm=sySum(str),bin=await gz(str);if(bin.length>950000)throw Error('too big');
+// 계정 농장 요약을 기억해 두고, 갑자기 레벨·돈이 튀면 올리지 않음
+function syLastSum(){try{return JSON.parse(lsG('shg-sync-sum')||'null')}catch(_){return null}}
+function syJump(sm){const o=syLastSum();if(!o||!(o.lv>1))return false;return sm.lv>o.lv+3||(sm.money>=1e9&&sm.money>o.money*20+1e8)}
+function syJumpAsk(sm){if(SY.jumpAsked)return;SY.jumpAsked=true;const o=syLastSum();whenFree(()=>objMenu('농장이 갑자기 바뀌었어요',[
+ ['계정 농장 받기','go',async()=>{try{const snap=await fdoc(SY.user.uid).get();if(!snap.exists)return;const rd=snap.data(),rstr=await gunz(rd.data.toUint8Array());const cur=lsG(SAVEKEY);if(cur)await syBackup(SY.user.uid,cur,'갑자기 바뀐 이 기기 농장');sySetBase(rd.ts||0);syApply(rstr)}catch(e){alertBox('받지 못했어요',e.code||e.message||'')}}],
+ ['이 기기 농장 그대로 쓰기','',async()=>{try{const snap=await fdoc(SY.user.uid).get();if(snap.exists)await syBackup(SY.user.uid,await gunz(snap.data().data.toUint8Array()),'바뀌기 전 계정 농장')}catch(_){}noSave=false;SY.allowJump=true;await syUp(true);SY.allowJump=false;toast('이 기기 농장을 계정에 저장했어요. 전 농장은 백업에 남겨 뒀어요')}]],
+ `계정 농장: Lv${o.lv} · ${won(o.money)}<br>이 기기 농장: Lv${sm.lv} · ${won(sm.money)}<br><small>잘못 바뀐 것일 수 있어서 아직 계정에 올리지 않았어요. 모르겠으면 "계정 농장 받기"를 눌러 주세요.</small>`))}
+async function syUp(force){if(!SY.user||SY.busy||noSave||!saveSafe())return;if(!force&&SY.act<=SY.upAt)return;if(!force&&await syLight())return;saveGame();const str=lsG(SAVEKEY);if(!str)return;const h=str.length+':'+str.slice(-64);if(!force&&h===SY.hash)return;SY.busy=true;const t0=Date.now();
+ try{const sm=sySum(str);if(syJump(sm)&&!SY.allowJump){SY.busy=false;noSave=true;syJumpAsk(sm);return}const bin=await gz(str);if(bin.length>950000)throw Error('too big');
   const fd={data:firebase.firestore.Blob.fromUint8Array(bin),sid:SY.sid,ts:sm.ts,lv:sm.lv,name:sm.name,money:sm.money,email:SY.user.email||'',up:firebase.firestore.FieldValue.serverTimestamp()},hb=document.hidden?0:Date.now();
   let ok=false;if(SY.prOK){try{const b=firebase.firestore().batch();b.set(fdoc(SY.user.uid),fd);b.set(PRES(SY.user.uid),{sid:SY.sid,hb,ts:sm.ts},{merge:true});await b.commit();ok=true;SY.hbAt=Date.now()}catch(e){SY.prOK=false}}
   if(!ok)await fdoc(SY.user.uid).set(fd);
-  SY.hash=h;SY.last=Date.now();SY.upAt=t0;SY.joined=true;sySetBase(sm.ts);lsS('shg-sync-uid',SY.user.uid);lsS('shg-sync-up',null)}catch(e){SY.err='up:'+(e.code||e.message)}SY.busy=false}
-async function syBackup(uid,str,why){try{const bin=await gz(str);await fdoc(uid).collection('backups').doc(String(Date.now())).set({data:firebase.firestore.Blob.fromUint8Array(bin),why,...sySum(str)})}catch(_){}}
+  SY.hash=h;SY.last=Date.now();SY.upAt=t0;SY.joined=true;sySetBase(sm.ts);lsS('shg-sync-sum',JSON.stringify({lv:sm.lv,money:sm.money}));{const td=new Date().toDateString();if(lsG('shg-bak-day')!==td){lsS('shg-bak-day',td);syBackup(SY.user.uid,str,'하루 한 번 자동 백업')}}lsS('shg-sync-uid',SY.user.uid);lsS('shg-sync-up',null)}catch(e){SY.err='up:'+(e.code||e.message)}SY.busy=false}
+async function syBackup(uid,str,why){try{const bin=await gz(str);await fdoc(uid).collection('backups').doc(String(Date.now())).set({data:firebase.firestore.Blob.fromUint8Array(bin),why,...sySum(str)});lsS('shg-bak-err',null);return true}catch(e){const c=e.code||e.message||'?';SY.err='bak:'+c;lsS('shg-bak-err',c);if(lsG('shg-bak-day'))lsS('shg-bak-day',null);if(!SY.bakWarn){SY.bakWarn=1;toast('계정 백업을 남기지 못했어요 ('+c+')')}return false}}
 // 계정 백업 목록에서 골라 되살리기
 async function bakOpen(){if(!SY.user){toast('먼저 로그인해 주세요');return}toast('백업을 불러오는 중이에요');
  try{const C=fdoc(SY.user.uid).collection('backups'),errs=[];let L=null;
@@ -2463,14 +2473,18 @@ async function bakOpen(){if(!SY.user){toast('먼저 로그인해 주세요');ret
   const f=x=>`Lv${x.lv||1} · ${won(x.money||0)} · ${new Date(+x.id).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'})}`;setShow(false);
   objMenu('어느 농장으로 되살릴까요?',L.map(x=>[`${f(x)}<small style="display:block;font-size:.72em;opacity:.75">${x.why||''}</small>`,'',()=>confirmBox('이 농장으로 되살릴까요?',`${f(x)} 농장으로 바꿔요. 지금 농장도 백업으로 남겨 둬요.`,async()=>{try{const str=await gunz(x.data.toUint8Array());saveGame();const cur=lsG(SAVEKEY);if(cur)await syBackup(SY.user.uid,cur,'되살리기 전 농장');const snap=await fdoc(SY.user.uid).get();if(snap.exists)sySetBase(snap.data().ts||0);lsS('shg-sync-uid',SY.user.uid);lsS('shg-sync-up','1');lsS('shg-sync-msg','백업한 농장으로 되살렸어요');syApply(str)}catch(e){alertBox('되살리지 못했어요',e.code||e.message||'잠시 뒤 다시 해 주세요')}},'되살리기',false)]),'계정에 남아 있는 백업이에요. 가장 최근 것이 위에 있어요.')}
  catch(e){alertBox('백업을 불러오지 못했어요',e.code||e.message||'잠시 뒤 다시 해 주세요')}}
-function syApply(str){noSave=true;lsS(SAVEKEY,str);lsS('shg-newbie',null);location.reload()}
+function syApply(str){noSave=true;lsS(SAVEKEY,str);{const m=sySum(str);lsS('shg-sync-sum',JSON.stringify({lv:m.lv,money:m.money}))}lsS('shg-newbie',null);location.reload()}
+// 사고로 잃은 농장 되살리기: a/fix/ 에 둔 농장을 해당 계정에 한 번 제안
+const FIXES=[{id:'fix-20261023',email:'koreantch@gmail.com',file:'a/fix/k1023.json',t:'10월 22일 농장 (Lv40 · 1,945만 원)'}];
+async function fixOffer(u,rstr){const f=FIXES.find(x=>x.email===u.email&&u.emailVerified&&!lsG('shg-'+x.id));if(!f)return false;let str;try{const r=await fetch(f.file+'?'+Date.now());if(!r.ok)return false;str=await r.text();JSON.parse(str)}catch(_){return false}
+ whenFree(()=>objMenu('농장을 되살릴까요?',[['되살리기','go',async()=>{lsS('shg-'+f.id,'1');await syBackup(u.uid,rstr,'되살리기 전 계정 농장');const d=JSON.parse(str);d.ts=Date.now();const s2=JSON.stringify(d);lsS('shg-sync-uid',u.uid);lsS('shg-sync-up','1');lsS('shg-sync-msg','농장을 되살렸어요');syApply(s2)}],['그냥 두기','',()=>{lsS('shg-'+f.id,'1')}]],`${f.t}으로 되돌려요. 지금 농장은 백업으로 남겨 둬요.`));return false}
 async function syOnLogin(u){setTimeout(mlFetch,1500);STAT.login=1;
  {let ovr=SY.override;try{if(sessionStorage.getItem('shg-ovr')){ovr=true;sessionStorage.removeItem('shg-ovr')}}catch(_){}
   if(!ovr){const d=await prGet();if(d&&d.sid&&d.sid!==SY.sid&&Date.now()-(d.hb||0)<HB_LIVE){syBlock(u,false,Math.max(0,Math.round((Date.now()-d.hb)/1000)));return}}
   await prSet(Date.now())}
  try{const snap=await fdoc(u.uid).get(),local=lsG(SAVEKEY),linked=lsG('shg-sync-uid')===u.uid,forceUp=lsG('shg-sync-up')==='1';
  if(!snap.exists){await syUp(true);toast('농장을 계정에 저장했어요. 이제 다른 기기에서도 이어서 할 수 있어요');return}
- const rd=snap.data(),rstr=await gunz(rd.data.toUint8Array()),R=sySum(rstr),L=local?sySum(local):null;
+ const rd=snap.data(),rstr=await gunz(rd.data.toUint8Array()),R=sySum(rstr),L=local?sySum(local):null;if(!syLastSum())lsS('shg-sync-sum',JSON.stringify({lv:R.lv,money:R.money}));if(await fixOffer(u,rstr))return;if(!saveSafe()){whenFree(()=>objMenu('계정 농장을 받을까요?',[['계정 농장 받기','go',()=>{lsS('shg-sync-uid',u.uid);sySetBase(R.ts);syApply(rstr)}],['나중에','',()=>{}]],`이 기기 농장을 불러오지 못했어요. 계정에 저장된 농장(Lv${R.lv} · ${won(R.money)})을 받을 수 있어요. 이 기기에 있던 농장은 따로 남겨 둬요.`));return}
  if(forceUp){await syBackup(u.uid,rstr,'처음부터 다시 하기 전');await syUp(true);return}
  if(!L||(!linked&&L.lv<=1&&R.lv>1)){if(local&&!linked)await syBackup(u.uid,local,'이 기기에 있던 농장');lsS('shg-sync-uid',u.uid);sySetBase(R.ts);syApply(rstr);return}
  if(linked){const b=syBase();if(b?R.ts>b+1000:R.ts>L.ts+3000){await syBackup(u.uid,local,'다른 기기 농장을 받기 전');lsS('shg-sync-msg','다른 기기에서 한 농장을 불러왔어요');sySetBase(R.ts);syApply(rstr)}else{if(R.lv>L.lv||R.money>L.money*2)await syBackup(u.uid,rstr,'계정에 있던 농장(레벨이 더 높음)');await syUp(true)}return}
@@ -2608,7 +2622,9 @@ const toolVal=(f,t)=>{const r=TOOLS.find(x=>x[0]===f);return r[6][t]};
 function startAct(name,loops,done,spd=1){hero.act={name,loops,frame:0,t:0,done,spd}}
 let hudT=0;let last=0,sheetTick=0;
 function autoZoom(){const s=Math.min(innerWidth,innerHeight);zoom=Math.max(.6,Math.min(1.2,s/620))}
-function start(){setTimeout(()=>{if(!REQS.length){reqGen();reqGen()}},500);if(!localStorage.getItem||true){const m=G.month;WX={w:'sun',t:MTEMP[m-1]+2}}invFill();autoZoom();try{if(!sessionStorage.getItem('rot-ok')&&innerHeight>innerWidth*1.1&&innerWidth<600)document.getElementById('rot-tip').hidden=false}catch(_){}document.getElementById('rot-x').onclick=()=>{document.getElementById('rot-tip').hidden=true;try{sessionStorage.setItem('rot-ok','1')}catch(_){}};let nb=false;try{nb=(USER||localStorage.getItem('shg-newbie')==='1')&&!localStorage.getItem(SAVEKEY)}catch(_){}if(nb){G.lv=1;G.xp=0;G.hp=100;money=30000;bagLv=0;stoLv=0;Object.keys(INV.seed).forEach(c=>INV.seed[c]=0);Object.keys(INV.seedling).forEach(c=>INV.seedling[c]=0);INV.seed.lettuce=4;INV.seed.potato=4;Object.keys(FINV).forEach(k=>FINV[k]=0);FINV['199']=4;Object.keys(FOODINV).forEach(k=>FOODINV[k]=0);FOODINV['163']=2;Object.values(MATS).forEach(m=>m[1]=0);STAT.qs=['163',null,null,null,null]}let hadSave=false;try{hadSave=!!localStorage.getItem(SAVEKEY)}catch(_){}if(!SAMPLE)loadGame();ghMigrate();PLOTS.forEach(plotFix);dripMigrate();linkDedupe();if(SAMPLE){STAT.storySeen=1;STAT.welcomed=1;G.name='견본 농장';G.lv=99;G.xp=0;G.hp=maxHp();money=90000000000;try{STAT.roulDay=roulToday()}catch(_){}sampleFarm();setTimeout(()=>toast('견본 농장이에요. 여기서 한 일은 저장되지 않아요'),2500)}setTimeout(decoDot,0);if(hadSave&&LASTTS)offlineRun((Date.now()-LASTTS)/1000);if(USER){SET.day=60;worldSnap()}if(!hadSave&&!OBS.length)initObs();rebuildBlocked();hudDraw();const c=T(hero.i,hero.j);cam.x=c.x;cam.y=c.y+80;requestAnimationFrame(loop);qsDraw()}
+function loadFailed(){noSave=true;try{const raw=localStorage.getItem(SAVEKEY);if(raw&&!localStorage.getItem(SAVEKEY+'-bad'))localStorage.setItem(SAVEKEY+'-bad',raw)}catch(_){}
+ setTimeout(()=>alertBox('농장을 불러오지 못했어요','저장된 농장은 지우지 않고 그대로 두었어요. 이 화면에서 한 일은 저장되지 않아요. 새로고침해 보고, 계속 이러면 운영자에게 알려 주세요. ('+(LOADFAIL||'알 수 없음')+')'),1200)}
+function start(){setTimeout(()=>{if(!REQS.length){reqGen();reqGen()}},500);if(!localStorage.getItem||true){const m=G.month;WX={w:'sun',t:MTEMP[m-1]+2}}invFill();autoZoom();try{if(!sessionStorage.getItem('rot-ok')&&innerHeight>innerWidth*1.1&&innerWidth<600)document.getElementById('rot-tip').hidden=false}catch(_){}document.getElementById('rot-x').onclick=()=>{document.getElementById('rot-tip').hidden=true;try{sessionStorage.setItem('rot-ok','1')}catch(_){}};let nb=false;try{nb=(USER||localStorage.getItem('shg-newbie')==='1')&&!localStorage.getItem(SAVEKEY)}catch(_){}if(nb){G.lv=1;G.xp=0;G.hp=100;money=30000;bagLv=0;stoLv=0;Object.keys(INV.seed).forEach(c=>INV.seed[c]=0);Object.keys(INV.seedling).forEach(c=>INV.seedling[c]=0);INV.seed.lettuce=4;INV.seed.potato=4;Object.keys(FINV).forEach(k=>FINV[k]=0);FINV['199']=4;Object.keys(FOODINV).forEach(k=>FOODINV[k]=0);FOODINV['163']=2;Object.values(MATS).forEach(m=>m[1]=0);STAT.qs=['163',null,null,null,null]}let hadSave=false;try{hadSave=!!localStorage.getItem(SAVEKEY)}catch(_){}if(!SAMPLE){try{loadGame()}catch(e){LOADFAIL='load:'+e.message}if(!saveSafe())loadFailed()}ghMigrate();PLOTS.forEach(plotFix);dripMigrate();linkDedupe();if(SAMPLE){STAT.storySeen=1;STAT.welcomed=1;G.name='견본 농장';G.lv=99;G.xp=0;G.hp=maxHp();money=90000000000;try{STAT.roulDay=roulToday()}catch(_){}sampleFarm();setTimeout(()=>toast('견본 농장이에요. 여기서 한 일은 저장되지 않아요'),2500)}setTimeout(decoDot,0);if(hadSave&&LASTTS)offlineRun((Date.now()-LASTTS)/1000);if(USER){SET.day=60;worldSnap()}if(!hadSave&&!OBS.length)initObs();rebuildBlocked();hudDraw();const c=T(hero.i,hero.j);cam.x=c.x;cam.y=c.y+80;requestAnimationFrame(loop);qsDraw()}
 function loop(ts){const dt=Math.min(.1,(ts-last)/1000||0);last=ts;fpsTick(ts);update(dt);{const ci=Math.max(0,Math.min(N,(cam.x/(TW/2)+cam.y/(TH/2))/2)),cj=Math.max(0,Math.min(N,(cam.y/(TH/2)-cam.x/(TW/2))/2));cam.x=(ci-cj)*TW/2;cam.y=(ci+cj)*TH/2}draw();requestAnimationFrame(loop)}
 // 점적호스는 없앰: 가진 것은 스프링클러로 (연결한 밭·강화 단계 그대로)
 function linkDedupe(){const seen={};PLACED.forEach(o=>{if(!o.links||!LINKCAP[o.k])return;const S=seen[o.k]||(seen[o.k]=new Set());o.links=o.links.filter(n=>{if(S.has(n))return false;S.add(n);return true})})}
