@@ -680,6 +680,10 @@ addEventListener('resize',resize);resize();
 const T=(i,j)=>({x:(i-j)*TW/2,y:(i+j)*TH/2});
 const BLD=[['house',0,0,5,5],['storage',6,0,2,2],['shipbox',8,0,1,1],['tap',8,1,1,1],['compost',6,3,2,2]];
 const ghAt=(i,j)=>BLD.find(b=>b[0]==='greenhouse'&&i>=b[1]&&i<b[1]+b[3]&&j>=b[2]&&j<b[2]+b[4]);const inGH=(i,j)=>!!ghAt(i,j);
+// 온실 안과 문 앞 칸에서는 온실 가운데 줄로 걷기
+function ghSnap(i,j){let g=ghAt(i,j);const x=i+.5,y=j+.5;
+ if(!g)for(const b of BLD){if(b[0]!=='greenhouse'||b[3]===b[4])continue;if(b[3]<b[4]?(i>=b[1]&&i<b[1]+b[3]&&(j===b[2]-1||j===b[2]+b[4])):(j>=b[2]&&j<b[2]+b[4]&&(i===b[1]-1||i===b[1]+b[3]))){g=b;break}}
+ if(!g||g[3]===g[4])return[x,y];return g[3]<g[4]?[g[1]+g[3]/2,y]:[x,g[2]+g[4]/2]}
 function ghDoor(a,b,c,d,G_){const g=G_||ghAt(a,b)||ghAt(c,d);if(!g)return false;if(g[3]===g[4]){const fj=g[2]+g[4]-1;return a===c&&(a===g[1]||a===g[1]+1)&&((b===fj&&d===fj+1)||(d===fj&&b===fj+1))}
  const m=x=>(Math.min(g[3],g[4])===2?[0,1]:[1,2]).includes(x);if(!g[5]){const fj=g[2]+g[4]-1,bj=g[2];return a===c&&m(a-g[1])&&(Math.min(b,d)===fj||Math.max(b,d)===bj)&&Math.abs(b-d)===1}const fi=g[1]+g[3]-1,bi=g[1];return b===d&&m(b-g[2])&&(Math.min(a,c)===fi||Math.max(a,c)===bi)&&Math.abs(a-c)===1}
 
@@ -2580,7 +2584,7 @@ function placedTap(po){closeSheet();if(FREC[po.k]){facOpen('p'+po.id,po.k);retur
 const AHIT=new Map();function alphaAt(im,x,y){let c=AHIT.get(im);if(!c){c=document.createElement('canvas');c.width=im.width;c.height=im.height;const g=c.getContext('2d',{willReadFrequently:true});try{g.drawImage(im,0,0)}catch(_){}AHIT.set(im,c)}try{return c.getContext('2d').getImageData(x|0,y|0,1,1).data[3]}catch(_){return 255}}
 function spriteHit(w){let best=null,bd=-1;PLACED.forEach(o=>{if(isG(o.k)||o.k==='plot')return;const im=PIMG[o.k];if(!im||!im.width)return;const f=T(o.i+o.w,o.j+o.h),cxp=(o.i-o.j+(o.w-o.h)/2)*TW/2,x0=cxp-im.width/2,y0=f.y-im.height+4;
  let lx=w.x-x0;const ly=w.y-y0;if(lx<0||ly<0||lx>=im.width||ly>=im.height)return;if(o.rot)lx=im.width-1-lx;if(alphaAt(im,lx,ly)<60)return;const d=o.i+o.j+o.w+o.h;if(d>bd){bd=d;best=o}});return best}
-function tap(sx,sy){if(sheet.classList.contains('on')){closeSheet();return}const w=screenToWorld(sx,sy),t=worldToTile(w.x,w.y);if(deco.on){decoTap(t);return}if(!LINK&&!batch&&!MSEL){const hp=spriteHit(w);if(hp){placedTap(hp);return}}if(MSEL){const mp=(t.i>=0&&t.j>=0&&t.i<N&&t.j<N)?plotAt(t.i,t.j):null;if(mp)mSelTap(mp);else toast('일할 밭을 누르세요. 다 골랐으면 시작을 누르세요');return}if(LINK){const lp=(t.i>=0&&t.j>=0&&t.i<N&&t.j<N)?plotAt(t.i,t.j):null;if(lp)linkTap(lp);else toast('밭을 눌러 주세요. 다 했으면 완료를 누르세요');return}
+function tap(sx,sy){if(sheet.classList.contains('on')){closeSheet();return}const w=screenToWorld(sx,sy),t=worldToTile(w.x,w.y);if(deco.on){decoTap(t);return}if(!LINK&&!batch&&!MSEL&&typeof npcHit==='function'){const nk=npcHit(w);if(nk){if(nk==='chief')chiefTalk();else merOpen();return}}if(!LINK&&!batch&&!MSEL){const hp=spriteHit(w);if(hp){placedTap(hp);return}}if(MSEL){const mp=(t.i>=0&&t.j>=0&&t.i<N&&t.j<N)?plotAt(t.i,t.j):null;if(mp)mSelTap(mp);else toast('일할 밭을 누르세요. 다 골랐으면 시작을 누르세요');return}if(LINK){const lp=(t.i>=0&&t.j>=0&&t.i<N&&t.j<N)?plotAt(t.i,t.j):null;if(lp)linkTap(lp);else toast('밭을 눌러 주세요. 다 했으면 완료를 누르세요');return}
  const p=(t.i>=0&&t.j>=0&&t.i<N&&t.j<N)?plotAt(t.i,t.j):null;
  if(p){if(batch&&ok(p,batch)&&!busy(p)){enqueue(p,batch);return}if(p.crop&&p.crop.prog>=1)return;openSheet(p);return}
  if(!batch&&bldAt(t)==='storage'){closeSheet();sfx('open');stoShow(true);return}if(!batch&&(bldAt(t)==='tap'||bldAt(t)==='shipbox')){const b=bldEnt(t);closeSheet();objMenu(BNAME[b[0]],[...(b[0]==='shipbox'?[['상자 열기','go',shipOpen]]:[]),...(b[0]==='tap'?[['물 채우기','go',()=>{if(hero.act||hero.job||Q.length){toast('일을 마치고 떠 주세요');return}goFill(null,{i:b[1],j:b[2],w:b[3],h:b[4],n:'수돗가'})}]]:[]),['옮기기','',()=>mvStart('bld',b)],['보관함에','',()=>confirmBox(`${BNAME[b[0]]}${josa(BNAME[b[0]],'을','를')} 보관함에 넣을까요?`,'보관함에서 다시 놓을 수 있어요.',()=>bStore(b),'넣기',false)]]);return}if(!batch&&bldAt(t)==='house'){closeSheet();sfx('open');hsShow(true);return}if(!batch&&!plotAt(t.i,t.j)&&inGH(t.i,t.j)){const b=ghAt(t.i,t.j);closeSheet();ghMenu(b);return}if(!batch&&bldAt(t)==='compost'){facOpen('bld:compost','compost');return}if(!batch){const ob=obsAt(t);if(ob){closeSheet();obsTap(ob);return}}if(!batch){const po=placedAt(t);if(po&&!isG(po.k)){placedTap(po);return}}
@@ -2638,7 +2642,7 @@ function update(dt){petUpdate(dt);if(USER)worldSync();else G.dayT+=dt;{const r=d
  growTick(dt);mAnimTick(dt);
  sheetTick+=dt;if(sel&&sheetTick>.5){sheetTick=0;if(view==='main')renderSheet()}
  if(hero.act){const a=hero.act,n=HM[a.name][0].length;a.t+=dt;if(a.t>.16/(a.spd||1)){a.t=0;a.frame++;if(a.frame>=n*a.loops){const d=a.done;hero.act=null;d()}}}
- else if(hero.path.length){const [ti,tj]=hero.path[0];const gx=ti+.5,gy=tj+.5,dx=gx-hero.i,dy=gy-hero.j,d=Math.hypot(dx,dy),sp=3.2*dt;face(dx,dy);
+ else if(hero.path.length){const [ti,tj]=hero.path[0];const [gx,gy]=ghSnap(ti,tj),dx=gx-hero.i,dy=gy-hero.j,d=Math.hypot(dx,dy),sp=3.2*dt;face(dx,dy);
   if(d<=sp){hero.i=gx;hero.j=gy;hero.path.shift();if(!hero.path.length&&hero.job)doJob(hero.job)}else{hero.i+=dx/d*sp;hero.j+=dy/d*sp}
   hero.ft+=dt;if(hero.ft>.1){hero.ft=0;hero.frame=(hero.frame+1)%6}}
  else{hero.frame=0;kick()}
@@ -2920,15 +2924,17 @@ function npcFig(k,x,y){const c=cx,im=NPCIMG[k];c.save();c.translate(x,y);{const 
 const NPCIM={};function npcImg(k){if(!KIT.ic[k])return null;if(!NPCIM[k]){NPCIM[k]=new Image();NPCIM[k].src=KIT.ic[k]}return NPCIM[k]}
 const NMK={};
 function npcMarks(){const hide=deco.on||(typeof LINK!=='undefined'&&LINK);[['chief',chiefHere(),SIC.speaker||KIT.ic.btn_notebook],['mer',merHere(),null]].forEach(([k,on,src])=>{const st=NPCST[k];let e=NMK[k];
-  if(hide||!on||!st||st.mv){if(e)e.hidden=true;return}
+  if(hide||!on||!st||st.mv||(k==='chief'&&CHIEF.act&&!chiefDone(CHIEF.act))){if(e)e.hidden=true;return}
   if(!e){e=NMK[k]=document.createElement('button');e.type='button';e.className='mk ripe fmk npcmk';e.innerHTML='<img alt="">';marks.appendChild(e)}
   if(k==='mer'){const hb=HOL.find(h=>h.k===MER.h);src=hb?SIC[hb.ic]||PL.img[hb.ic]:src}
-  e.hidden=false;let lb=e.querySelector('.npclb');if(k==='chief'){const a=CHIEF.act,dn=a&&chiefDone(a);e.dataset.n=(!a||dn)?'!':'';if(a&&!dn){if(!lb){lb=document.createElement('span');lb.className='npclb';e.appendChild(lb)}const t_=chiefShort(a);if(lb.textContent!==t_)lb.textContent=t_}else if(lb)lb.remove()}else e.dataset.n='';const t=T(st.i,st.j);e.style.left=((t.x-cam.x)*zoom+W/2)+'px';e.style.top=((t.y-130-cam.y)*zoom+H/2)+'px';const im=e.querySelector('img');if(src&&im.getAttribute('src')!==src)im.src=src;
+  e.hidden=false;e.dataset.n=k==='chief'?'!':'';const t=T(st.i,st.j);e.style.left=((t.x-cam.x)*zoom+W/2)+'px';e.style.top=((t.y-130-cam.y)*zoom+H/2)+'px';const im=e.querySelector('img');if(src&&im.getAttribute('src')!==src)im.src=src;
   e.setAttribute('aria-label',k==='chief'?'이장님 부탁 보기':'명절 상인 좌판 열기');
   e.onclick=ev=>{ev.stopPropagation();if(sheet.classList.contains('on'))closeSheet();if(k==='chief')chiefTalk();else merOpen()}})}
 
 // ===== 이장님 대화창
 let CTT=null;
+function npcHit(w){for(const k of ['chief','mer']){const st=NPCST[k];if(!st)continue;const t=T(st.i,st.j),fx=t.x,fy=t.y+TH/2+6,h=NPCH[k]||120;
+  if(w.x>fx-34&&w.x<fx+34&&w.y>fy-h&&w.y<fy+(k==='mer'?40:6))return k}return null}
 function chiefTalk(){chiefTick();const a=CHIEF.act;
  if(a&&chiefDone(a))return ctShow('아이고 고맙구먼. 이거 받어, 얼마 안 되여.',[[a.t?'건네기':'받기',b=>{chiefFinish(b);ctShow('오늘은 됐어. 욕봤구먼. 내일 또 올게.',[['닫기',ctClose]])},'go']],rwText(a.rw));
  if(a){const left=Math.max(0,Math.ceil((a.until-Date.now())/6e4));return ctShow(`아직이여? 천천히 혀. ${chiefSay(a)}`,[['수첩에서 보기',()=>{ctClose();nbMode='note';nbTab='chief';nbShow(true)}],['닫기',ctClose]],`${chiefShort(a)} · ${Math.floor(left/60)}시간 ${left%60}분 남음`)}
