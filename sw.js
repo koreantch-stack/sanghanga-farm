@@ -1,5 +1,5 @@
 // 상한가 농장 오프라인 저장: 그림·소리(a/)는 한 번 받으면 보관, 페이지는 늘 새 것 먼저
-const V='shg-4a88773ac8';
+const V='shg-e668be3986';
 self.addEventListener('install',e=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V&&k!=='shg-a').map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET'||u.origin!==location.origin)return;

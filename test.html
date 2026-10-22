@@ -881,7 +881,7 @@ function topPick(p){if(!TOPF.some(T=>FINV[T[0]]>0)){toast('덧거름이 없어�
 // 화면 위 정보 줄
 const need=n=>Math.round((40+25*n+2.5*n*n)/10)*10;
 const G={lv:MYLV,xp:620,hp:100+5*(MYLV-1),day:6,month:MONTH,dayT:0};
-const maxHp=()=>100+5*(G.lv-1);
+const maxHp=()=>100+5*(G.lv-1)+(typeof wearHp==='function'?wearHp():0);
 const COSTHP={hoe:4,base:2,plant:3,water:2,top:2,harvest:2,plow:4};
 function hudFit(){const h=document.getElementById('hud');if(!h)return;h.classList.remove('t1','t2','t3');const over=()=>h.scrollWidth>h.clientWidth+1||[...h.querySelectorAll('.hb')].some(b=>b.scrollWidth>b.clientWidth+1);for(const c of ['t1','t2','t3']){if(!over())break;h.classList.add(c)}}addEventListener('resize',()=>setTimeout(hudFit,50));document.fonts&&document.fonts.ready.then(()=>setTimeout(hudFit,0));
 function hudDraw(){setTimeout(hudFit,0);hudH&&setTimeout(hudH,0);document.getElementById('h-lv').textContent='Lv '+G.lv;document.getElementById('h-xp').style.width=Math.min(100,G.xp/need(G.lv)*100)+'%';
@@ -2741,7 +2741,7 @@ function draw(){cx.setTransform(DPR,0,0,DPR,0,0);cx.fillStyle='#7da23e';cx.fillR
  const hp=T(hero.i,hero.j);S.push({k:hero.i+hero.j+.3,pt:[hero.i,hero.j],f(){
   const an=hero.act?hero.act.name:'walk',fi=hero.act?hero.act.frame%HM[an][0].length:hero.frame,m=HM[an][hero.dir][fi];
   const idle=!hero.act&&!hero.path.length&&IDLE.front.complete;
-  cx.save();cx.translate(hp.x,hp.y+TH/2+6);{const k=SK('hero');cx.scale(k,k)}if(idle){const im=hero.dir?IDLE.back:IDLE.front,hh=hero.dir?116:118,ww=im.width*hh/im.height;if(hero.flip!==(hero.dir===1))cx.scale(-1,1);cx.drawImage(im,-ww/2,-hh+4,ww,hh)}else{if(hero.flip)cx.scale(-1,1);cx.drawImage(an==='cheer'?CHIMG:IMG.hero,m.x,m.y,m.w,m.h,-m.ax,-m.ay,m.w,m.h)}cx.restore()}});
+  cx.save();cx.translate(hp.x,hp.y+TH/2+6);{const k=SK('hero');cx.scale(k,k)}const WO=typeof WEARON==='function'&&WEARON()&&wearReady();if(idle){const im=hero.dir?IDLE.back:IDLE.front,hh=hero.dir?116:118,ww=im.width*hh/im.height;if(hero.flip!==(hero.dir===1))cx.scale(-1,1);if(WO)wearStand(cx,hero.dir?1:0,hh,0,4);else cx.drawImage(im,-ww/2,-hh+4,ww,hh)}else{if(hero.flip)cx.scale(-1,1);if(WO&&an==='cheer')wearStand(cx,2+hero.dir*4+fi%4,112,0,4);else if(WO)wearMotion(m);else cx.drawImage(an==='cheer'?CHIMG:IMG.hero,m.x,m.y,m.w,m.h,-m.ax,-m.ay,m.w,m.h)}cx.restore()}});
  const front=(a,b)=>{if(b.box&&a.pt)return a.pt[0]>=b.box[1]||a.pt[1]>=b.box[3]?1:(a.pt[0]<b.box[0]||a.pt[1]<b.box[2]?-1:0);if(a.box&&b.pt)return -front(b,a);
   if(a.box&&b.box)return a.box[0]>=b.box[1]||a.box[2]>=b.box[3]?1:(b.box[0]>=a.box[1]||b.box[2]>=a.box[3]?-1:0);return 0};
  const items=S.filter(x=>!x.box).sort((a,b)=>a.k-b.k),blds=S.filter(x=>x.box).sort((a,b)=>a.k-b.k);
@@ -2912,5 +2912,45 @@ function npcMarks(){const hide=deco.on||(typeof LINK!=='undefined'&&LINK);[['chi
 function npcTick(){try{chiefTick();merTick()}catch(e){console.log('npc',e)}}
 npcTick();setInterval(npcTick,1000);
 </script>
+<script id="wear-js">
+// ===== 옷 입히기 (시험판만): 기본 몸 + 하의 + 상의 + 모자 층을 겹쳐 그림
+const WEARON=()=>!USER;
+const WEAR={"items": [["t_white", "흰 티", "top"], ["t_flannel", "체크 남방", "top"], ["t_vest", "작업 조끼", "top"], ["t_shirt", "와이셔츠", "top"], ["t_jeogori", "한복 저고리", "top"], ["t_panda", "판다 티", "top"], ["b_overall", "청멜빵", "bot"], ["b_mombbae", "꽃무늬 몸빼", "bot"], ["b_jeans", "청바지", "bot"], ["b_suit", "정장 바지", "bot"], ["b_baji", "한복 바지", "bot"], ["b_panda", "판다 바지", "bot"], ["h_straw", "밀짚모자", "hat"], ["h_cap", "야구모자", "hat"], ["h_beanie", "털모자", "hat"], ["h_towel", "머릿수건", "hat"], ["h_bokgeon", "복건", "hat"], ["h_lincoln", "링컨 모자", "hat"], ["h_panda", "판다 모자", "hat"]], "sf": [[26, 0, 167, 423], [228, 0, 169, 422], [420, 33, 121, 200], [535, 35, 112, 199], [648, 33, 107, 199], [755, 26, 117, 207], [419, 219, 112, 195], [529, 222, 116, 194], [643, 219, 117, 195], [760, 220, 117, 197]]};
+const WNAME={},WSLOT={};WEAR.items.forEach(([k,n,s])=>{WNAME[k]=n;WSLOT[k]=s});
+const WFX={t_flannel:[20,5],b_mombbae:[10,5],t_vest:[30,5],b_jeans:[15,5],t_shirt:[40,10],b_suit:[20,10],t_jeogori:[50,15],b_baji:[25,15],t_panda:[30,10],b_panda:[15,10],h_panda:[10,5]};
+const WSET=[[['t_shirt','b_suit'],10,'증권맨 세트'],[['t_jeogori','b_baji'],10,'한복 세트'],[['t_panda','b_panda','h_panda'],15,'판다 세트']];
+if(!G.wear)G.wear={top:'t_white',bot:'b_overall',hat:'h_straw'};
+const WIM={m:{},s:{}};const wim=(kd,k)=>{const c=WIM[kd];if(!c[k]){c[k]=new Image();c[k].src=`a/wear/${kd}/${k}.webp`}return c[k]};
+function wearList(){const w=G.wear||{},L=['base_body'];if(w.bot&&w.bot!=='b_overall')L.push(w.bot);if(w.top)L.push(w.top);if(w.bot==='b_overall')L.push(w.bot);L.push(w.hat||'base_head');return L}
+function wearReady(){return wearList().every(k=>{const a=wim('m',k),b=wim('s',k);return a.complete&&a.width&&b.complete&&b.width})}
+function wearSets(){const on=Object.values(G.wear||{});return WSET.filter(s=>s[0].every(k=>on.includes(k)))}
+function wearHp(){if(!WEARON())return 0;return Object.values(G.wear||{}).reduce((a,k)=>a+((WFX[k]||[0])[0]),0)}
+function wearRegen(){if(!WEARON())return 0;const v=Object.values(G.wear||{}).reduce((a,k)=>a+((WFX[k]||[0,0])[1]),0)+wearSets().reduce((a,s)=>a+s[1],0);return Math.min(40,v)/100}
+{const _hm=hpMul;window.hpMul=function(){return _hm()*(1+wearRegen())}}
+// 그리기: 움직임(45장)
+function wearMotion(m){wearList().forEach(k=>{const im=wim('m',k);if(im.width)cx.drawImage(im,m.x,m.y,m.w,m.h,-m.ax,-m.ay,m.w,m.h)})}
+// 그리기: 서기(0 앞, 1 뒤)·기뻐하기(2~9). 높이 hh에 맞춰 발밑 기준
+function wearStand(g,i,hh,x,y){const f=WEAR.sf[i],dh=hh/.86,dw=dh*f[2]/f[3];wearList().forEach(k=>{const im=wim('s',k);if(im.width)g.drawImage(im,f[0],f[1],f[2],f[3],x-dw/2,y-dh,dw,dh)})}
+// 상태창 그림
+{const _sw=swHero;window.swHero=swHero=function(){if(!WEARON())return _sw();const cv=document.getElementById('sw-cv');if(!cv)return;const g=cv.getContext('2d');g.clearRect(0,0,cv.width,cv.height);g.imageSmoothingEnabled=true;g.fillStyle='rgba(120,90,50,.18)';g.beginPath();g.ellipse(100,282,70,14,0,0,7);g.fill();
+ const go=()=>wearStand(g,0,250,100,290);if(wearReady())go();else setTimeout(()=>{if(document.getElementById('sw-cv')===cv)swHero()},300)}}
+// 상태창 옷 탭
+const WSLN={hat:'모자',top:'상의',bot:'하의'};let wSel='top';
+{const _sd=statDraw;window.statDraw=statDraw=function(){_sd();if(!WEARON()||statTab!=='wear')return;
+ const w=G.wear,tile=s=>`<button type="button" class="u-t sw-eq" data-s="${s}" aria-pressed="${s===wSel}"><b>${WSLN[s]}</b><span class="pz">${w[s]?WNAME[w[s]]:'안 입음'}</span></button>`;
+ const fx=k=>WFX[k]?`체력 +${WFX[k][0]} · 회복 +${WFX[k][1]}%`:'효과 없음';
+ const sets=wearSets();
+ document.getElementById('stat-page').innerHTML=`<div class="u2"><div class="sw-stage"><div class="sw-col">${['hat','top','bot'].map(tile).join('')}</div><div class="sw-fig"><canvas id="sw-cv" width="200" height="300"></canvas><b>${G.name||'이름 없음'}</b><small>Lv ${G.lv}</small></div></div>
+ <div class="u-det"><div class="u-dh"><div><h2>${WSLN[wSel]}</h2><small>${w[wSel]?WNAME[w[wSel]]+' · '+fx(w[wSel]):'안 입음'}</small></div></div>
+ <div class="wr-list">${WEAR.items.filter(([k,n,s])=>s===wSel).map(([k,n])=>`<button type="button" class="wr-it" data-k="${k}" aria-pressed="${w[wSel]===k}"><b>${n}</b><small>${fx(k)}</small></button>`).join('')}<button type="button" class="wr-it" data-k="" aria-pressed="${!w[wSel]}"><b>벗기</b><small>기본 회색 옷</small></button></div>
+ <div class="u-row"><span>옷 효과 합계</span><b>최대 체력 +${wearHp()} · 회복 +${Math.round(wearRegen()*100)}%</b></div>
+ ${sets.length?`<div class="u-row"><span>세트</span><b>${sets.map(s=>s[2]+' 회복 +'+s[1]+'%').join(', ')}</b></div>`:''}
+ <p class="u-hint" style="margin:6px 0;text-align:left">시험판에서만 보이는 옷장이에요. 모든 옷을 가진 걸로 해 두었어요. 회복 효과는 최대 +40%까지예요.</p></div></div>`;
+ swHero();
+ document.querySelectorAll('#stat-page .sw-eq').forEach(b=>b.onclick=()=>{wSel=b.dataset.s;sfx('act');statDraw()});
+ document.querySelectorAll('#stat-page .wr-it').forEach(b=>b.onclick=()=>{G.wear[wSel]=b.dataset.k||null;G.hp=Math.min(G.hp,maxHp());sfx('act');hudDraw();statDraw();saveGame&&saveGame()})}}
+if(WEARON())wearList().forEach(k=>{wim('m',k);wim('s',k)});
+</script>
+<style>.wr-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;margin:8px 0}.wr-it{border:2px solid #e2cfa4;background:#fff8e6;border-radius:10px;padding:6px 8px;text-align:left;font:500 .85rem/1.3 var(--f-b);color:#3a2a1a}.wr-it small{display:block;color:#8a7a62;font-size:.72rem}.wr-it[aria-pressed="true"]{border-color:#3f8a3c;background:#e9f6e2}</style>
 <script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))</script>
 </body></html>
