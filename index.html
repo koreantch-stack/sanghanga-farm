@@ -2455,7 +2455,11 @@ async function syUp(force){if(!SY.user||SY.busy||noSave)return;if(!force&&SY.act
 async function syBackup(uid,str,why){try{const bin=await gz(str);await fdoc(uid).collection('backups').doc(String(Date.now())).set({data:firebase.firestore.Blob.fromUint8Array(bin),why,...sySum(str)})}catch(_){}}
 // 계정 백업 목록에서 골라 되살리기
 async function bakOpen(){if(!SY.user){toast('먼저 로그인해 주세요');return}toast('백업을 불러오는 중이에요');
- try{const q=await fdoc(SY.user.uid).collection('backups').orderBy(firebase.firestore.FieldPath.documentId(),'desc').limit(12).get();const L=q.docs.map(d=>({id:d.id,...d.data()}));if(!L.length){alertBox('백업이 없어요','아직 계정에 남은 백업이 없어요.');return}
+ try{const C=fdoc(SY.user.uid).collection('backups'),errs=[];let L=null;
+  // 세 가지 방법으로 차례로 시도
+  for(const f of [()=>C.orderBy(firebase.firestore.FieldPath.documentId(),'desc').limit(8).get(),()=>C.orderBy('ts','desc').limit(8).get(),()=>C.limit(30).get()]){
+   try{const q=await f();L=q.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(+b.id||0)-(+a.id||0)).slice(0,12);break}catch(e){errs.push(e.code||e.message)}}
+  if(!L){alertBox('백업을 불러오지 못했어요','원인: '+errs.join(' / ')+' — '+(errs.some(x=>/permission/.test(x))?'파이어베이스 규칙에 백업 읽기 허락이 빠져 있을 수 있어요.':'잠시 뒤 다시 해 주세요.'));return}if(!L.length){alertBox('백업이 없어요','아직 계정에 남은 백업이 없어요.');return}
   const f=x=>`Lv${x.lv||1} · ${won(x.money||0)} · ${new Date(+x.id).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'})}`;setShow(false);
   objMenu('어느 농장으로 되살릴까요?',L.map(x=>[`${f(x)}<small style="display:block;font-size:.72em;opacity:.75">${x.why||''}</small>`,'',()=>confirmBox('이 농장으로 되살릴까요?',`${f(x)} 농장으로 바꿔요. 지금 농장도 백업으로 남겨 둬요.`,async()=>{try{const str=await gunz(x.data.toUint8Array());saveGame();const cur=lsG(SAVEKEY);if(cur)await syBackup(SY.user.uid,cur,'되살리기 전 농장');const snap=await fdoc(SY.user.uid).get();if(snap.exists)sySetBase(snap.data().ts||0);lsS('shg-sync-uid',SY.user.uid);lsS('shg-sync-up','1');lsS('shg-sync-msg','백업한 농장으로 되살렸어요');syApply(str)}catch(e){alertBox('되살리지 못했어요',e.code||e.message||'잠시 뒤 다시 해 주세요')}},'되살리기',false)]),'계정에 남아 있는 백업이에요. 가장 최근 것이 위에 있어요.')}
  catch(e){alertBox('백업을 불러오지 못했어요',e.code||e.message||'잠시 뒤 다시 해 주세요')}}
