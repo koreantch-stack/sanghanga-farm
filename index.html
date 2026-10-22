@@ -2228,13 +2228,14 @@ let GFI=[],GFU=[],GFTO='all';
 let LTS=null;async function ltLoad(msg){ltLoad.t=1;try{const q=await firebase.firestore().collection('letters').orderBy('ts','desc').limit(60).get();LTS=q.docs.map(d=>({id:d.id,...d.data()}));if(msg)toast(`편지 ${LTS.length}통을 불러왔어요`);if(!document.getElementById('admwin').hidden)admDraw()}catch(e){LTS=[];alertBox('편지를 불러오지 못했어요',(e.code||e.message)+'. 파이어베이스 규칙을 확인해 주세요.')}}
 async function usLoad(msg){usLoad.t=1;try{const q=await firebase.firestore().collection('farms').get();GFU=q.docs.map(d=>{const v=d.data();return{uid:d.id,name:v.name,lv:v.lv,money:v.money,email:v.email,up:v.up}}).sort((a,b)=>((b.up&&b.up.toMillis?b.up.toMillis():0)-(a.up&&a.up.toMillis?a.up.toMillis():0)));if(msg)toast(`${GFU.length}명을 불러왔어요`);if(!document.getElementById('admwin').hidden)admDraw()}catch(e){alertBox('불러오지 못했어요',(e.code||e.message)+'. 파이어베이스 규칙을 확인해 주세요.')}}
 const agoTxt=t=>{const m=Math.floor((Date.now()-t)/60000);return m<1?'방금':m<60?m+'분 전':m<1440?Math.floor(m/60)+'시간 전':Math.floor(m/1440)+'일 전'};
-const ADMCAT=[['seed','씨앗'],['seedling','모종'],['fert','밑거름'],['top','덧거름'],['mat','재료'],['food','음식'],['crop','창고 작물(상 등급)'],['deco','꾸미기·시설'],['tool','도구 강화(단계 올리기)']];let admCat='seed';
+const ADMCAT=[['seed','씨앗'],['seedling','모종'],['fert','밑거름'],['top','덧거름'],['mat','재료'],['food','음식'],['crop','창고 작물(상 등급)'],['deco','꾸미기·시설'],['mach','농기계'],['tool','도구 강화(단계 올리기)']];let admCat='seed';
 function admItems(c){if(c==='seed'||c==='seedling')return Object.keys(INV[c]).filter(k=>NAME[k]).sort((a,b)=>LV[a]-LV[b]).map(k=>[k,NAME[k]+(c==='seed'?' 씨앗':' 모종')]);
  if(c==='fert')return FERT.map(F=>[F[0],F[1]]);if(c==='top')return TOPF.map(T=>[T[0],T[1]]);if(c==='mat')return Object.entries(MATS).map(([k,v])=>[k,v[0]]);if(c==='food')return Object.entries(FOODS).map(([k,v])=>[k,v[0]]);
  if(c==='crop')return Object.keys(PRICE).filter(k=>NAME[k]).map(k=>[k,NAME[k]]);
  if(c==='deco'){const seen=new Set();return [...FACS,...INSTS,...DECO].filter(r=>!seen.has(r[0])&&seen.add(r[0])).map(r=>[r[0],r[1]]).concat(Object.keys(HDECO||{}).filter(k=>!seen.has(k)).map(k=>[k,HDECO[k][0]+' (명절)']))}
+ if(c==='mach')return MACH.map(m=>[m[0],m[1]+(OWN[m[0]]?' (가진 것 '+OWN[m[0]]+')':'')]);
  if(c==='tool')return TOOLS.map(t=>[t[0],t[1]+' (지금 '+((TOOLT[t[0]]||0)+1)+'단계)']);return[]}
-function admGive(c,id,n){if(c==='seed'||c==='seedling')INV[c][id]=(INV[c][id]||0)+n;else if(c==='fert'||c==='top')FINV[id]=(FINV[id]||0)+n;else if(c==='mat'){if(MATS[id])MATS[id][1]+=n}else if(c==='food')FOODINV[id]=(FOODINV[id]||0)+n;else if(c==='crop')addLot(id,'상',nowDay(),n);else if(c==='deco')OWN[id]=(OWN[id]||0)+n;else if(c==='tool'){const t=TOOLS.find(x=>x[0]===id);if(t)TOOLT[id]=Math.min(t[4].length-1,(TOOLT[id]||0)+n)}
+function admGive(c,id,n){if(c==='seed'||c==='seedling')INV[c][id]=(INV[c][id]||0)+n;else if(c==='fert'||c==='top')FINV[id]=(FINV[id]||0)+n;else if(c==='mat'){if(MATS[id])MATS[id][1]+=n}else if(c==='food')FOODINV[id]=(FOODINV[id]||0)+n;else if(c==='crop')addLot(id,'상',nowDay(),n);else if(c==='deco'||c==='mach')OWN[id]=(OWN[id]||0)+n;else if(c==='tool'){const t=TOOLS.find(x=>x[0]===id);if(t)TOOLT[id]=Math.min(t[4].length-1,(TOOLT[id]||0)+n)}
  if(typeof qsDraw==='function')qsDraw()}
 // ---- 우편함: 운영자 선물 받기
 let MAIL=[];
