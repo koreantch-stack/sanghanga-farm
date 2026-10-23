@@ -2998,26 +2998,27 @@ function gemDig(p){const full=p.nut>=pMax(p)*.99,g=3+Math.floor(Math.random()*3)
  if(got)setTimeout(()=>alertBox('장신구가 나왔어요!',`${ACC[got][0]} — ${ACC[got][2]}. 상태 정보창 장신구 탭에서 찰 수 있어요.`),500)}
 function accBagActs(it,det){let h='';
  if(it.k==='m:goldbit'){const n=MATS.goldbit[1];h=`<div class="acts"><button type="button" id="acc-ex" ${n>=100?'':'disabled'}>장신구로 바꾸기 <small>금조각 100개${n<100?` · ${100-n}개 더`:''}</small></button></div>`}
- else if(it.acc)h=`<div class="acts"><button type="button" id="acc-wear">차러 가기</button><button type="button" id="acc-sell" style="background:#b07a3a;border-color:#7a5228;box-shadow:0 3px 0 #7a5228">팔기 <small>${wonS(300000)}</small></button><button type="button" id="acc-drop" class="no" style="background:#8a8172;border-color:#5f584c;box-shadow:0 3px 0 #5f584c">버리기</button></div>`;
+ else if(it.acc)h=`<div class="acts"><button type="button" id="acc-wear">착용</button><button type="button" id="acc-sell" style="background:#b07a3a;border-color:#7a5228;box-shadow:0 3px 0 #7a5228">팔기 <small>${wonS(300000)}</small></button><button type="button" id="acc-drop" class="no" style="background:#8a8172;border-color:#5f584c;box-shadow:0 3px 0 #5f584c">버리기</button></div>`;
  if(!h)return;det.insertAdjacentHTML('beforeend',h);
  const ex=document.getElementById('acc-ex');if(ex)ex.onclick=()=>{if(MATS.goldbit[1]<100)return;confirmBox('장신구로 바꿀까요?','금조각 100개로 장신구 하나를 무작위로 받아요.',()=>{MATS.goldbit[1]-=100;const k=ACCK[Math.floor(Math.random()*ACCK.length)];accGive(k);sfx('trade');bagDraw();alertBox(ACC[k][0]+'이 나왔어요',`${ACC[k][2]}. 상태 정보창 장신구 탭에서 찰 수 있어요.`)},'바꾸기',false)};
  const k=it.acc;if(!k)return;
- document.getElementById('acc-wear').onclick=()=>{bagShow(false);statTab='wear';accSel=ACCSL.findIndex((x,i)=>x[0]===ACC[k][1]&&!accW()[i]);if(accSel<0)accSel=ACCSL.findIndex(x=>x[0]===ACC[k][1]);statOpen()};
+ document.getElementById('acc-wear').onclick=()=>{const old=accW().slice(),sl=accEquip(k);if(sl===false){toast('이미 차고 있는 장신구예요');return}const was=old[sl];toast(`${ACC[k][0]}${josa(ACC[k][0],'을','를')} ${ACCSL[sl][1]}에 찼어요`+(was?` · ${ACC[was][0]}${josa(ACC[was][0],'은','는')} 가방으로`:''));bagSel=null;bagDraw()};
  document.getElementById('acc-sell').onclick=()=>confirmBox(ACC[k][0]+' 팔까요?',`${won(300000)}을 받아요.`,()=>{STAT.acci[k]--;money+=300000;sfx('trade');hudDraw();bagSel=null;bagDraw()},'팔기',false);
  document.getElementById('acc-drop').onclick=()=>confirmBox(ACC[k][0]+' 버릴까요?','버린 장신구는 되찾을 수 없어요.',()=>{STAT.acci[k]--;bagSel=null;bagDraw()},'버리기',true)}
 let accSel=0;
-function accStatDraw(){const W_=accW();if(accSel<0||accSel>9)accSel=0;
- const tile=i=>{const k=W_[i];return`<button type="button" class="u-t sw-eq acc-t" data-k="${i}" aria-pressed="${i===accSel}">${k?`<img src="${ACCIC[k]}" alt="">`:`<span class="acc-ph">${ACCSL[i][1]}</span>`}<b>${ACCSL[i][1]}${i>=5?' ✦':''}</b><span class="pz">${k?ACC[k][0]:'비어 있음'}</span></button>`};
- const k=W_[accSel],part=ACCSL[accSel][0],own=ACCK.filter(x=>ACC[x][1]===part&&(STAT.acci||{})[x]>0);
- document.getElementById('stat-page').innerHTML=`<div class="u2"><div class="sw-stage"><div class="sw-col">${[0,1,2,3,4].map(tile).join('')}</div><div class="sw-fig"><canvas id="sw-cv" width="200" height="300"></canvas><b>${G.name||'이름 없음'}</b><small>Lv ${G.lv}</small></div><div class="sw-col">${[5,6,7,8,9].map(tile).join('')}</div></div>
- <div class="u-det" style="display:flex;flex-direction:column;justify-content:flex-start;gap:6px"><div class="u-dh"><div class="im">${k?`<img src="${ACCIC[k]}" alt="" style="width:100%;height:100%;object-fit:contain">`:''}</div><div><h2>${ACCSL[accSel][1]}${k?' · '+ACC[k][0]:''}</h2><small>${k?'차고 있어요':'비어 있음'}${accSel>=5?' · 오른쪽 칸이라 이펙트가 보여요':' · 왼쪽 칸은 효과만 있고 이펙트는 안 보여요'}</small></div></div>
- ${k?`<div class="u-row"><span>효과</span><b class="u-ok">${ACC[k][2]}</b></div><div class="u-row"><span>이펙트</span><b>${ACC[k][3]}${accSel>=5?'':' (안 보임)'}</b></div><button type="button" class="u-big alt" id="acc-off">빼기</button>`:''}
- <h4 class="fh" style="margin:10px 0 6px">${ACCSL[accSel][1]}에 찰 수 있는 장신구</h4>${own.length?own.map(x=>{const on=W_.includes(x);return`<div class="u-row"><span><img src="${ACCIC[x]}" alt="" style="width:28px;height:28px;vertical-align:middle;margin-right:6px">${ACC[x][0]} <small style="color:var(--mu)">${STAT.acci[x]}개</small></span><button type="button" class="set-btn acc-on" data-x="${x}" ${on?'disabled':''}>${on?'차는 중':'차기'}</button></div>`}).join(''):'<p class="u-hint" style="text-align:left">가진 장신구가 없어요. 보석 새싹을 캐거나 금조각 100개를 모아 바꿔 보세요.</p>'}
- <p class="u-hint" style="margin:8px 0;text-align:left">찬 장신구 효과는 모두 들어가요. 이펙트는 오른쪽 다섯 칸(✦)에 찬 장신구만 주인공 둘레에 보여요. 같은 장신구는 두 개 찰 수 없어요.</p></div></div>`;
- swHero();
- document.querySelectorAll('#stat-page .acc-t').forEach(b=>b.onclick=()=>{accSel=+b.dataset.k;sfx('act');statDraw()});
- const off=document.getElementById('acc-off');if(off)off.onclick=()=>{accGive(W_[accSel]);W_[accSel]=null;sfx('act');statDraw()};
- document.querySelectorAll('#stat-page .acc-on').forEach(b=>b.onclick=()=>{const x=b.dataset.x;if(W_.includes(x)||!(STAT.acci[x]>0))return;if(W_[accSel])accGive(W_[accSel]);STAT.acci[x]--;W_[accSel]=x;sfx('trade');statDraw()})}
+function accEquip(x,slot){const W_=accW();if(W_.includes(x)||!((STAT.acci||{})[x]>0))return false;const part=ACC[x][1];
+ if(slot==null){slot=W_.findIndex((v,i)=>!v&&ACCSL[i][0]===part);if(slot<0)slot=ACCSL.findIndex(s=>s[0]===part)}
+ if(W_[slot])accGive(W_[slot]);STAT.acci[x]--;W_[slot]=x;sfx('trade');return slot}
+function accSlotOpen(i){const W_=accW(),k=W_[i],part=ACCSL[i][0],own=ACCK.filter(x=>ACC[x][1]===part&&(STAT.acci||{})[x]>0&&!W_.includes(x));
+ const ic=x=>`<img src="${ACCIC[x]}" alt="" style="width:30px;height:30px;vertical-align:middle;margin-right:6px">`;
+ const acts=[];if(k)acts.push([`빼기 <small>${ACC[k][0]}</small>`,'',()=>{accGive(k);W_[i]=null;sfx('act');statDraw()}]);
+ own.forEach(x=>acts.push([`${ic(x)}${ACC[x][0]} ${k?'로 바꾸기':'차기'}<small style="display:block;font-size:.72em;opacity:.75">${ACC[x][2]}</small>`,'go',()=>{accEquip(x,i);statDraw()}]));
+ objMenu(`${ACCSL[i][1]}${k?' · '+ACC[k][0]:''}`,acts,(k?`${ic(k)}<b>${ACC[k][2]}</b><br>이펙트: ${ACC[k][3]}${i>=5?'':' (왼쪽 칸이라 안 보여요)'}<br>`:'비어 있어요.<br>')+(own.length?'':'<small>여기에 찰 수 있는 장신구가 가방에 없어요. 보석 새싹을 캐거나 금조각 100개를 모아 바꿔 보세요.</small>'))}
+function accStatDraw(){const W_=accW();
+ const tile=i=>{const k=W_[i];return`<button type="button" class="u-t sw-eq acc-t" data-k="${i}">${k?`<img src="${ACCIC[k]}" alt="">`:`<span class="acc-ph">${ACCSL[i][1]}</span>`}<b>${ACCSL[i][1]}${i>=5?' ✦':''}</b><span class="pz">${k?ACC[k][0]:'비어 있음'}</span></button>`};
+ document.getElementById('stat-page').innerHTML=`<div class="acc-wrap"><div class="sw-stage"><div class="sw-col">${[0,1,2,3,4].map(tile).join('')}</div><div class="sw-fig"><canvas id="sw-cv" width="200" height="300"></canvas><b>${G.name||'이름 없음'}</b><small>Lv ${G.lv}</small></div><div class="sw-col">${[5,6,7,8,9].map(tile).join('')}</div></div>
+ <p class="u-hint" style="margin:8px 0 0;text-align:center">칸을 누르면 차거나 뺄 수 있어요. 효과는 모두 들어가고, 이펙트는 오른쪽 칸(✦)에 찬 것만 보여요.</p></div>`;
+ swHero();document.querySelectorAll('#stat-page .acc-t').forEach(b=>b.onclick=()=>{sfx('act');accSlotOpen(+b.dataset.k)})}
 // 이펙트 (그림 없이 코드로 그림)
 const ACCST={steps:[],lt:0};
 function accAura(x,y){const W_=STAT.accw;if(!W_||!SET.pop&&false)return;const vis=[...new Set(W_.slice(5).filter(Boolean))];
@@ -3042,6 +3043,8 @@ function accAura(x,y){const W_=STAT.accw;if(!W_||!SET.pop&&false)return;const vi
 .sw-stage .sw-col .acc-t b{font-size:12px}
 .sw-stage .sw-col .acc-t .pz{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sw-stage:has(.acc-t){min-height:0}
+.acc-wrap{max-width:560px;margin:0 auto;width:100%}
+.acc-wrap .sw-stage{grid-template-columns:92px minmax(0,1fr) 92px}
 .sw-stage .sw-col:has(.acc-t){gap:6px}
 </style>
 <script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))</script>
