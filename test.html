@@ -1948,9 +1948,10 @@ function bagSellPrice(k){const [t,id]=k.split(':');if(t==='acc'||(t==='seed'&&GE
 function bagHave(k){const [t,id]=k.split(':');return t==='food'?FOODINV[id]||0:qGet(k)}
 function bagSell(it,n){const pz=bagSellPrice(it.k),tot=pz*n,[t,id]=it.k.split(':');
  confirmBox(`${it.name} 팔기`,`${it.name} ${n}개를 ${won(tot)}에 팔까요? (1개 ${won(pz)}, 산 값의 절반)`,()=>{if(bagHave(it.k)<n)return;if(t==='food')FOODINV[id]-=n;else qAdd(it.k,-n);money+=tot;STAT.sold+=tot;sfx('trade');hudDraw();bagSel=null;bagDraw();toast(`${it.name} ${n}개를 팔았어요 +${won(tot)}`)},'팔기',false)}
-function storeSellPrice(k){const r=[...DECO,...FACS,...INSTS].find(x=>x[0]===k);if(!r)return null;const v=r[3];return Array.isArray(v)?{mat:v[0],n:Math.floor(v[1]/2)}:{won:Math.floor(v/2)}}
-function storeSell(k){const sp=storeSellPrice(k);if(!sp||pAvail(k)<=0)return;const what=sp.mat?`${matName(sp.mat)} ${sp.n}개`:won(sp.won);
- confirmBox(`${pName(k)} 팔기`,`보관함의 ${pName(k)} 1개를 ${what}에 팔까요? (산 값의 절반)`,()=>{if(pAvail(k)<=0)return;OWN[k]--;if(sp.mat){if(MATS[sp.mat])MATS[sp.mat][1]+=sp.n}else{money+=sp.won;STAT.sold+=sp.won}sfx('trade');hudDraw();if(pAvail(k)<=0){deco.sel=null;deco.has=false}decoBar();toast(`${pName(k)}을 팔았어요`)},'팔기',false)}
+function storeSellPrice(k){if(typeof HDECO!=='undefined'&&HDECO[k]){let pr=200000;HOL.forEach(h=>h.deco.forEach(([x,v])=>{if(x===k)pr=v}));return{won:Math.floor(pr/2)}}const r=[...DECO,...FACS,...INSTS].find(x=>x[0]===k);if(!r)return null;const v=r[3];return Array.isArray(v)?{mat:v[0],n:Math.floor(v[1]/2)}:{won:Math.floor(v/2)}}
+function storeSell(k){const sp=storeSellPrice(k),have=pAvail(k);if(!sp||have<=0)return;const what=q=>sp.mat?`${matName(sp.mat)} ${sp.n*q}개`:won(sp.won*q);
+ const go=q=>confirmBox(`${pName(k)} 팔기`,`보관함의 ${pName(k)} ${q}개를 ${what(q)}에 팔까요? (산 값의 절반)`,()=>{q=Math.min(q,pAvail(k));if(q<=0)return;OWN[k]-=q;if(sp.mat){if(MATS[sp.mat])MATS[sp.mat][1]+=sp.n*q}else{money+=sp.won*q;STAT.sold+=sp.won*q}sfx('trade');hudDraw();if(pAvail(k)<=0){deco.sel=null;deco.has=false}decoBar();toast(`${pName(k)} ${q}개를 팔았어요`)},'팔기',false);
+ if(have===1){go(1);return}objMenu(`${pName(k)} 팔기`,[[`1개 팔기 <small>${what(1)}</small>`,'',()=>go(1)],[`전부 팔기 <small>${have}개 · ${what(have)}</small>`,'go',()=>go(have)]],`보관함에 ${have}개 있어요. 놓여 있는 것은 팔리지 않아요.`)}
 // ---- 처음 이야기와 이름 짓기
 const STORYIMG=["a/4a8115464e06.webp", "a/9e3af4fed4e3.webp", "a/3d6c070542f1.webp", "a/8e6f2f41d037.webp", "a/4a87f2c2f6c3.webp", "a/0f7af5990ed5.webp", "a/3b37ff9282ce.webp"];
 const ME=()=>G.name||'나';
