@@ -824,7 +824,10 @@ function ok(p,a){const c=p.crop;switch(a.t){
 const FL=[];function floatNum(arr){if(!SET.pop)return;arr.forEach(([t,col],k)=>FL.push({t,col,x:hero.i,y:hero.j,age:-k*.18}))}
 const Q=[];let batch=null,queueOpen=false;
 const samePlant=(x,a)=>x&&x.t==='plant'&&x.c===a.c&&x.sl===a.sl;
-function avail(a,self){let n=INV[a.sl?'seedling':'seed'][a.c]||0;Q.forEach(q=>{if(samePlant(q.a,a))n--});if(hero.job&&hero.job!==self&&samePlant(hero.job.a,a))n--;return n}
+// 씨앗·모종이 없으면 심을 때마다 1개 값이 바로 빠져나감(묻지 않음)
+function seedBuy(a){return !GEMC[a.c]&&(COST[a.c]||0)>0&&LV[a.c]<=G.lv&&(a.sl?HOW[a.c]!=='seed':HOW[a.c]!=='seedling')}
+function seedHas(a){return (INV[a.sl?'seedling':'seed'][a.c]||0)>0||(seedBuy(a)&&money>=buyPrice(a.c,!!a.sl))}
+function avail(a,self){let n=(INV[a.sl?'seedling':'seed'][a.c]||0)+(seedBuy(a)?Math.floor(money/buyPrice(a.c,!!a.sl)):0);Q.forEach(q=>{if(samePlant(q.a,a))n--});if(hero.job&&hero.job!==self&&samePlant(hero.job.a,a))n--;return n}
 let alOk=null;function confirmBox(t,m,f,label='갈아엎기',danger=true){alertBox(t,m);alOk=f;document.getElementById('al-no').hidden=false;document.getElementById('al-ok').textContent=label;document.getElementById('al-ok').className=danger?'danger':''}
 const uiBusy=()=>{const st=document.getElementById('story'),nw=document.getElementById('namewin');return !!document.getElementById('intro')||(st&&!st.hidden)||(nw&&!nw.hidden)};
 function whenFree(fn){if(!uiBusy()){fn();return}const t=setInterval(()=>{if(!uiBusy()){clearInterval(t);setTimeout(fn,600)}},400)}
@@ -832,7 +835,7 @@ function alertBox(t,m){alOk=null;document.getElementById('al-no').hidden=true;do
 const busy=p=>(hero.job&&hero.job.p===p)||Q.some(q=>q.p===p);
 const sameKind=(x,y)=>x&&y&&x.t===y.t&&x.c===y.c&&x.sl===y.sl&&x.f===y.f;
 function enqueue(p,a){if(busy(p))return;sfx('act');if((Q.length||hero.job)&&batch&&!sameKind(batch,a)){toast('지금 예약한 일이 다 끝나면 다른 일을 예약할 수 있어요');return}if(!ok(p,a)){toast('이 밭에는 지금 할 수 없어요');return}Q.push({p,a});kick();}
-function outOf(a){for(let k=Q.length-1;k>=0;k--)if(samePlant(Q[k].a,a))Q.splice(k,1);if(batch&&samePlant(batch,a))setBatch(null);const w=a.sl?'모종':'씨앗';alertBox(`${w}${josa(w,'이','가')} 다 떨어졌어요`,`가진 ${NAME[a.c]} ${w}${josa(w,'을','를')} 모두 썼어요. 상점에서 더 사 오면 다시 심을 수 있어요.`)}
+function outOf(a){if(seedBuy(a)&&!((INV[a.sl?'seedling':'seed'][a.c]||0)>0)){for(let k=Q.length-1;k>=0;k--)if(samePlant(Q[k].a,a))Q.splice(k,1);if(batch&&samePlant(batch,a))setBatch(null);alertBox('돈이 모자라요',`${NAME[a.c]} ${a.sl?'모종':'씨앗'} 1개 값 ${won(buyPrice(a.c,!!a.sl))}이 없어서 더 못 심었어요.`);return}for(let k=Q.length-1;k>=0;k--)if(samePlant(Q[k].a,a))Q.splice(k,1);if(batch&&samePlant(batch,a))setBatch(null);const w=a.sl?'모종':'씨앗';alertBox(`${w}${josa(w,'이','가')} 다 떨어졌어요`,`가진 ${NAME[a.c]} ${w}${josa(w,'을','를')} 모두 썼어요. 상점에서 더 사 오면 다시 심을 수 있어요.`)}
 function setBatch(a){batch=a;document.getElementById('bbar').hidden=true}
 document.getElementById('bbar-x').onclick=()=>setBatch(null);
 function cancelJob(p){const i=Q.findIndex(q=>q.p===p);if(i>=0){Q.splice(i,1);toast(`${p.no}번 밭 예약을 취소했어요`);return}
@@ -847,15 +850,15 @@ function kick(){if(hero.act||hero.job)return;if(!Q.length&&batch&&batch.t!=='top
   hero.job=j;path.push([p.i+.5,p.j+.5]);hero.path=path;return}}
 function doJob(j){if(j.fill){doFill(j);return}if(j.o){obsWork(j.o);return}if(j.a&&j.a.t==='water'&&CAN.left<=0){hero.job=null;goFill(j);return}const p=j.p,a=j.a;hero.dir=0;hero.flip=false;
  if(G.hp<(COSTHP[a.t]||0)*(1-tierOf(a.t)*50/9/100)){hero.job=null;Q.length=0;setBatch(null);alertBox('체력이 모자라요','쉬면 체력이 저절로 차요. 집에서 자거나 먹을거리를 먹어도 돼요.');return}
- if(a.t==='plant'&&!(INV[a.sl?'seedling':'seed'][a.c]>0)){hero.job=null;outOf(a);kick();return}
+ if(a.t==='plant'&&!seedHas(a)){hero.job=null;outOf(a);kick();return}
  {const fk=a.t==='base'?FERT[a.f][0]:a.t==='top'?TOPF[a.f||0][0]:null;if(fk&&!(FINV[fk]>0)){hero.job=null;for(let k=Q.length-1;k>=0;k--)if(Q[k].a.t===a.t)Q.splice(k,1);setBatch(null);alertBox('거름이 다 떨어졌어요',`가진 ${a.t==='base'?FERT[a.f][1]+' 밑거름':TOPF[a.f||0][1]}을 모두 썼어요. 상점에서 더 사 오면 다시 뿌릴 수 있어요.`);kick();return}}
- if(!(a.t==='plant'?(p.soil==='tilled'&&!p.crop&&(INV[a.sl?'seedling':'seed'][a.c]||0)>0):ok(p,a))){hero.job=null;kick();return}
+ if(!(a.t==='plant'?(p.soil==='tilled'&&!p.crop&&seedHas(a)):ok(p,a))){hero.job=null;kick();return}
  const tr=tierOf(a.t),spd=TSEC[0]/TSEC[tr],hpc=(COSTHP[a.t]||0)*(1-tr*50/9/100);
  const fin=f=>()=>{f();STAT['a_'+a.t]=(STAT['a_'+a.t]||0)+1;G.hp=Math.max(0,G.hp-hpc);addXp(a.t==='harvest'?0:3);hero.job=null;if(sel===p)renderSheet();kick()};
  sfx({hoe:'hoe',plow:'hoe',base:'fert',top:'fert',plant:'sow',water:'water',harvest:'hoe'}[a.t]);
  if(a.t==='hoe')startAct('hoe',2,fin(()=>{p.soil='tilled';if(p.nut<pBase(p)){const g=pBase(p)-p.nut;p.nut=pBase(p);floatNum([['기본 양분까지 +'+Math.round(g).toLocaleString('ko-KR'),'#b6e37a']])}const b=parseInt(toolVal('hoe',tr))||0;if(b){p.nut=Math.min(pMax(p),p.nut+b);floatNum([['양분 +'+b,'#b6e37a']])}}),spd);
  else if(a.t==='base')startAct('plant',1,fin(()=>{const v=Math.round(FERT[a.f][2]*(1+(parseInt(toolVal('shovel',tr))||0)/100));p.nut=Math.min(pMax(p),p.nut+v);p.base=true;FINV[FERT[a.f][0]]--;floatNum([['양분 +'+v.toLocaleString('ko-KR'),'#b6e37a']])}),spd);
- else if(a.t==='plant')startAct('plant',2,fin(()=>{p.crop={c:a.c,sl:a.sl,prog:0,st:1,gb:a.sl?(parseInt(toolVal('trowel',tr))||0):0,off:!a.sl&&!p.gh&&!SOW[a.c].includes(G.month)};INV[a.sl?'seedling':'seed'][a.c]--;if(accOn('cherrypin')&&!GEMC[a.c])addXp(2+Math.round((LV[a.c]||1)/8))}),spd);
+ else if(a.t==='plant')startAct('plant',2,fin(()=>{p.crop={c:a.c,sl:a.sl,prog:0,st:1,gb:a.sl?(parseInt(toolVal('trowel',tr))||0):0,off:!a.sl&&!p.gh&&!SOW[a.c].includes(G.month)};if((INV[a.sl?'seedling':'seed'][a.c]||0)>0)INV[a.sl?'seedling':'seed'][a.c]--;else{const pr=buyPrice(a.c,!!a.sl);money-=pr;STAT.spent+=pr;floatNum([['-'+won(pr),'#ffb0a0']]);hudDraw()}if(accOn('cherrypin')&&!GEMC[a.c])addXp(2+Math.round((LV[a.c]||1)/8))}),spd);
  else if(a.t==='water')startAct('water',2,fin(()=>{p.water=parseInt(toolVal('can',tr).split('/')[1])||3;CAN.left=Math.max(0,CAN.left-1)}),spd);
  else if(a.t==='plow')startAct('hoe',2,fin(()=>{p.crop=null;p.water=0;p.base=false;p.soil='tilled'}),spd);
  else if(a.t==='top')startAct('plant',1,fin(()=>{p.topD=nowDay();if(p.crop)p.crop.stop=false;const T=TOPF[a.f||0];const v=Math.round(T[2]*accTop()*(1+(parseInt(toolVal('shovel',tr))||0)/100));p.nut=Math.min(pMax(p),p.nut+v);FINV[T[0]]--;if(p.crop){if(T[0]==='t2')p.crop.gb=(p.crop.gb||0)+5;if(T[0]==='t3')p.crop.tb=(p.crop.tb||0)+.05;if(T[0]==='t4')p.crop.tb=(p.crop.tb||0)+.1}floatNum([['양분 +'+v,'#b6e37a']])}),spd);
@@ -2319,7 +2322,7 @@ function plantDraw(){const p=PW.p,sl=PW.sl,kind=sl?'seedling':'seed',gh=!!p.gh;
   <div class="u-row"><span>갈아엎으면</span><b class="u-ok">양분 +${g.add.toLocaleString('ko-KR')}</b></div><div class="u-row"><span>갈아엎는 횟수</span><b>${g.times}번 (총 +${(g.add*g.times).toLocaleString('ko-KR')})</b></div>
   <div class="u-row"><span>이 밭 양분</span><b>${Math.round(p.nut).toLocaleString('ko-KR')} / ${pMax(p).toLocaleString('ko-KR')}</b></div><div class="u-row"><span>심는 철</span><b>일 년 내내 · 추위·더위 걱정 없음</b></div>
   <p class="u-hint" style="margin:4px 0 8px">자라는 동안 양분을 먹지 않아요. 물은 줘야 잘 자라요. 다 자라면 거두는 대신 갈아엎고, 밭은 갈아 둔 채로 남아요.</p>
-  ${lk?`<button type="button" class="u-big" disabled>Lv${LV[c]}부터 심을 수 있어요</button>`:n?`<button type="button" class="u-big" id="pw-go">심기<small>가진 씨앗 ${n}</small></button>`:`<button type="button" class="u-big alt" id="pw-buy">상점에서 사기<small>1개 ${won(buyPrice(c,false))}</small></button>`}`;
+  ${lk?`<button type="button" class="u-big" disabled>Lv${LV[c]}부터 심을 수 있어요</button>`:n?`<button type="button" class="u-big" id="pw-go">심기<small>가진 씨앗 ${n}</small></button>`:`<button type="button" class="u-big" id="pw-go">심기<small>심을 때마다 1개 ${won(buyPrice(c,false))}</small></button>`}`;
   const go=document.getElementById('pw-go');if(go)go.onclick=()=>{plantClose();choose(p,{t:'plant',c,sl:false})};const by=document.getElementById('pw-buy');if(by)by.onclick=()=>{plantClose();shopTab='seed';shopBand=bandOf(LV[c]);shopShow(true);shopSel='seed:'+c;shopQ=1;shopDraw()};return}
  const n=INV[kind][c]||0,s=st(c),need=NEED[c],[t0,t1]=TEMP[c],tw=WX.t,yd=sl?24:12,inc=Math.round(yd*pr(c)-buyPrice(c,sl));
  const tg=gh?ghTemp(c,p):tw,tTxt=gh?(tg<t0?`<span class="u-dn">온실 안 ${Math.round(tg)}℃ · 추워서 느려요</span>`:tg>t1?`<span class="u-warn">온실 안 ${Math.round(tg)}℃ · 더워서 느려요</span>`:`<span class="u-ok">온실 안 ${Math.round(tg)}℃ · 딱 좋아요</span>`):tw<t0?`<span class="u-dn">오늘 ${tw}℃ · 추워서 느려요</span>`:tw>t1?`<span class="u-warn">오늘 ${tw}℃ · 더워서 느려요</span>`:`<span class="u-ok">오늘 ${tw}℃ · 딱 좋아요</span>`;
@@ -2329,7 +2332,7 @@ function plantDraw(){const p=PW.p,sl=PW.sl,kind=sl?'seedling':'seed',gh=!!p.gh;
  <div class="u-row"><span>적온 ${t0}~${t1}℃</span><b>${tTxt}</b></div>
  <div class="u-price">${uSpark(c)}<div><b>${won(pr(c))}</b> ${stTag(c)}<div>${uTrend(c)} 어제보다</div></div></div>
  <div class="u-row"><span>예상 수익</span><b>약 ${yd}개 × ${won(pr(c))} ${inc>=0?'= +':'= '}${won(inc)}</b></div>
- ${s?`<button type="button" class="u-big" disabled>${LV[c]>G.lv?`Lv${LV[c]}부터 심을 수 있어요`:'온실에서만 자라요'}</button>`:n?`<button type="button" class="u-big" id="pw-go">심기<small>가진 ${sl?'모종':'씨앗'} ${n}</small></button>`:`<button type="button" class="u-big alt" id="pw-buy">상점에서 사기<small>1개 ${won(buyPrice(c,sl))}</small></button>`}`;
+ ${s?`<button type="button" class="u-big" disabled>${LV[c]>G.lv?`Lv${LV[c]}부터 심을 수 있어요`:'온실에서만 자라요'}</button>`:n?`<button type="button" class="u-big" id="pw-go">심기<small>가진 ${sl?'모종':'씨앗'} ${n}</small></button>`:`<button type="button" class="u-big" id="pw-go">심기<small>심을 때마다 1개 ${won(buyPrice(c,sl))}</small></button>`}`;
  const go=document.getElementById('pw-go');if(go)go.onclick=()=>{plantClose();choose(p,{t:'plant',c,sl})};
  const by=document.getElementById('pw-buy');if(by)by.onclick=()=>{plantClose();shopTab=sl?'seedling':'seed';shopBand=bandOf(LV[c]);shopShow(true);shopSel=(sl?'seedling':'seed')+':'+c;shopQ=10;shopDraw()}}
 document.getElementById('pw-tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;PW.sl=b.dataset.k==='seedling';PW.c=null;sfx('menu');plantDraw()};
