@@ -825,6 +825,9 @@ const FL=[];function floatNum(arr){if(!SET.pop)return;arr.forEach(([t,col],k)=>F
 const Q=[];let batch=null,queueOpen=false;
 const samePlant=(x,a)=>x&&x.t==='plant'&&x.c===a.c&&x.sl===a.sl;
 // 씨앗·모종이 없으면 심을 때마다 1개 값이 바로 빠져나감(묻지 않음)
+// 실제 시간 글: 초 → '약 2시간 30분'
+function rtTxt(sec){sec=Math.max(0,Math.round(sec));if(sec<60)return`${sec}초`;const m=Math.round(sec/60);if(m<60)return`${m}분`;const h=Math.floor(m/60),mm=m%60;if(h<24)return`${h}시간${mm?' '+mm+'분':''}`;const d=Math.floor(h/24),hh=h%24;return`${d}일${hh?' '+hh+'시간':''}`}
+function growLeft(c,p){const d=Math.max(1,Math.ceil(growSec(c)/SET.day*(1-c.prog)/(p.water>0?1:.3)/Math.max(.3,tempF(c.c,p))-1e-6));const left=Math.max(0,(d-1)*SET.day+(SET.day-((typeof G.dayT==='number'?G.dayT:0)%SET.day)));return`다 자라기까지 농장 시간 ${d}일 · 실제 시간 약 ${rtTxt(left)}`}
 function seedBuy(a){return !GEMC[a.c]&&(COST[a.c]||0)>0&&LV[a.c]<=G.lv&&(a.sl?HOW[a.c]!=='seed':HOW[a.c]!=='seedling')}
 function seedHas(a){return (INV[a.sl?'seedling':'seed'][a.c]||0)>0||(seedBuy(a)&&money>=buyPrice(a.c,!!a.sl))}
 function avail(a,self){let n=(INV[a.sl?'seedling':'seed'][a.c]||0)+(seedBuy(a)?Math.floor(money/buyPrice(a.c,!!a.sl)):0);Q.forEach(q=>{if(samePlant(q.a,a))n--});if(hero.job&&hero.job!==self&&samePlant(hero.job.a,a))n--;return n}
@@ -1064,7 +1067,7 @@ const bandOf=l=>Math.floor((Math.max(1,l)-1)/10);
 const STABS=[['seed','씨앗'],['seedling','모종'],['fert','거름'],['mat','재료'],['tool','농기구'],['mach','농기계'],['inst','설치'],['fac','시설'],['pet','동물'],['deco','꾸미기']];
 function shopItems(){const L=[];
  if(shopTab==='seed'||shopTab==='seedling'){const sl=shopTab==='seedling',kind=sl?'seedling':'seed';
-  if(shopBand==null)shopBand=bandOf(G.lv);Object.keys(INV[kind]).filter(c=>!GEMC[c]&&bandOf(LV[c])===shopBand).sort((a,b)=>LV[a]-LV[b]).forEach(c=>L.push({k:kind+':'+c,ic:KIT.ic[sl?'168':'167'],sub:A[c+'_3'],name:NAME[c]+(sl?' 모종':' 씨앗'),info:GMC[c]?`Lv${LV[c]} · 녹비 · ${DAYS[c]}일마다 양분 +${GMC[c].add.toLocaleString('ko-KR')} × ${GMC[c].times}번`:`Lv${LV[c]} · ${DAYS[c]}일${GHONLY.includes(c)?' · 비닐하우스':''}`,lv:LV[c],price:buyPrice(c,sl),have:()=>INV[kind][c],add:n=>INV[kind][c]+=n,bag:1}))}
+  if(shopBand==null)shopBand=bandOf(G.lv);Object.keys(INV[kind]).filter(c=>!GEMC[c]&&bandOf(LV[c])===shopBand).sort((a,b)=>LV[a]-LV[b]).forEach(c=>L.push({k:kind+':'+c,ic:KIT.ic[sl?'168':'167'],sub:A[c+'_3'],name:NAME[c]+(sl?' 모종':' 씨앗'),info:GMC[c]?`Lv${LV[c]} · 녹비 · ${DAYS[c]}일마다 양분 +${GMC[c].add.toLocaleString('ko-KR')} × ${GMC[c].times}번`:`Lv${LV[c]} · ${DAYS[c]}일 (실제 ${rtTxt(DAYS[c]*SET.day*(sl?.7:1)/(SET.grow||1))})${GHONLY.includes(c)?' · 비닐하우스':''}`,lv:LV[c],price:buyPrice(c,sl),have:()=>INV[kind][c],add:n=>INV[kind][c]+=n,bag:1}))}
  if(shopTab==='fert'){FERT.forEach(([ic,nm,v])=>L.push({k:'f:'+ic,ic:KIT.ic[ic],name:nm+' 밑거름',info:`밭 양분 +${v.toLocaleString('ko-KR')}`,lv:FLV[ic],price:FPRICE[ic],have:()=>FINV[ic],add:n=>FINV[ic]+=n,bag:1}));
   TOPF.forEach(([ic,nm,v,fx],n)=>L.push({k:'f:'+ic,ic:KIT.ic['203'],hue:ic,name:nm,info:`덧거름 · 양분 +${v}${n?' · '+fx:''}`,lv:[5,8,25,60][n],price:[500,900,1500,3000][n],have:()=>FINV[ic]||0,add:q=>FINV[ic]=(FINV[ic]||0)+q,bag:1}))}
  if(shopTab==='mat'){L.push({k:'m:179',ic:KIT.ic['179'],name:'기본 상토',info:'씨앗과 함께 모종을 키워요',lv:1,price:200,have:()=>MATS['179'][1],add:n=>MATS['179'][1]+=n,bag:1})}
@@ -1095,7 +1098,7 @@ function shopDraw(){const L=shopItems();document.getElementById('shop-money').te
  const why=lock?`Lv${it.lv}부터 살 수 있어요`:it.done?it.doneTxt:it.mat?(mx?'':`${matName(it.mat[0])}이 모자라요 (가진 것 ${matHave(it.mat[0])}개)`):(money<it.price?'돈이 모자라요':(!mx?'가방에 자리가 없어요':''));
  const cost=it.mat?0:it.price*Math.max(1,shopQ),left=bagCap()-bagItems().length;
  det.innerHTML=`<div class="u-dh"><div class="im"><img src="${it.sub||it.ic}" alt="" style="${it.hue&&!it.sub?topHue(it.hue):''}">${it.sub?`<img class="sub" src="${it.ic}" alt="">`:''}</div><div><h2>${it.name}</h2><small>Lv${it.lv||1} · ${it.mat?`${matName(it.mat[0])} ${it.mat[1]}개`:'1개 '+won(it.price)}${it.have?` · 가진 것 ${it.have()}개`:''}</small></div></div>
-  ${c?uBand(c,sl,false)+`<div class="u-cal">${uCal(c)}</div><div class="u-row"><span>자라는 날</span><b>${DAYS[c]}일 · ${sl?'20~28개':'10~14개'}</b></div><div class="u-row"><span>거둔 ${NAME[c]} 시세</span><b>${stTag(c)} ${won(pr(c))} ${uTrend(c)}</b></div>`:''}
+  ${c?uBand(c,sl,false)+`<div class="u-cal">${uCal(c)}</div><div class="u-row"><span>자라는 날</span><b>${DAYS[c]}일 (실제 ${rtTxt(DAYS[c]*SET.day*(sl?.7:1)/(SET.grow||1))}) · ${sl?'20~28개':'10~14개'}${(YM[c]||1)>1?' × '+(Math.round(YM[c]*10)/10):''}</b></div><div class="u-row"><span>거둔 ${NAME[c]} 시세</span><b>${stTag(c)} ${won(pr(c))} ${uTrend(c)}</b></div>`:''}
   ${!c&&(it.desc||it.info)?`<p class="u-desc">${it.desc||it.info}</p>`:''}
   ${multi&&!lock&&!it.done?`<div class="u-qty"><button type="button" class="u-qb" data-q="min">최소</button><button type="button" class="u-qb" data-q="-1">−</button><input class="u-qn" id="sq-n" inputmode="numeric" value="${shopQ}"><button type="button" class="u-qb" data-q="1">+</button><button type="button" class="u-qb" data-q="max">최대</button></div><div class="u-qrow"><button type="button" class="u-qb" data-q="10">+10</button><button type="button" class="u-qb" data-q="100">+100</button><button type="button" class="u-qb" data-q="-10">−10</button></div>`:''}
   ${!lock&&!it.done?`<div class="u-sum"><div class="u-row"><span>${multi?'합계':'값'}</span><b style="font-size:20px">${costTxt(it,Math.max(1,shopQ))}</b></div>${it.mat?'':`<div class="u-row"><span>사고 나면 남는 돈</span><b class="${money-cost<0?'u-warn':''}">${won(money-cost)}</b></div>`}${it.bag?`<div class="u-row"><span>가방 남은 칸</span><b>${left} / ${bagCap()}칸</b></div>`:''}</div>`:''}
@@ -2537,7 +2540,7 @@ function state(p){const c=p.crop;
  if(c.prog>=1&&GEMC[c.c])return[`${NAME[c.c]} 새싹 다 자람`,'캐면 금조각과 옥돌이 나와요. 아주 드물게 장신구도 나와요',ACCIC.bud];
  if(c.prog>=1&&GMC[c.c])return[`${NAME[c.c]} 다 자람`,`갈아엎으면 양분 +${GMC[c.c].add.toLocaleString('ko-KR')} · ${GMC[c.c].times-(c.hv||0)}번 더 갈아엎을 수 있어요`,A[c.c+'_3']];
  if(c.prog>=1)return[`${NAME[c.c]} 다 자람`,`지금 거두면 ${c.sl?'20~28':'10~14'}개, 개당 ${won(pr(c.c))}`,A[c.c+'_3']];
- return[`${NAME[c.c]} 자라는 중`,c.stop?'양분이 모자라 자라지 않고 있어요.':p.water<=0?'물이 말라 천천히 자라요. 물을 주세요.':tempF(c.c,p)<1?(()=>{const t=p.gh?Math.round(ghTemp(c.c,p)):WX.t;return`${p.gh?'온실 안':'오늘'} ${t}℃라 ${t<TEMP[c.c][0]?'추워서':'더워서'} ${Math.round(tempF(c.c,p)*100)}% 속도로 자라요 (적온 ${TEMP[c.c][0]}~${TEMP[c.c][1]}℃)`})():`다 자라기까지 ${Math.max(1,Math.ceil(growSec(c)/SET.day*(1-c.prog)/(p.water>0?1:.3)/Math.max(.3,tempF(c.c,p))-1e-6))}일 · 새벽마다 하루씩 자라요`+(HH[c.c]>1?` · ${HH[c.c]-(c.hv||0)}번 ${GMC[c.c]?'갈아엎어요':'거둬요'}`:''),A[c.c+'_'+stOf(c)]]}
+ return[`${NAME[c.c]} 자라는 중`,c.stop?'양분이 모자라 자라지 않고 있어요.':p.water<=0?'물이 말라 천천히 자라요. 물을 주세요.':tempF(c.c,p)<1?(()=>{const t=p.gh?Math.round(ghTemp(c.c,p)):WX.t;return`${p.gh?'온실 안':'오늘'} ${t}℃라 ${t<TEMP[c.c][0]?'추워서':'더워서'} ${Math.round(tempF(c.c,p)*100)}% 속도로 자라요 (적온 ${TEMP[c.c][0]}~${TEMP[c.c][1]}℃) · `+growLeft(c,p)})():growLeft(c,p)+(HH[c.c]>1?` · ${HH[c.c]-(c.hv||0)}번 ${GMC[c.c]?'갈아엎어요':'거둬요'}`:''),A[c.c+'_'+stOf(c)]]}
 function renderSheet(){const p=sel;if(!p)return;
  
  const back='<button class="back" id="sh-back" type="button">← 밭으로 돌아가기</button>';
