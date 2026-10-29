@@ -1494,7 +1494,9 @@ function decoMode(v){deco.buy=null;deco.last=null;if(v&&(hero.act||hero.job||Q.l
  if(v){closeSheet();mkShow(false);bagShow(false);shopShow(false);stoShow(false);nbShow(false);setShow(false);hsShow(false);setBatch(null);decoBar()}}
 function pDraw(im,k,i,j,w,h,rot){if(k==='greenhouse'){drawGH(i,j,w,h,rot,deco.mv&&deco.mv.ref?deco.mv.ref[6]||0:0,1);return}if(k==='plot'){const t=T(i,j);cx.drawImage(IMG.plot_wild,t.x-128,t.y);return}if(isB(k)){const f=T(i+w-1,j+h-1);cx.drawImage(im,f.x-im.width/2,f.y+64-im.height+4);return}const f=T(i+w,j+h),cxp=(i-j+(w-h)/2)*TW/2;
  if(isG(k)){const t=T(i,j);cx.drawImage(im,t.x-65,t.y-1,130,66);return}
- const s=SB(im,w,h),iw=im.width*s,ih=im.height*s;if(rot){cx.save();cx.translate(cxp,0);cx.scale(-1,1);cx.drawImage(im,-iw/2,f.y-ih+4,iw,ih);cx.restore()}else cx.drawImage(im,cxp-iw/2,f.y-ih+4,iw,ih)}
+ const s=SB(im,w,h),iw=im.width*s,ih=im.height*s;let by=f.y+4;if(w*h>=4&&isTree(k)){const t0=T(i,j);by=(t0.y+f.y)/2+TH*.18}if(rot){cx.save();cx.translate(cxp,0);cx.scale(-1,1);cx.drawImage(im,-iw/2,by-ih,iw,ih);cx.restore()}else cx.drawImage(im,cxp-iw/2,by-ih,iw,ih)}
+// 나무는 바닥 칸 가운데에 세움
+const TREEK={};function isTree(k){if(TREEK[k]==null){const n=pName(k)||'';TREEK[k]=/나무$|목련/.test(n)}return TREEK[k]}
 let VIS=()=>true;
 // 작은 비율(시험판만): 사람·농기계 줄이고, 시설·꾸미기는 바닥 칸에 맞춰 줄임
 const SMALL=()=>!USER&&SET.small!==false;
