@@ -1751,7 +1751,7 @@ function reqPage(pg,back){REQS.forEach(r=>{if(r.until<1e12)r.until=Date.now()+86
  pg.querySelectorAll('button[data-id]').forEach(b=>b.onclick=()=>{const r=REQS.find(x=>x.id===+b.dataset.id);if(!r||(STO[r.c]||0)<r.n)return;useCrop(r.c,r.n);money+=r.pay;STAT.sold+=r.pay;STAT.reqDone=(STAT.reqDone||0)+1;REQS=REQS.filter(x=>x!==r);const q=b.getBoundingClientRect();gainPop('+'+won(r.pay),q.left+q.width/2,q.top);sfx('trade');addXp(r.xp);hudDraw();hDraw()})}
 // ---- 동물: 따라다니고 하루 한 번 도움
 const PETIMG={};Object.entries({"baekgu_f": ["a/5f89f6f12f9d.webp", "a/1c401ed7a51d.webp", "a/0f81ca82989b.webp", "a/1005297bb096.webp"], "baekgu_b": ["a/6d0adaebcdfd.webp", "a/24441c266aa7.webp", "a/c82c27c488c8.webp", "a/0f4165e99f9a.webp"], "hwanggu_f": ["a/61e184a335b9.webp", "a/7ee1d9c8d1ad.webp", "a/f7c4cada6853.webp", "a/90dcfbd3ca17.webp"], "hwanggu_b": ["a/ed99db3a05c9.webp", "a/c0d1fcdad9c4.webp", "a/64202f5be84f.webp", "a/e51554c2249f.webp"], "cheese_f": ["a/bd11f41fd0ff.webp", "a/3955655ece69.webp", "a/1b4f23621735.webp", "a/3203c0834d4b.webp"], "cheese_b": ["a/c41c4d73b641.webp", "a/d703da0b1e99.webp", "a/b0e8081fed47.webp", "a/5252cf9e8210.webp"], "calico_f": ["a/53da77debace.webp", "a/09acab2d99a0.webp", "a/2100f030b64b.webp", "a/099c63b69164.webp", "a/3e5cabe88860.webp", "a/2a867f48a749.webp", "a/a049517346c4.webp", "a/0f161bd02ffe.webp"], "calico_b": ["a/e9d5a46efad3.webp", "a/8dd1ad3bc7a6.webp", "a/6121b3569179.webp", "a/bf4f556a7b1b.webp", "a/577ba4e231af.webp", "a/4896b0c9c31d.webp", "a/29543f981a67.webp", "a/2fc14ed1f56b.webp"], "blackcat_f": ["a/e8cd536b3e14.webp", "a/4d202190719e.webp", "a/0e9f6cb32ce8.webp", "a/6a1802636d48.webp", "a/58e59baaee03.webp", "a/d4ebd61bb7fd.webp", "a/0468a29db0d7.webp", "a/cd90acf856fd.webp"], "blackcat_b": ["a/a0a4053db3fa.webp", "a/72761ff5f0dc.webp", "a/8a5bc7cb1eda.webp", "a/c9f0a8bf737e.webp", "a/e480d612cd6e.webp", "a/a755cae6c88d.webp", "a/f3767cc8ea92.webp", "a/6e29734bd304.webp"], "corgi_f": ["a/23f4e947eaf1.webp", "a/5f8dde77fe97.webp", "a/8a17d7dd9c4e.webp", "a/471ade12caa8.webp", "a/77ee8f3f07f7.webp", "a/ffe8d3507b2d.webp", "a/f907935d5760.webp", "a/933a02d02ec6.webp"], "corgi_b": ["a/4c34f822be9d.webp", "a/bb5756b9b788.webp", "a/150f1b4804d1.webp", "a/41b55b167427.webp", "a/339743b9a021.webp", "a/6f79150f49c0.webp", "a/47183b80ffda.webp", "a/ad230b63414a.webp"], "rabbit_f": ["a/60b202a340ee.webp", "a/ad73ff6e86e0.webp", "a/934a8321d3d9.webp", "a/1ac329426308.webp", "a/794357d243e6.webp", "a/0cb2b36bd823.webp", "a/908ff8f4f379.webp", "a/d192b1affb06.webp"], "rabbit_b": ["a/6ba91cf2c768.webp", "a/dec82d3b9458.webp", "a/d0be0d51702f.webp", "a/d0a18fab4f6c.webp", "a/097f5a596870.webp", "a/90c6c62968e2.webp", "a/9b7ad8fe0d20.webp", "a/7fbf3ccf9e24.webp"]}).forEach(([k,a])=>PETIMG[k]=a.map(u=>{const im=new Image();im.src=u;return im}));
-const PETS=[['baekgu','백구',5,100000,'하루 한 번 밭 어딘가에서 씨앗을 물어 와요'],['hwanggu','황구',15,500000,'씨앗 대신 가끔 옥돌을 물어 와요'],['corgi','웰시코기',10,300000,'하루 한 번 벤 풀을 한 다발 물어 와요'],['cheese','치즈 고양이',8,200000,'창고 쥐를 쫓아 등급이 5% 늦게 떨어져요'],['calico','삼색 고양이',20,600000,'창고 등급이 8% 늦게 떨어져요'],['blackcat','검은 고양이',30,1000000,'창고 등급이 10% 늦게 떨어져요'],['rabbit','토끼',12,250000,'옆에 있으면 마음이 편해져 체력이 조금 더 빨리 차요']];
+const PETS=[['baekgu','백구',5,100000,'가끔 씨앗을 물어 와요. 머리 위 하트를 누르면 받아요'],['hwanggu','황구',15,500000,'가끔 옥돌이나 신기한 돌을 물어 와요. 하트를 누르면 받아요'],['corgi','웰시코기',10,300000,'가끔 벤 풀을 한 다발 물어 와요. 하트를 누르면 받아요'],['cheese','치즈 고양이',8,200000,'창고 쥐를 쫓아 등급이 5% 늦게 떨어져요'],['calico','삼색 고양이',20,600000,'창고 등급이 8% 늦게 떨어져요'],['blackcat','검은 고양이',30,1000000,'창고 등급이 10% 늦게 떨어져요'],['rabbit','토끼',12,250000,'옆에 있으면 마음이 편해져 체력이 조금 더 빨리 차요']];
 const PETST={};
 const myPets=()=>PETS.filter(p=>OWN[p[0]]>0).map(p=>p[0]);
 const TRAIL=[];
@@ -1761,7 +1761,8 @@ function petFree(i,j){const a=Math.floor(i),b=Math.floor(j);return a>=0&&b>=0&&a
 function petPick(st){for(let n=0;n<20;n++){const i=.5+Math.random()*(N-1),j=.5+Math.random()*(N-1);if(petFree(i,j)){st.ti=i;st.tj=j;return}}st.ti=st.i;st.tj=st.j}
 function petUpdate(dt){const L=myPets();if(!L.length)return;const now=Date.now();
  L.forEach((k,n)=>{const st=PETST[k]||(PETST[k]={i:hero.i-.6-n*.3,j:hero.j-.6,dir:0,flip:false,f:0,t:0,mv:false,wait:Math.random()*3});if(!isFinite(st.i)||!isFinite(st.j)){st.i=hero.i;st.j=hero.j}
-  if(st.gift&&now-st.gift.t>PETGIFT){st.gift=null;petPick(st)}
+  if(st.gift&&now-st.gift.t>PETGIFT){st.gift=null;petPick(st);st.next=PETNEXT()}
+  if(!st.next)st.next=PETNEXT();if(!st.gift&&now>=st.next){st.next=PETNEXT();if(['baekgu','hwanggu','corgi'].includes(k))petGift(k)}
   let ti,tj,sp;
   if(st.gift){ti=hero.i+.7;tj=hero.j+.4+n*.25;sp=3.2}else{if(st.ti==null){petPick(st)}ti=st.ti;tj=st.tj;sp=1.4}
   const dx=ti-st.i,dy=tj-st.j,d=Math.hypot(dx,dy);st.mv=st.gift?d>.5:d>.15;
@@ -1772,16 +1773,19 @@ function petHeart(k,st){let e=document.getElementById('ph-'+k);if(!st.gift||docu
  if(!e){e=document.createElement('button');e.type='button';e.className='pet-heart';e.id='ph-'+k;e.innerHTML='♥';e.onclick=ev=>{ev.stopPropagation();petTake(k)};marks.appendChild(e)}
  const t=T(st.i,st.j),fr=PETIMG[k+'_f'],h=(fr&&fr[0]&&fr[0].height||60)*SK('hero');e.hidden=false;e.style.left=((t.x-cam.x)*zoom+W/2)+'px';e.style.top=((t.y+TH/2-h-cam.y)*zoom+H/2-10)+'px';
  const left=1-(Date.now()-st.gift.t)/PETGIFT;e.style.opacity=left<.25?(.4+.6*Math.abs(Math.sin(Date.now()/200))):1}
-function petTake(k){const st=PETST[k];if(!st||!st.gift)return;const g=st.gift;st.gift=null;petPick(st);const msg=[];
+function petTake(k){const st=PETST[k];if(!st||!st.gift)return;const g=st.gift;st.gift=null;petPick(st);st.next=PETNEXT();const msg=[];
  g.items.forEach(([t,id,n])=>{if(t==='seed'){INV.seed[id]=(INV.seed[id]||0)+n;msg.push(`${NAME[id]} 씨앗 ${n}개`)}else if(MATS[id]){MATS[id][1]+=n;gotPop(id,n,`${g.who}${josa(g.who,'이','가')} 물어 왔어요`);msg.push(`${MATS[id][0]} ${n}개`)}});
  sfx('trade');const e=document.getElementById('ph-'+k);if(e){const r=e.getBoundingClientRect();gainPop('♥ '+msg.join(' · '),r.left+r.width/2,r.top);e.hidden=true}toast(`${g.who}${josa(g.who,'이','가')} ${msg.join(', ')}${josa(msg.at(-1).slice(-1),'을','를')} 물어 왔어요`)}
 function petDraw(S){myPets().forEach(k=>{const st=PETST[k];if(!st)return;const fr=PETIMG[k+(st.dir?'_b':'_f')];if(!fr||!fr.length)return;const im=fr[st.f%fr.length],t=T(st.i,st.j);
  S.push({k:st.i+st.j+.25,pt:[st.i,st.j],f(){cx.save();cx.translate(t.x,t.y+TH/2+4);{const k=SK('hero');cx.scale(k,k)}if(st.flip)cx.scale(-1,1);cx.drawImage(im,-im.width/2,-im.height);cx.restore()}})})}
-function petDaily(){if(CATCH)return;const L=myPets(),now=Date.now(),bell=accOn('bellneck');
- const give=(k,who,items)=>{const st=PETST[k];if(!st||!items.length||st.gift)return;st.gift={t:now,who,items}};
- if(L.includes('baekgu')){const cs=ALLC.filter(c=>LV[c]<=G.lv&&HOW[c]!=='seedling');const c=cs[Math.floor(Math.random()*cs.length)];if(c)give('baekgu','백구',[['seed',c,bell?2:1]])}
- if(L.includes('hwanggu')){const it=[];if(Math.random()<.4)it.push(['m','187',1]);const sn=stoneRoll(8);if(sn)it.push(['m',sn,1]);if(bell)it.push(['m','186',1]);give('hwanggu','황구',it)}
- if(L.includes('corgi'))give('corgi','웰시코기',[['m','174',bell?6:5]])}
+// 물어 오는 때: 동물마다 실제 5~40분 사이 아무 때나(불규칙)
+const PETNEXT=()=>Date.now()+(5+Math.random()*35)*60000;
+function petDaily(){}
+function petGift(k){const st=PETST[k],bell=accOn('bellneck'),R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));let who,items=[];
+ if(k==='baekgu'){const cs=ALLC.filter(c=>LV[c]<=G.lv&&HOW[c]!=='seedling');const c=cs[Math.floor(Math.random()*cs.length)];if(c){who='백구';items=[['seed',c,R(2,4)+(bell?1:0)]]}}
+ else if(k==='hwanggu'){who='황구';if(Math.random()<.6)items.push(['m','187',1]);const sn=stoneRoll(15);if(sn)items.push(['m',sn,1]);if(!items.length||bell)items.push(['m','186',R(2,4)])}
+ else if(k==='corgi'){who='웰시코기';items=[['m','174',R(10,15)+(bell?2:0)]]}
+ if(who&&items.length)st.gift={t:Date.now(),who,items}}
 const catSlow=()=>{const L=myPets();return L.includes('blackcat')?1.1:L.includes('calico')?1.08:L.includes('cheese')?1.05:1};
 // ---- 농기계 밭일
 const GRAIN=['rice','barley','wheat','corn','buckwheat','soybean','adzuki','peanut'];
