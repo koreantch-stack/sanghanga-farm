@@ -80,6 +80,8 @@ body{background:var(--field);color:var(--ink);font-family:var(--f-b);overflow:hi
 *{-webkit-tap-highlight-color:transparent}
 #c:focus{outline:none}
 #marks{position:fixed;inset:0;pointer-events:none;z-index:3}
+.pet-heart{position:absolute;left:0;top:0;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:3px solid #c0392b;background:#fff0f0;color:#e0405a;font:700 24px/30px sans-serif;text-align:center;padding:0;box-shadow:0 3px 0 #8a2a2a;pointer-events:auto;cursor:pointer;animation:phb 1s ease-in-out infinite}
+@keyframes phb{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-5px) scale(1.08)}}
 .mk{position:absolute;left:0;top:0;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;border:3px solid #6b4a28;background:#fbf0d8;box-shadow:0 3px 0 #4a321b;padding:4px;pointer-events:auto;cursor:pointer;display:grid;place-items:center}
 .mk img{width:100%;height:100%;object-fit:contain}
 .mk.ripe{border-color:#c48a1a;background:#fff3c4;animation:bob 1s ease-in-out infinite}
@@ -1753,18 +1755,33 @@ const PETS=[['baekgu','백구',5,100000,'하루 한 번 밭 어딘가에서 씨�
 const PETST={};
 const myPets=()=>PETS.filter(p=>OWN[p[0]]>0).map(p=>p[0]);
 const TRAIL=[];
-function petUpdate(dt){const L=myPets();if(!L.length)return;const last=TRAIL[TRAIL.length-1];if(!last||Math.hypot(last[0]-hero.i,last[1]-hero.j)>.15){TRAIL.push([hero.i,hero.j]);if(TRAIL.length>60)TRAIL.shift()}
- L.forEach((k,n)=>{const st=PETST[k]||(PETST[k]={i:hero.i-.6,j:hero.j-.6,dir:0,flip:false,f:0,t:0,mv:false});const tg=TRAIL[Math.max(0,TRAIL.length-1-(n+1)*5)]||[hero.i,hero.j];
-  const dx=tg[0]-st.i,dy=tg[1]-st.j,d=Math.hypot(dx,dy),sp=3.4*dt;st.mv=d>.25;
-  if(st.mv){const m=Math.min(d,sp);st.i+=dx/d*m;st.j+=dy/d*m;if(Math.abs(dx)>=Math.abs(dy)){st.dir=dx>0?0:1;st.flip=dx<0}else{st.dir=dy<0?1:0;st.flip=dy>0}st.t+=dt;if(st.t>.11){st.t=0;st.f++}}else st.f=0})}
+// 동물: 농장을 자유롭게 돌아다니다가, 물어 온 게 있으면 머리 위에 하트를 띄우고 주인공에게 옴. 하트를 눌러야 받음. 1분 지나면 사라짐
+const PETGIFT=60000;
+function petFree(i,j){const a=Math.floor(i),b=Math.floor(j);return a>=0&&b>=0&&a<N&&b<N&&!blocked.has(a+','+b)}
+function petPick(st){for(let n=0;n<20;n++){const i=.5+Math.random()*(N-1),j=.5+Math.random()*(N-1);if(petFree(i,j)){st.ti=i;st.tj=j;return}}st.ti=st.i;st.tj=st.j}
+function petUpdate(dt){const L=myPets();if(!L.length)return;const now=Date.now();
+ L.forEach((k,n)=>{const st=PETST[k]||(PETST[k]={i:hero.i-.6-n*.3,j:hero.j-.6,dir:0,flip:false,f:0,t:0,mv:false,wait:Math.random()*3});if(!isFinite(st.i)||!isFinite(st.j)){st.i=hero.i;st.j=hero.j}
+  if(st.gift&&now-st.gift.t>PETGIFT){st.gift=null;petPick(st)}
+  let ti,tj,sp;
+  if(st.gift){ti=hero.i+.7;tj=hero.j+.4+n*.25;sp=3.2}else{if(st.ti==null){petPick(st)}ti=st.ti;tj=st.tj;sp=1.4}
+  const dx=ti-st.i,dy=tj-st.j,d=Math.hypot(dx,dy);st.mv=st.gift?d>.5:d>.15;
+  if(!st.gift&&!st.mv){if(st.wait==null)st.wait=2+Math.random()*5;st.wait-=dt;if(st.wait<=0){st.wait=null;petPick(st)}}
+  if(st.mv){const m=Math.min(d,sp*dt);st.i+=dx/d*m;st.j+=dy/d*m;if(Math.abs(dx)>=Math.abs(dy)){st.dir=dx>0?0:1;st.flip=dx<0}else{st.dir=dy<0?1:0;st.flip=dy>0}st.t+=dt;if(st.t>.11){st.t=0;st.f++}}else st.f=0;
+  petHeart(k,st)})}
+function petHeart(k,st){let e=document.getElementById('ph-'+k);if(!st.gift||document.body.classList.contains('decoing')){if(e)e.hidden=true;return}
+ if(!e){e=document.createElement('button');e.type='button';e.className='pet-heart';e.id='ph-'+k;e.innerHTML='♥';e.onclick=ev=>{ev.stopPropagation();petTake(k)};marks.appendChild(e)}
+ const t=T(st.i,st.j),fr=PETIMG[k+'_f'],h=(fr&&fr[0]&&fr[0].height||60)*SK('hero');e.hidden=false;e.style.left=((t.x-cam.x)*zoom+W/2)+'px';e.style.top=((t.y+TH/2-h-cam.y)*zoom+H/2-10)+'px';
+ const left=1-(Date.now()-st.gift.t)/PETGIFT;e.style.opacity=left<.25?(.4+.6*Math.abs(Math.sin(Date.now()/200))):1}
+function petTake(k){const st=PETST[k];if(!st||!st.gift)return;const g=st.gift;st.gift=null;petPick(st);const msg=[];
+ g.items.forEach(([t,id,n])=>{if(t==='seed'){INV.seed[id]=(INV.seed[id]||0)+n;msg.push(`${NAME[id]} 씨앗 ${n}개`)}else if(MATS[id]){MATS[id][1]+=n;gotPop(id,n,`${g.who}${josa(g.who,'이','가')} 물어 왔어요`);msg.push(`${MATS[id][0]} ${n}개`)}});
+ sfx('trade');const e=document.getElementById('ph-'+k);if(e){const r=e.getBoundingClientRect();gainPop('♥ '+msg.join(' · '),r.left+r.width/2,r.top);e.hidden=true}toast(`${g.who}${josa(g.who,'이','가')} ${msg.join(', ')}${josa(msg.at(-1).slice(-1),'을','를')} 물어 왔어요`)}
 function petDraw(S){myPets().forEach(k=>{const st=PETST[k];if(!st)return;const fr=PETIMG[k+(st.dir?'_b':'_f')];if(!fr||!fr.length)return;const im=fr[st.f%fr.length],t=T(st.i,st.j);
  S.push({k:st.i+st.j+.25,pt:[st.i,st.j],f(){cx.save();cx.translate(t.x,t.y+TH/2+4);{const k=SK('hero');cx.scale(k,k)}if(st.flip)cx.scale(-1,1);cx.drawImage(im,-im.width/2,-im.height);cx.restore()}})})}
-function petDaily(){const L=myPets(),msg=[];
- if(L.includes('baekgu')){const cs=ALLC.filter(c=>LV[c]<=G.lv&&HOW[c]!=='seedling');const c=cs[Math.floor(Math.random()*cs.length)];if(c){INV.seed[c]=(INV.seed[c]||0)+1;msg.push(`백구가 ${NAME[c]} 씨앗을 물어 왔어요`)}}
- if(L.includes('hwanggu')&&Math.random()<.4){MATS['187'][1]++;msg.push('황구가 옥돌을 물어 왔어요');gotPop('187',1,'황구가 물어 왔어요')}if(L.includes('hwanggu')){const sn=stoneRoll(8);if(sn){MATS[sn][1]++;gotPop(sn,1,'황구가 물어 왔어요');msg.push('황구가 '+MATS[sn][0]+josa(MATS[sn][0],'을','를')+' 물어 왔어요')}}
- if(L.includes('corgi')){MATS['174'][1]+=5;msg.push('웰시코기가 벤 풀 5개를 물어 왔어요')}
- if(accOn('bellneck')&&L.length){if(L.includes('baekgu')){const cs=ALLC.filter(c=>LV[c]<=G.lv&&HOW[c]!=='seedling');const c=cs[Math.floor(Math.random()*cs.length)];if(c)INV.seed[c]=(INV.seed[c]||0)+1}if(L.includes('hwanggu'))MATS['186'][1]++;if(L.includes('corgi'))MATS['174'][1]++;msg.push('방울 소리 듣고 하나씩 더 물어 왔어요')}
- if(msg.length)setTimeout(()=>toast(msg.join(' · ')),900)}
+function petDaily(){if(CATCH)return;const L=myPets(),now=Date.now(),bell=accOn('bellneck');
+ const give=(k,who,items)=>{const st=PETST[k];if(!st||!items.length||st.gift)return;st.gift={t:now,who,items}};
+ if(L.includes('baekgu')){const cs=ALLC.filter(c=>LV[c]<=G.lv&&HOW[c]!=='seedling');const c=cs[Math.floor(Math.random()*cs.length)];if(c)give('baekgu','백구',[['seed',c,bell?2:1]])}
+ if(L.includes('hwanggu')){const it=[];if(Math.random()<.4)it.push(['m','187',1]);const sn=stoneRoll(8);if(sn)it.push(['m',sn,1]);if(bell)it.push(['m','186',1]);give('hwanggu','황구',it)}
+ if(L.includes('corgi'))give('corgi','웰시코기',[['m','174',bell?6:5]])}
 const catSlow=()=>{const L=myPets();return L.includes('blackcat')?1.1:L.includes('calico')?1.08:L.includes('cheese')?1.05:1};
 // ---- 농기계 밭일
 const GRAIN=['rice','barley','wheat','corn','buckwheat','soybean','adzuki','peanut'];
