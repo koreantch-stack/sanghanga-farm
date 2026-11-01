@@ -103,6 +103,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
 .sr select{font:400 14px 'Gowun Dodum';padding:4px;border-radius:8px;border:1px solid #c9a978;background:#fff}
 .sw button{border:0;border-radius:10px;background:var(--green);color:#fff;font:400 15px 'Do Hyeon';padding:7px 12px;cursor:pointer}
 .sw button.danger{background:var(--red)}.sw button.close{display:block;margin:12px auto 0;background:#8a6a45;padding:9px 30px}
+#sv-test .adh{display:block;font:400 14px 'Do Hyeon';color:#7b6247;margin:12px 0 0}#adm-it button{display:flex;align-items:center;gap:6px;justify-content:center}#adm-it img{width:24px;height:24px}#adm-us{font:400 12px 'Gowun Dodum';color:#4a3826;margin-top:8px;max-height:260px;overflow:auto}#adm-us div{padding:6px 2px;border-bottom:1px solid #eadbbd}#adm-us b{font:400 14px 'Do Hyeon'}
 #sv-acc{background:#fff;border:1px solid #e3cfa6;border-radius:12px;padding:10px;margin-bottom:6px}#sv-acc .ab{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}#sv-acc small{display:block;font-size:12px;color:#7b6247;line-height:1.4}#sv-acc b{font:400 16px 'Do Hyeon'}
 #confirm p{white-space:pre-line;font-size:15px;line-height:1.5;text-align:center;margin:0 0 14px}.cfb{display:flex;gap:10px;justify-content:center}#cf-no{background:#b9a888}
 #toast{position:absolute;left:50%;bottom:150px;transform:translateX(-50%);background:rgba(30,20,10,.88);color:#fff6e0;padding:8px 14px;border-radius:14px;font-size:14px;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none;max-width:86%;text-align:center}
@@ -168,14 +169,15 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>새 이야기<small>열리면 바로 볼지, 이야기 탭에 쌓아 둘지</small></span><select id="sv-story"><option value="now">바로 보기</option><option value="later">나중에 보기</option></select></div>
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-장부-2</p>
-  <div id="sv-test" hidden><div class="sr"><span>시험용</span></div>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-운영자-1</p>
+  <div id="sv-test" hidden><div class="sr"><span>운영자 모드<small>운영자 계정에만 보여요</small></span></div><b class="adh">엽전·재료·날짜</b>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
     <button type="button" data-t="bean">콩 +1000</button><button type="button" data-t="ice">얼음 가득</button>
     <button type="button" data-t="star">별 조각 +10</button><button type="button" data-t="day">하루 넘기기</button>
-    <button type="button" data-t="sum">여름으로</button><button type="button" data-t="win">겨울로</button>
-   </div></div></div></div>
+    <button type="button" data-t="sum">여름으로</button><button type="button" data-t="win">겨울로</button><button type="button" data-t="pop">인기 +5000</button><button type="button" data-t="m3">엽전 +100조</button>
+   </div><b class="adh">특별 아이템</b><div id="adm-it" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px"></div>
+   <b class="adh">손님 목록</b><button type="button" data-t="users" style="width:100%;margin-top:6px">카페 이용자 불러오기</button><div id="adm-us"></div></div></div></div>
  <div id="confirm"><div class="sw"><h3 id="cf-t"></h3><p id="cf-m"></p><div class="cfb"><button type="button" id="cf-no">그만두기</button><button type="button" id="cf-ok" class="danger">확인</button></div></div></div>
  <div id="toast"></div>
  <div id="story"><button type="button" class="skip" id="st-skip">건너뛰기</button><div id="cut"></div><div class="hint">화면을 눌러 넘기기</div></div>
@@ -556,8 +558,13 @@ $('sv-rename').onclick=()=>{$('nm').value=S.name;$('nm-err').textContent='';$('n
 let cfOk=null,cfNo=null;function confirmBox(t,m,f,ok,no,fno){$('cf-t').textContent=t;$('cf-m').textContent=m;$('cf-ok').textContent=ok||'확인';$('cf-no').textContent=no||'그만두기';cfOk=f;cfNo=fno||null;$('confirm').classList.add('on')}
 $('cf-no').onclick=()=>{$('confirm').classList.remove('on');cfOk=null;const f=cfNo;cfNo=null;if(f)f()};$('cf-ok').onclick=()=>{$('confirm').classList.remove('on');const f=cfOk;cfOk=null;if(f)f()};
 // 비밀 버튼: 판 표시를 빠르게 일곱 번 누르면 시험용 단추가 열려요
-{let n=0,t=0;$('sv-ver').onclick=()=>{const now=Date.now();n=now-t<600?n+1:1;t=now;if(n>=7){n=0;$('sv-test').hidden=!$('sv-test').hidden;toast($('sv-test').hidden?'시험용 단추를 닫았어요':'시험용 단추가 열렸어요')}}}
-$('sv-test').onclick=e=>{const b=e.target.closest('button[data-t]');if(!b)return;const t=b.dataset.t;
+const ADMIN_EMAIL='koreantch@gmail.com';let ADMIN=false;
+function admSet(){ADMIN=!!(SY.user&&SY.user.email===ADMIN_EMAIL&&SY.user.emailVerified);$('sv-test').hidden=!ADMIN;if(ADMIN)$('adm-it').innerHTML=ITEMS.map(([k,n,ic])=>`<button type="button" data-t="it" data-k="${k}"><img src="a/${ic}.webp" alt="">${n.replace('대리 장부 · ','장부 ')} +${k==='orn'?1:10}</button>`).join('')+'<button type="button" data-t="itall">전부 +10</button>'}
+async function admUsers(){const e=$('adm-us');e.textContent='불러오는 중이에요';try{const q=await firebase.firestore().collection('cafe').get();const L=q.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.ts||0)-(a.ts||0));const today=new Date().toDateString();
+ e.innerHTML=`<p style="margin:4px 0">${L.length}명 · 오늘 들어온 사람 ${L.filter(u=>new Date(u.ts||0).toDateString()===today).length}명</p>`+L.map(u=>`<div><b>${esc(u.name||'이름 없음')}</b> · ${stName(u.stage||0)}<br>${esc(u.email||u.id.slice(0,8))}<br>번 돈 ${won(u.earned||0)} · ${u.ts?new Date(u.ts).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'}):'-'}</div>`).join('')}catch(err){e.textContent='불러오지 못했어요: '+(err.code||err.message)}}
+$('sv-test').onclick=e=>{const b=e.target.closest('button[data-t]');if(!b||!ADMIN)return;const t=b.dataset.t;if(t==='users'){admUsers();return}
+ if(t==='it'||t==='itall'){(t==='it'?[b.dataset.k]:ITEMS.map(x=>x[0])).forEach(k=>{if(k==='orn')S.orn=Math.min(20,(S.orn||0)+(t==='it'?1:10));else giveItem(k,10)});if(tab==='market')drawPanel()}
+ if(t==='pop')S.pop=(S.pop||0)+5000;if(t==='m3')S.money+=1e14;
  if(t==='m1')S.money+=8e10;if(t==='m2')S.money+=1e12;if(t==='bean')S.bean+=1000;if(t==='ice')S.ice=iceCap();if(t==='star')S.star=(S.star||0)+10;
  if(t==='day'){S.day++;rollBean();dailyIce()}if(t==='sum')S.day=SEASONDAY+1;if(t==='win')S.day=SEASONDAY*3+1;
  sfx('trade');toast(b.textContent+' 했어요');hud();save();checkStory()};
@@ -601,7 +608,7 @@ const sum=d=>({ts:d.lastTs||0,earned:d.earned||0,stage:d.stage||0,money:d.money|
 const fmtSum=x=>`${stName(x.stage)} · 엽전 ${won(x.money)} · ${new Date(x.ts).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'})} 저장`;
 function loadScript(u){return new Promise((ok,no)=>{const e=document.createElement('script');e.src=u;e.onload=ok;e.onerror=no;document.head.appendChild(e)})}
 async function syInit(){if(SY.ready)return true;try{const B='../lib/';await loadScript(B+'firebase-app-compat.js');await Promise.all([loadScript(B+'firebase-auth-compat.js'),loadScript(B+'firebase-firestore-compat.js')]);if(!firebase.apps.length)firebase.initializeApp(FBCFG);SY.ready=true;
- firebase.auth().getRedirectResult().catch(()=>{});firebase.auth().onAuthStateChanged(u=>{SY.user=u;if(u)syOnLogin(u);accDraw()});return true}catch(e){return false}}
+ firebase.auth().getRedirectResult().catch(()=>{});firebase.auth().onAuthStateChanged(u=>{SY.user=u;admSet();if(u)syOnLogin(u);accDraw()});return true}catch(e){return false}}
 async function gz(str){const cs=new Blob([str]).stream().pipeThrough(new CompressionStream('gzip'));return new Uint8Array(await new Response(cs).arrayBuffer())}
 async function gunz(u8){const ds=new Blob([u8]).stream().pipeThrough(new DecompressionStream('gzip'));return await new Response(ds).text()}
 const CD=uid=>firebase.firestore().collection('cafe').doc(uid),CP=uid=>firebase.firestore().collection('cafePres').doc(uid);
@@ -633,7 +640,7 @@ async function bakOpen(){if(!SY.user)return;toast('백업을 불러오는 중이
 function bakGo(i){const b=BAKS[i];if(!b)return;confirmBox('이 진행으로 되살릴까요?',`${stName(b.stage)} · 엽전 ${won(b.money||0)}\n지금 진행도 백업으로 남겨 둬요.`,async()=>{try{const str=await gunz(b.data.toUint8Array());save();const cur2=lsG(SAVE);if(cur2)await syBackup(SY.user.uid,cur2,'되살리기 전 진행');lsS('cih-forceup','1');syApply(str,'백업한 진행으로 되살렸어요')}catch(e){toast('되살리지 못했어요')}},'되살리기')}
 function accDraw(){const e=$('sv-acc');if(!e)return;if(!SY.user){e.innerHTML='<b>계정</b><small>구글로 로그인하면 진행이 계정에 저장돼서 폰·PC 어디서든 이어서 할 수 있어요. 처음 연결하면 각성 가배, 합격 부적, 유기 별 조각 장식을 5개씩 드려요.</small><div class="ab"><button type="button" id="acc-in">구글로 로그인</button></div>';$('acc-in').onclick=syLogin;return}
  e.innerHTML=`<b>${esc(SY.user.displayName||'구글 계정')}</b><small>${esc(SY.user.email||'')}<br>${SY.err?'저장 오류: '+esc(SY.err):SY.last?'마지막 저장 '+new Date(SY.last).toLocaleTimeString('ko-KR',{hour:'numeric',minute:'2-digit'}):'저장 준비 중'}</small><div class="ab"><button type="button" id="acc-up">지금 저장</button><button type="button" id="acc-bak">백업에서 되살리기</button><button type="button" id="acc-out" style="background:#8a6a45">로그아웃</button></div>`;
- $('acc-up').onclick=()=>syUp(true).then(()=>toast(SY.err?'저장하지 못했어요':'계정에 저장했어요'));$('acc-bak').onclick=bakOpen;$('acc-out').onclick=()=>confirmBox('로그아웃할까요?','이 기기의 진행은 그대로 남아요.',async()=>{await syUp(true);await firebase.auth().signOut();lsS('cih-uid',null);SY.user=null;accDraw();toast('로그아웃했어요')},'로그아웃')}
+ $('acc-up').onclick=()=>syUp(true).then(()=>toast(SY.err?'저장하지 못했어요':'계정에 저장했어요'));$('acc-bak').onclick=bakOpen;$('acc-out').onclick=()=>confirmBox('로그아웃할까요?','이 기기의 진행은 그대로 남아요.',async()=>{await syUp(true);await firebase.auth().signOut();lsS('cih-uid',null);SY.user=null;admSet();accDraw();toast('로그아웃했어요')},'로그아웃')}
 if(lsG('cih-uid'))syInit();
 {const m=lsG('cih-msg');if(m){lsS('cih-msg',null);setTimeout(()=>toast(m),2500)}}
 </script>
