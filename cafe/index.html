@@ -39,6 +39,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
 #app.st2 #event{top:calc(90px + env(safe-area-inset-top))}
 #floors{position:absolute;top:calc(46px + env(safe-area-inset-top));left:8px;right:8px;display:flex;gap:4px;z-index:21}
 #floors button{flex:1;border:1px solid #c79a5a;background:rgba(40,25,12,.72);color:#fff3d6;border-radius:14px;padding:5px 0;font:400 14px 'Do Hyeon';cursor:pointer}
+.mtabs{display:flex;gap:4px;margin:2px 0 8px}.mtabs button{flex:1;border:1px solid #d9bd8a;background:#fff;border-radius:10px;padding:7px 0;font:400 14px 'Do Hyeon';color:#6d5539}.mtabs button.on{background:#f5d27a;color:#4a2a0c}
 #floors .fb-b{flex:1.9;display:flex;align-items:center;justify-content:center;gap:2px}#floors .fb-b img{width:18px;height:18px;object-fit:contain}#floors .fb-b i{font-style:normal;font-size:13px;margin-right:3px}
 .res{flex:none}#day{flex:none;white-space:nowrap}#top{flex-wrap:nowrap}
 #floors button.on{background:#f5d27a;color:#4a2a0c}
@@ -155,7 +156,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>새 이야기<small>열리면 바로 볼지, 이야기 탭에 쌓아 둘지</small></span><select id="sv-story"><option value="now">바로 보기</option><option value="later">나중에 보기</option></select></div>
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-무릉도원-6</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-무릉도원-7</p>
   <div id="sv-test" hidden><div class="sr"><span>시험용</span></div>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
@@ -204,7 +205,26 @@ const MENU=[
  ['iceginseng','인삼 꿀 냉차','i4',0,2.5e10,0,5,2,35,400,1],
  ['bingsu','팥빙수','i5',0,5e10,0,6,2,40,560,1],
  ['icesikhye','냉식혜','i6',0,1e11,0,4,2,40,800,1],
- ['premium','특 아이스 가비','i7',0,2e11,1,7,2,40,1200,1]];
+ ['premium','특 아이스 가비','i7',0,2e11,1,7,2,40,1200,1],
+ // 2층: 진짜 빙고 얼음을 한 덩이씩 쓰는 메뉴 (11번째 칸 'f2', 12번째 칸 1 = 얼음)
+ ['f2coffee','빙고 직냉 가비','j0',0,2e9,1,5,2,0,150,0,'f2',1],
+ ['f2hwachae','얼음 오미자 화채','j1',0,8e9,0,5,2,15,220,0,'f2',1],
+ ['f2sujeong','얼음 꿀 수정과','j2',0,2.5e10,0,5,2,15,320,0,'f2',1],
+ ['f2maesil','얼음 매실차','j4',0,6e10,0,5,2,20,450,0,'f2',1],
+ ['f2bingsu','궁중 빙수','j3',0,1.5e11,0,6,2,20,650,0,'f2',1],
+ ['f2table','어전 다과상','j5',0,3e11,0,8,2,25,1000,0,'f2',1],
+ // 금남당: 서비스
+ ['gmherb','약초 족욕','k0',0,1e10,0,5,2,0,200,0,'gm',0],
+ ['gmmint','박하 냉족욕','k1',0,1.5e10,0,5,2,10,260,0,'gm',1],
+ ['gmginger','생강 온족욕','k2',0,2e10,0,5,2,10,300,0,'gm',0],
+ ['gmmask','녹두 얼굴팩','k3',0,4e10,0,5,2,15,380,0,'gm',0],
+ ['gmskin','인삼 피부관리','k4',0,8e10,0,6,2,15,500,0,'gm',0],
+ ['gmrose','장미수 화장','k5',0,1.2e11,0,5,2,20,600,0,'gm',0],
+ ['gmmassage','전신 마사지','k6',0,2.5e11,0,9,2,20,850,0,'gm',0],
+ ['gmhair','동백기름 머리 손질','k7',0,4e11,0,6,2,25,1100,0,'gm',0]];
+const GSEASON={gmherb:[0,2],gmmint:[1],gmginger:[3]};
+const grp=m=>m[11]||'';
+const floorOk=m=>grp(m)==='f2'?!!L(S.shop,'floor2'):grp(m)==='gm'?!!L(S.shop,'geum'):true;
 const mic=m=>typeof m[2]==='number'?`a/m${m[2]}.webp`:`a/${m[2]}.webp`;
 const MMAX=40;
 const MI={};MENU.forEach((m,i)=>MI[m[0]]=i);
@@ -356,7 +376,7 @@ const lvSum=()=>MENU.reduce((a,m)=>a+Math.max(0,L(S.menu,m[0])-1),0);
 function bestMul(){return Math.max(1,...MENU.filter(m=>L(S.menu,m[0])).map(m=>m[9]))*(1+0.03*lvSum())}
 function baseMul(){return (1+L(S.shop,'hand'))*(L(S.shop,'pot')?1.5:1)*(1+0.1*L(S.staff,'maehwa'))*[1,1.3,1.8][S.stage]}
 function mupCost(k){const m=MENU[MI[k]],lv=L(S.menu,k);return Math.round(Math.max(15,m[4]*0.06)*Math.pow(1.25,lv-1))}
-function menuReq(k){const i=MI[k];if(!i)return null;const pm=MENU[i-1];return {pk:pm[0],pn:pm[1],need:MENU[i][8],have:L(S.menu,pm[0])}}
+function menuReq(k){const i=MI[k];let j=i-1;while(j>=0&&grp(MENU[j])!==grp(MENU[i]))j--;if(j<0)return null;const pm=MENU[j];return {pk:pm[0],pn:pm[1],need:MENU[i][8],have:L(S.menu,pm[0])}}
 const seats=()=>Math.min(cur().seats.length,cur().base+L(S.shop,'seat'));
 const tapPow=()=>1+0.15*L(S.shop,'hand');
 const autoRate=()=>L(S.staff,'samwol')+3*L(S.staff,'servers');
@@ -378,7 +398,7 @@ const scene=$('scene'),CU=[];let brewProg=0,spawnT=.6,cuN=0;
 function helpers(){const st=cur(),sm=$('sam'),mh=$('mae'),sv=$('srv'),f=S.stage===2?(S.floor||0):-1;sv.hidden=!(f>=0&&f<2&&L(S.staff,'servers'));sv.style.left=(st.hero.x+50)+'%';sv.style.bottom=(st.hero.b-6)+'%';$('heroimg').hidden=prisonOn();sm.hidden=!L(S.staff,'samwol')||S.stage===2;sm.style.left=(st.hero.x+(S.stage?-24:-13))+'%';sm.style.bottom=(st.hero.b-3)+'%';mh.hidden=!(S.stage>=1&&L(S.staff,'maehwa'))||f>0;mh.style.left=(st.hero.x+24)+'%';mh.style.bottom=(st.hero.b-1)+'%'}
 function setStage(){setTimeout(()=>{if(typeof bgmSync==='function')bgmSync()},0);const st=cur();$('bg').src=st.bg;floorsDraw();const h=$('heroimg');h.style.left=st.hero.x+'%';h.style.bottom=st.hero.b+'%';helpers();CU.splice(0).forEach(c=>c.el.remove())}
 function freeSeat(){const n=seats(),used=new Set(CU.map(c=>c.seat));for(let i=0;i<n;i++)if(!used.has(i))return i;return -1}
-function pickOrder(ct){const open=MENU.filter(m=>L(S.menu,m[0])>0).map(m=>m[0]);const fav=ct[2].filter(k=>open.includes(k));const r=Math.random();let k;if(r<.45)k=open[open.length-1];else if(r<.7&&open.length>1)k=open[open.length-2];else{const pool=fav.length?fav:open;k=pool[Math.floor(Math.random()*pool.length)]}const bad=x=>(MENU[MI[x]][5]&&!S.bean)||(MENU[MI[x]][10]&&!ready());if(bad(k)){const nb=open.filter(x=>!bad(x));if(nb.length)k=nb[Math.floor(Math.random()*nb.length)]}return k}
+function pickOrder(ct){const fg=S.stage===2?['','f2','gm'][S.floor||0]:'';let open=MENU.filter(m=>L(S.menu,m[0])>0&&grp(m)===fg&&(!GSEASON[m[0]]||GSEASON[m[0]].includes(season()))).map(m=>m[0]);if(!open.length)open=MENU.filter(m=>L(S.menu,m[0])>0&&!grp(m)).map(m=>m[0]).slice(fg?-3:0);const fav=ct[2].filter(k=>open.includes(k));const r=Math.random();let k;if(r<.45)k=open[open.length-1];else if(r<.7&&open.length>1)k=open[open.length-2];else{const pool=fav.length?fav:open;k=pool[Math.floor(Math.random()*pool.length)]}const bad=x=>(MENU[MI[x]][5]&&!S.bean)||(MENU[MI[x]][10]&&!ready())||(MENU[MI[x]][12]&&!(S.ice>0));if(bad(k)){const nb=open.filter(x=>!bad(x));if(nb.length)k=nb[Math.floor(Math.random()*nb.length)]}return k}
 function spawn(){const seat=freeSeat();if(seat<0)return;{const here=new Set(CU.map(c=>c.ti));for(let j=0;j<CUSTX.length;j++){const x=CUSTX[j];if(S.stage===2&&!cur().sp.includes(j))continue;if(S.seen[x[4]]&&!here.has(6+j)&&Math.random()<.05)return spawnAs(6+j,seat)}}if(S.stage===2){const L2=cur().cust;return spawnAs(L2[Math.floor(Math.random()*L2.length)],seat)}let w=[3,3,3,1,1,2];if(S.seen.seyun){w[3]=3;w[4]=3}if(gwageo())w[0]=8;let tot=w.reduce((a,b)=>a+b),r=Math.random()*tot,ti=0;while(r>=w[ti]){r-=w[ti];ti++}
  spawnAs(ti,seat)}
 function spawnAs(ti,seat){
@@ -386,7 +406,7 @@ function spawnAs(ti,seat){
  el.innerHTML=`<img class="body" src="a/${ct[0]}.webp" alt="${ct[1]}"><div class="bub"><img src="${mic(MENU[MI[k]])}" alt=""><i><b style="width:100%"></b></i></div>`;scene.appendChild(el);
  const c={id:++cuN,el,seat,k,ti,pat:32,max:32,mul:ct[3],arr:false};CU.push(c);requestAnimationFrame(()=>{el.style.left=x+'%'});setTimeout(()=>c.arr=true,1400)}
 function queue(){return CU.filter(c=>c.arr&&!c.done).sort((a,b)=>a.id-b.id)}
-function nextOrder(){const q=queue();return q.find(c=>(!MENU[MI[c.k]][5]||S.bean>0)&&(!MENU[MI[c.k]][10]||ready()>0))||null}
+function nextOrder(){const q=queue();return q.find(c=>(!MENU[MI[c.k]][5]||S.bean>0)&&(!MENU[MI[c.k]][10]||ready()>0)&&(!MENU[MI[c.k]][12]||S.ice>0))||null}
 function leave(c,ok){c.done=true;c.el.querySelector('.bub').style.display='none';c.el.style.left='112%';c.el.classList.add('gone');setTimeout(()=>{c.el.remove();const i=CU.indexOf(c);if(i>=0)CU.splice(i,1)},1300)}
 function pop(txt,x,y,bad){const e=document.createElement('div');e.className='pop'+(bad?' bad':'');e.textContent=txt;e.style.left=x+'px';e.style.top=y+'px';$('app').appendChild(e);setTimeout(()=>e.remove(),1000)}
 function workOf(k){return MENU[MI[k]][6]}
@@ -399,7 +419,7 @@ function brewTap(amt,auto){
  const c=nextOrder();if(c){brewProg+=amt||tapPow();if(brewProg>=workOf(c.k)){brewProg=0;serve(c)}}
  drawBrew();hudLite()}
 const fmtv=v=>v<100?(Math.round(v*10)/10).toString():fmt(v);
-function serve(c){const m=MENU[MI[c.k]];if(m[5])S.bean--;if(m[10])S.warm=(S.warm||0)+1;let g=priceOf(c.k)*c.mul;if(c.ti===8){S.pop+=10;const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('외상이오 · 인기 +10',r.left-ar.left+r.width/2,r.top-ar.top);sfx('menu');leave(c,true);S.served++;hud();checkStory();return}if(c.ti===6)setTimeout(()=>toast('김세윤이 다녀가자 양반 손님들이 수군거려요'),300);if(c.ti===7)setTimeout(()=>toast('박선우가 값을 후하게 치르며 맛을 염탐하고 갔어요'),300);if(c.pat/c.max>.6)g*=1.15;g=Math.round(g);S.money+=g;S.earned+=g;S.served++;S.pop+=1+L(S.shop,'sign')*.5;
+function serve(c){const m=MENU[MI[c.k]];if(m[5])S.bean--;if(m[12])S.ice=Math.max(0,(S.ice||0)-1);if(grp(m)==='gm')S.pop+=2;if(m[10])S.warm=(S.warm||0)+1;let g=priceOf(c.k)*c.mul;if(c.ti===8){S.pop+=10;const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('외상이오 · 인기 +10',r.left-ar.left+r.width/2,r.top-ar.top);sfx('menu');leave(c,true);S.served++;hud();checkStory();return}if(c.ti===6)setTimeout(()=>toast('김세윤이 다녀가자 양반 손님들이 수군거려요'),300);if(c.ti===7)setTimeout(()=>toast('박선우가 값을 후하게 치르며 맛을 염탐하고 갔어요'),300);if(c.pat/c.max>.6)g*=1.15;g=Math.round(g);S.money+=g;S.earned+=g;S.served++;S.pop+=1+L(S.shop,'sign')*.5;
  const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('주문 완료 +'+fmt(g)+'냥',r.left-ar.left+r.width/2,r.top-ar.top);sfx('trade');leave(c,true);hud();checkStory()}
 function drawBrew(){const c=nextOrder();const f=$('brew').querySelector('.fill');const cm=comboMul(),live=performance.now()-lastTapT<800&&combo>1;$('combo').hidden=!live;if(live)$('combo').textContent=`연타 ${combo}${cm>1?' · ×'+cm:''}`;
  if(!c){f.style.width='0';$('brew-sub').textContent=`한 번에 ${fmtv(tapVal())}냥${autoRate()?' · 일손 초당 '+fmtv(tapVal()*autoRate())+'냥':''}`;CU.forEach(x=>x.el.querySelector('.bub')?.classList.remove('next'));return}
@@ -410,11 +430,11 @@ function afford(){if(!tab)return;document.querySelectorAll('#plist button[data-c
 function hud(){$('r-money').textContent=fmt(S.money);$('r-bean').textContent=fmt(S.bean);$('r-pop').textContent=fmt(S.pop);{const m2=S.stage===2;if(m2){$('fb-ice').textContent=S.ice||0;$('fb-star').textContent=`${ready()}/${S.star||0}`}$('app').classList.toggle('st2',m2)}
  $('day').innerHTML=`${SEASON[season()]} ${dayIn()}일<small>${cur().n}</small>`;
  const ev=$('event');let t='';if(prisonOn())t='무릉도원 폐쇄 · 손님이 끊겼어요';else if(S.ev==='seonwoo'&&Date.now()<S.evUntil)t='송상 다방 개업 · 손님이 줄었어요';else if(gwageo())t='과거 시험 철 · 선비 손님이 몰려요';else if(market())t='장날 · 손님이 많아요';ev.hidden=!t;ev.textContent=t;
- const any=k=>{if(k==='menu')return MENU.some(m=>{const q=menuReq(m[0]);return!L(S.menu,m[0])&&m[7]<=S.stage&&m[4]&&S.money>=m[4]&&(!q||q.have>=q.need)});if(k==='staff')return STAFF.some(s=>staffOpen(s[0])&&S.money>=s[5](L(S.staff,s[0])));if(k==='shop')return SHOP.some(s=>shopOk(s)&&S.money>=s[5](L(S.shop,s[0])));if(k==='story')return STORDER.some(k=>S.seen[k]==='new');return false};
+ const any=k=>{if(k==='menu')return MENU.some(m=>{const q=menuReq(m[0]);return!L(S.menu,m[0])&&m[7]<=S.stage&&floorOk(m)&&m[4]&&S.money>=m[4]&&(!q||q.have>=q.need)});if(k==='staff')return STAFF.some(s=>staffOpen(s[0])&&S.money>=s[5](L(S.staff,s[0])));if(k==='shop')return SHOP.some(s=>shopOk(s)&&S.money>=s[5](L(S.shop,s[0])));if(k==='story')return STORDER.some(k=>S.seen[k]==='new');return false};
  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',any(b.dataset.t)))}
 // ---------- 창 ----------
-let tab=null,lastPanelDown=0;
-function openPanel(t){tab=t;$('panel').classList.add('on');$('app').classList.add('pan');document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('cur',b.dataset.t===t));sfx('open');drawPanel()}
+let mTab='',tab=null,lastPanelDown=0;
+function openPanel(t){tab=t;if(t==='menu')mTab=S.stage===2?['','f2','gm'][S.floor||0]:'';$('panel').classList.add('on');$('app').classList.add('pan');document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('cur',b.dataset.t===t));sfx('open');drawPanel()}
 function closePanel(){tab=null;setTimeout(floorsDraw,0);$('panel').classList.remove('on');$('app').classList.remove('pan');document.querySelectorAll('#tabs button').forEach(b=>b.classList.remove('cur'))}
 function staffOpen(k){if(k==='samwol')return!!S.seen.samwol;if(k==='servers'||k==='binggo')return S.stage>=2;return S.stage>=1}
 const shopVis=s=>s[6]<0||(s[7]?S.stage>=s[6]:S.stage===s[6]);
@@ -422,8 +442,11 @@ function shopWhy(s){if(s[0]==='dawooga'&&!L(S.shop,'pot'))return'포트 먼저';
 function shopOk(s){return shopVis(s)&&L(S.shop,s[0])<s[4](S.stage)&&!shopWhy(s)}
 function drawPanel(){if(!tab)return;const P=$('plist');let h='';
  if(tab==='menu'){$('p-title').textContent='메뉴';$('p-sub').textContent=`지금 한 번에 ${fmtv(tapVal())}냥`;
-  let shownNext=false;MENU.forEach(m=>{const k=m[0],lv=L(S.menu,k);if(!lv&&shownNext){h+=`<div class="row lock"><img src="a/u7.webp" alt=""><div><b>???</b><span>앞 메뉴를 열면 보여요</span></div></div>`;return}if(!lv)shownNext=true;if(m[7]>S.stage){h+=`<div class="row lock"><img src="${mic(m)}" alt=""><div><b>${m[1]}</b><span>${m[7]===2?'무릉도원을 열면 생겨요 · 별 조각이 필요해요':'다우가를 열면 생겨요'}</span></div></div>`;return}
-   if(!lv){const q=menuReq(k),okq=!q||q.have>=q.need;h+=`<div class="row"><img src="${mic(m)}" alt=""><div><b>${m[1]}</b><span>열면 누를 때 ×${m[9]}${m[5]?' · 커피콩 1개':''}${m[10]?' · 별 조각 1개':''}<br>${q?`${q.pn} ${q.need}단계 필요 (지금 ${q.have}단계)`:''}</span></div><button type="button" data-a="mopen" data-k="${k}" data-c="${m[4]}" data-ok="${okq?1:0}" ${S.money<m[4]||!okq?'disabled':''}>열기<small>${won(m[4])}</small></button></div>`;return}
+  if(S.stage===2)h+=`<div class="mtabs">${[['','1층 · 별 조각'],['f2','2층 · 얼음'],['gm','금남당']].map(([g,n])=>`<button type="button" data-mt="${g}" class="${mTab===g?'on':''}">${n}</button>`).join('')}</div>`;
+  if(S.stage===2&&mTab==='f2')h+='<p class="note">2층 메뉴는 한 잔에 빙고 얼음 한 덩이를 써요. 2층 손님만 주문해요.</p>';
+  if(S.stage===2&&mTab==='gm')h+='<p class="note">금남당 손님만 받는 서비스예요. 족욕은 철마다 바뀌어요. 봄·가을 약초, 여름 박하(얼음 한 덩이), 겨울 생강.</p>';
+  let shownNext=false;MENU.forEach(m=>{if(grp(m)!==(S.stage===2?mTab:''))return;const k=m[0],lv=L(S.menu,k);if(!lv&&!floorOk(m)){if(!shownNext){shownNext=true;h+=`<div class="row lock"><img src="${mic(m)}" alt=""><div><b>${m[1]}</b><span>${grp(m)==='f2'?'가게 탭에서 2층을 열면 생겨요':'가게 탭에서 금남당을 열면 생겨요'}</span></div></div>`}return}if(!lv&&shownNext){h+=`<div class="row lock"><img src="a/u7.webp" alt=""><div><b>???</b><span>앞 메뉴를 열면 보여요</span></div></div>`;return}if(!lv)shownNext=true;if(m[7]>S.stage){h+=`<div class="row lock"><img src="${mic(m)}" alt=""><div><b>${m[1]}</b><span>${m[7]===2?'무릉도원을 열면 생겨요 · 별 조각이 필요해요':'다우가를 열면 생겨요'}</span></div></div>`;return}
+   if(!lv){const q=menuReq(k),okq=!q||q.have>=q.need;h+=`<div class="row"><img src="${mic(m)}" alt=""><div><b>${m[1]}</b><span>열면 누를 때 ×${m[9]}${m[5]?' · 커피콩 1개':''}${m[10]?' · 별 조각 1개':''}${m[12]?' · 얼음 1덩이':''}${GSEASON[k]?' · '+GSEASON[k].map(i=>SEASON[i]).join('·')+'에만':''}<br>${q?`${q.pn} ${q.need}단계 필요 (지금 ${q.have}단계)`:''}</span></div><button type="button" data-a="mopen" data-k="${k}" data-c="${m[4]}" data-ok="${okq?1:0}" ${S.money<m[4]||!okq?'disabled':''}>열기<small>${won(m[4])}</small></button></div>`;return}
    const cost=mupCost(k);h+=`<div class="row"><img src="${mic(m)}" alt=""><div><b>${m[1]} <small>${lv}단계</small></b><span>${m[9]===Math.max(...MENU.filter(x=>L(S.menu,x[0])).map(x=>x[9]))?`대표 메뉴 · 누를 때 ×${m[9]} · `:''}단계마다 누를 때 +3% · 주문 ${won(priceOf(k))}${m[5]?' · 콩 1개':''}</span></div>${lv>=MMAX?'<button disabled>최고</button>':`<button type="button" data-a="mup" data-k="${k}" data-c="${cost}" ${S.money<cost?'disabled':''}>올리기<small>${won(cost)}</small></button>`}</div>`})}
  if(tab==='staff'){$('p-title').textContent='일손';$('p-sub').textContent='들이면 누르지 않아도 장사가 돌아가요';const LK={samwol:'이야기가 진행되면 만나요',servers:'무릉도원을 열면 들일 수 있어요',binggo:'무릉도원을 열면 들일 수 있어요'};
   STAFF.forEach(s=>{const lv=L(S.staff,s[0]),cost=s[5](lv);if(!staffOpen(s[0])){h+=`<div class="row lock"><img class="por" src="a/${s[2]}.webp" alt=""><div><b>???</b><span>${LK[s[0]]||'다우가를 열면 들일 수 있어요'}</span></div></div>`;return}
@@ -443,8 +466,8 @@ function drawPanel(){if(!tab)return;const P=$('plist');let h='';
   STORDER.forEach(k=>{const o=S.seen[k];h+=o?`<div class="row"><img src="a/u7.webp" alt=""><div><b>${ST[k].t}${o==='new'?' <small style="color:var(--red)">새 이야기</small>':''}</b></div><button type="button" data-a="replay" data-k="${k}">보기</button></div>`:`<div class="row lock"><img src="a/u7.webp" alt=""><div><b>???</b><span>아직 열리지 않았어요</span></div></div>`})}
  P.innerHTML=h}
 $('plist').addEventListener('pointerdown',()=>{lastPanelDown=performance.now()});
-$('plist').onclick=e=>{const b=e.target.closest('button[data-a]');if(!b||b.disabled)return;const a=b.dataset.a,k=b.dataset.k;
- if(a==='mopen'){const m=MENU[MI[k]],q=menuReq(k);if(S.money<m[4]||(q&&q.have<q.need))return;S.money-=m[4];S.menu[k]=1;sfx('trade');toast(`${m[1]}${josa(m[1])} 메뉴에 올렸어요`)}
+$('plist').onclick=e=>{{const t=e.target.closest('button[data-mt]');if(t){mTab=t.dataset.mt;sfx('menu');drawPanel();return}}const b=e.target.closest('button[data-a]');if(!b||b.disabled)return;const a=b.dataset.a,k=b.dataset.k;
+ if(a==='mopen'){const m=MENU[MI[k]],q=menuReq(k);if(S.money<m[4]||(q&&q.have<q.need)||!floorOk(m))return;S.money-=m[4];S.menu[k]=1;sfx('trade');toast(`${m[1]}${josa(m[1])} 메뉴에 올렸어요`)}
  if(a==='mup'){const lv=L(S.menu,k),cost=mupCost(k);if(lv>=MMAX)return;if(S.money<cost)return;S.money-=cost;S.menu[k]=lv+1;sfx('trade')}
  if(a==='staff'){const s=STAFF.find(x=>x[0]===k),lv=L(S.staff,k),cost=s[5](lv);if(S.money<cost||lv>=(s[7]||10))return;S.money-=cost;S.staff[k]=lv+1;sfx('trade');helpers();if(!lv)toast(`${s[1]}${josa2(s[1])} 일손이 됐어요`)}
  if(a==='shop'){const s=SHOP.find(x=>x[0]===k),lv=L(S.shop,k),cost=s[5](lv);if(S.money<cost)return;S.money-=cost;S.shop[k]=lv+1;sfx('trade');
