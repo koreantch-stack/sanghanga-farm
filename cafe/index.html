@@ -319,14 +319,15 @@ function drawBrew(){const c=nextOrder();const f=$('brew').querySelector('.fill')
  if(!c){f.style.width='0';$('brew-sub').textContent=`한 번에 ${fmtv(tapVal())}냥${autoRate()?' · 일손 초당 '+fmtv(tapVal()*autoRate())+'냥':''}`;CU.forEach(x=>x.el.querySelector('.bub')?.classList.remove('next'));return}
  f.style.width=Math.min(100,brewProg/workOf(c.k)*100)+'%';$('brew-sub').textContent=`${MENU[MI[c.k]][1]} 주문 · 다 내리면 +${fmt(priceOf(c.k)*c.mul)}냥`;CU.forEach(x=>x.el.querySelector('.bub')?.classList.toggle('next',x===c))}
 // ---------- 화면 위 ----------
-let hudT=0;function hudLite(){$('r-money').textContent=fmt(S.money);const n=performance.now();if(n-hudT>400){hudT=n;hud();if(tab&&tab!=='story')drawPanel()}}
+let hudT=0;function hudLite(){$('r-money').textContent=fmt(S.money);const n=performance.now();if(n-hudT>400){hudT=n;hud();afford()}}
+function afford(){if(!tab)return;document.querySelectorAll('#plist button[data-c]').forEach(b=>{b.disabled=b.dataset.ok==='0'||S.money<+b.dataset.c})}
 function hud(){$('r-money').textContent=fmt(S.money);$('r-bean').textContent=fmt(S.bean);$('r-pop').textContent=fmt(S.pop);
  $('day').innerHTML=`${SEASON[season()]} ${dayIn()}일<small>${STAGES[S.stage].n}</small>`;
  const ev=$('event');let t='';if(S.ev==='seonwoo'&&Date.now()<S.evUntil)t='송상 다방 개업 · 손님이 줄었어요';else if(gwageo())t='과거 시험 철 · 선비 손님이 몰려요';else if(market())t='장날 · 손님이 많아요';ev.hidden=!t;ev.textContent=t;
  const any=k=>{if(k==='menu')return MENU.some(m=>{const q=menuReq(m[0]);return!L(S.menu,m[0])&&m[7]<=S.stage&&m[4]&&S.money>=m[4]&&(!q||q.have>=q.need)});if(k==='staff')return STAFF.some(s=>staffOpen(s[0])&&S.money>=s[5](L(S.staff,s[0])));if(k==='shop')return SHOP.some(s=>shopOk(s)&&S.money>=s[5](L(S.shop,s[0])));if(k==='story')return STORDER.some(k=>S.seen[k]==='new');return false};
  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',any(b.dataset.t)))}
 // ---------- 창 ----------
-let tab=null;
+let tab=null,lastPanelDown=0;
 function openPanel(t){tab=t;$('panel').classList.add('on');$('app').classList.add('pan');document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('cur',b.dataset.t===t));sfx('open');drawPanel()}
 function closePanel(){tab=null;$('panel').classList.remove('on');$('app').classList.remove('pan');document.querySelectorAll('#tabs button').forEach(b=>b.classList.remove('cur'))}
 function staffOpen(k){if(k==='samwol')return!!S.seen.samwol;return S.stage>=1}
@@ -334,22 +335,23 @@ function shopOk(s){const lv=L(S.shop,s[0]),st=s[6];if(st>=0&&st!==S.stage&&!(s[0
 function drawPanel(){if(!tab)return;const P=$('plist');let h='';
  if(tab==='menu'){$('p-title').textContent='메뉴';$('p-sub').textContent=`지금 한 번에 ${fmtv(tapVal())}냥`;
   let shownNext=false;MENU.forEach(m=>{const k=m[0],lv=L(S.menu,k);if(!lv&&shownNext){h+=`<div class="row lock"><img src="a/u7.webp" alt=""><div><b>???</b><span>앞 메뉴를 열면 보여요</span></div></div>`;return}if(!lv)shownNext=true;if(m[7]>S.stage){h+=`<div class="row lock"><img src="a/m${m[2]}.webp" alt=""><div><b>${m[1]}</b><span>${m[7]===9?'무릉도원에서 열려요 · 빙고 얼음과 유기 별 조각이 필요해요':'다우가를 열면 생겨요'}</span></div></div>`;return}
-   if(!lv){const q=menuReq(k),okq=!q||q.have>=q.need;h+=`<div class="row"><img src="a/m${m[2]}.webp" alt=""><div><b>${m[1]}</b><span>열면 누를 때 ×${m[9]}${m[5]?' · 커피콩 1개':''}<br>${q?`${q.pn} ${q.need}단계 필요 (지금 ${q.have}단계)`:''}</span></div><button type="button" data-a="mopen" data-k="${k}" ${S.money<m[4]||!okq?'disabled':''}>열기<small>${won(m[4])}</small></button></div>`;return}
-   const cost=mupCost(k);h+=`<div class="row"><img src="a/m${m[2]}.webp" alt=""><div><b>${m[1]} <small>${lv}단계</small></b><span>${m[9]===Math.max(...MENU.filter(x=>L(S.menu,x[0])).map(x=>x[9]))?`대표 메뉴 · 누를 때 ×${m[9]} · `:''}단계마다 누를 때 +3% · 주문 ${won(priceOf(k))}${m[5]?' · 콩 1개':''}</span></div>${lv>=MMAX?'<button disabled>최고</button>':`<button type="button" data-a="mup" data-k="${k}" ${S.money<cost?'disabled':''}>올리기<small>${won(cost)}</small></button>`}</div>`})}
+   if(!lv){const q=menuReq(k),okq=!q||q.have>=q.need;h+=`<div class="row"><img src="a/m${m[2]}.webp" alt=""><div><b>${m[1]}</b><span>열면 누를 때 ×${m[9]}${m[5]?' · 커피콩 1개':''}<br>${q?`${q.pn} ${q.need}단계 필요 (지금 ${q.have}단계)`:''}</span></div><button type="button" data-a="mopen" data-k="${k}" data-c="${m[4]}" data-ok="${okq?1:0}" ${S.money<m[4]||!okq?'disabled':''}>열기<small>${won(m[4])}</small></button></div>`;return}
+   const cost=mupCost(k);h+=`<div class="row"><img src="a/m${m[2]}.webp" alt=""><div><b>${m[1]} <small>${lv}단계</small></b><span>${m[9]===Math.max(...MENU.filter(x=>L(S.menu,x[0])).map(x=>x[9]))?`대표 메뉴 · 누를 때 ×${m[9]} · `:''}단계마다 누를 때 +3% · 주문 ${won(priceOf(k))}${m[5]?' · 콩 1개':''}</span></div>${lv>=MMAX?'<button disabled>최고</button>':`<button type="button" data-a="mup" data-k="${k}" data-c="${cost}" ${S.money<cost?'disabled':''}>올리기<small>${won(cost)}</small></button>`}</div>`})}
  if(tab==='staff'){$('p-title').textContent='일손';$('p-sub').textContent='들이면 누르지 않아도 장사가 돌아가요';
   STAFF.forEach(s=>{const lv=L(S.staff,s[0]),cost=s[5](lv);if(!staffOpen(s[0])){h+=`<div class="row lock"><img class="por" src="a/${s[2]}.webp" alt=""><div><b>???</b><span>${s[0]==='samwol'?'이야기가 진행되면 만나요':'다우가를 열면 들일 수 있어요'}</span></div></div>`;return}
-   h+=`<div class="row"><img class="por" src="a/${s[2]}.webp" alt=""><div><b>${s[1]}${lv?` <small>${lv}단계</small>`:''}</b><span>${s[3]}<br>${lv?'지금 '+s[4](lv)+' → ':''}${s[4](lv+1)}</span></div>${lv>=10?'<button disabled>최고</button>':`<button type="button" data-a="staff" data-k="${s[0]}" ${S.money<cost?'disabled':''}>${lv?'키우기':'들이기'}<small>${won(cost)}</small></button>`}</div>`})}
+   h+=`<div class="row"><img class="por" src="a/${s[2]}.webp" alt=""><div><b>${s[1]}${lv?` <small>${lv}단계</small>`:''}</b><span>${s[3]}<br>${lv?'지금 '+s[4](lv)+' → ':''}${s[4](lv+1)}</span></div>${lv>=10?'<button disabled>최고</button>':`<button type="button" data-a="staff" data-k="${s[0]}" data-c="${cost}" ${S.money<cost?'disabled':''}>${lv?'키우기':'들이기'}<small>${won(cost)}</small></button>`}</div>`})}
  if(tab==='shop'){$('p-title').textContent='가게';$('p-sub').textContent=STAGES[S.stage].n;
   SHOP.forEach(s=>{const lv=L(S.shop,s[0]),st=s[6];if(s[0]==='murung'){if(S.stage>=1)h+=`<div class="row lock"><img src="a/${s[2]}.webp" alt=""><div><b>무릉도원 짓기</b><span>다음 업데이트에서 열려요</span></div></div>`;return}
    if(st>=0&&st!==S.stage&&!(s[0]==='sign'&&S.stage>=1)){if(st>S.stage)h+=`<div class="row lock"><img src="a/${s[2]}.webp" alt=""><div><b>${s[1]}</b><span>다우가를 열면 생겨요</span></div></div>`;return}
-   const max=s[4](S.stage),cost=s[5](lv);let btn;if(lv>=max)btn='<button disabled>다 했어요</button>';else if(s[0]==='dawooga'&&!L(S.shop,'pot'))btn='<button disabled>포트 먼저</button>';else btn=`<button type="button" data-a="shop" data-k="${s[0]}" ${S.money<cost?'disabled':''}>${max>1?'올리기':'하기'}<small>${won(cost)}</small></button>`;
+   const max=s[4](S.stage),cost=s[5](lv);let btn;if(lv>=max)btn='<button disabled>다 했어요</button>';else if(s[0]==='dawooga'&&!L(S.shop,'pot'))btn='<button disabled>포트 먼저</button>';else btn=`<button type="button" data-a="shop" data-k="${s[0]}" data-c="${cost}" ${S.money<cost?'disabled':''}>${max>1?'올리기':'하기'}<small>${won(cost)}</small></button>`;
    h+=`<div class="row"><img src="a/${s[2]}.webp" alt=""><div><b>${s[1]}${max>1?` <small>${lv} / ${max}</small>`:''}</b><span>${s[3]}</span></div>${btn}</div>`})}
  if(tab==='market'){$('p-title').textContent='장터';$('p-sub').textContent='커피콩 값은 날마다 바뀌어요';const p=beanPrice(),mx=Math.max(...S.beanP,p);
   h+=`<div class="chart">${S.beanP.map((v,i)=>`<i class="${i===S.beanP.length-1?'now':''}" style="height:${Math.max(6,v/mx*100)}%"></i>`).join('')}</div><p class="note">오늘 값 커피콩 1개 ${won(p)}. 막대가 낮은 날 사 두면 이득이에요. 흑가비와 꿀가비는 한 잔에 콩 1개를 써요.</p>`;
-  [10,50,200].forEach(n=>{h+=`<div class="row"><img src="a/u1.webp" alt=""><div><b>커피콩 ${n}개</b><span>${won(p*n)}</span></div><button type="button" data-a="bean" data-n="${n}" ${S.money<p*n?'disabled':''}>사기</button></div>`})}
+  [10,50,200].forEach(n=>{h+=`<div class="row"><img src="a/u1.webp" alt=""><div><b>커피콩 ${n}개</b><span>${won(p*n)}</span></div><button type="button" data-a="bean" data-n="${n}" data-c="${p*n}" ${S.money<p*n?'disabled':''}>사기</button></div>`})}
  if(tab==='story'){$('p-title').textContent='이야기';$('p-sub').textContent='지금까지 열린 장면';
   STORDER.forEach(k=>{const o=S.seen[k];h+=o?`<div class="row"><img src="a/u7.webp" alt=""><div><b>${ST[k].t}${o==='new'?' <small style="color:var(--red)">새 이야기</small>':''}</b></div><button type="button" data-a="replay" data-k="${k}">보기</button></div>`:`<div class="row lock"><img src="a/u7.webp" alt=""><div><b>???</b><span>아직 열리지 않았어요</span></div></div>`})}
  P.innerHTML=h}
+$('plist').addEventListener('pointerdown',()=>{lastPanelDown=performance.now()});
 $('plist').onclick=e=>{const b=e.target.closest('button[data-a]');if(!b||b.disabled)return;const a=b.dataset.a,k=b.dataset.k;
  if(a==='mopen'){const m=MENU[MI[k]],q=menuReq(k);if(S.money<m[4]||(q&&q.have<q.need))return;S.money-=m[4];S.menu[k]=1;sfx('trade');toast(`${m[1]}${josa(m[1])} 메뉴에 올렸어요`)}
  if(a==='mup'){const lv=L(S.menu,k),cost=mupCost(k);if(lv>=MMAX)return;if(S.money<cost)return;S.money-=cost;S.menu[k]=lv+1;sfx('trade')}
@@ -402,7 +404,7 @@ $('sv-reset').onclick=()=>confirmBox('처음부터 할까요?','엽전, 메뉴, 
 let last=performance.now(),autoAcc=0,saveT=0;
 function tick(now){const dt=Math.min(.2,(now-last)/1000);last=now;
  const paused=!!SQ||$('title').style.display!=='none';
- if(!paused){S.dayT+=dt;if(S.dayT>=DAYSEC){S.dayT-=DAYSEC;S.day++;rollBean();hud();if(tab==='market')drawPanel();checkStory()}
+ if(!paused){S.dayT+=dt;if(S.dayT>=DAYSEC){S.dayT-=DAYSEC;S.day++;rollBean();hud();if(tab==='market'&&performance.now()-lastPanelDown>1500)drawPanel();checkStory()}
   spawnT-=dt;if(spawnT<=0){spawn();spawnT=spawnGap()*(.7+Math.random()*.6)}
   CU.forEach(c=>{if(!c.arr||c.done)return;c.pat-=dt;const b=c.el.querySelector('.bub i b');if(b){b.style.width=Math.max(0,c.pat/c.max*100)+'%';b.style.background=c.pat/c.max<.3?'#c0452f':''}
    if(c.pat<=0){S.pop=Math.max(0,S.pop-1);const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('기다리다 갔어요',r.left-ar.left+r.width/2,r.top-ar.top,true);leave(c,false);hud()}});
