@@ -15,6 +15,8 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
 #scene{position:absolute;inset:0}
 #bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%}
 .hero{position:absolute;height:31%;transform:translateX(-50%);pointer-events:none;filter:drop-shadow(0 6px 6px rgba(0,0,0,.25));transition:transform .15s}
+.hero.helper{height:27%}
+#sam.work{transform:translateX(-50%) translateY(-2%) rotate(1.5deg)}
 .hero.brew{transform:translateX(-50%) translateY(-2%) rotate(-1.5deg)}
 .cust{position:absolute;height:27%;transform:translateX(-50%);transition:left 1.4s linear,opacity .6s;filter:drop-shadow(0 5px 5px rgba(0,0,0,.25))}
 .cust img.body{height:100%;display:block}
@@ -111,7 +113,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
 </head>
 <body>
 <div id="app">
- <div id="scene"><img id="bg" alt=""><img id="heroimg" class="hero" src="a/gayoung.webp" alt=""></div>
+ <div id="scene"><img id="bg" alt=""><img id="heroimg" class="hero" src="a/gayoung.webp" alt=""><img id="sam" class="hero helper" src="a/samwol.webp" alt="" hidden><img id="mae" class="hero helper" src="a/maehwa.webp" alt="" hidden></div>
  <div id="top">
   <div class="res"><img src="a/u0.webp" alt="엽전"><span id="r-money">0</span></div>
   <div class="res"><img src="a/u1.webp" alt="커피콩"><span id="r-bean">0</span></div>
@@ -170,6 +172,7 @@ const MENU=[
 const MMAX=40;
 const MI={};MENU.forEach((m,i)=>MI[m[0]]=i);
 // 손님: 그림, 이름, 좋아하는 것, 돈 배율
+const CUSTX=[['seyun','김세윤',['black','teapot','ginseng'],5,'seyun'],['seonwoo','박선우',['honey','teapot'],3,'seonwoo'],['hajun','허름한 손님',['black','sikhye'],0,'hajun']];
 const CUST=[['c0','가난한 선비',['black','honey','ginseng'],1],['c1','장꾼',['sikhye','misut','black'],.9],['c2','동네 아낙',['sujeong','omija','yakgwa','injeolmi'],1],['c3','양반댁 규수',['omija','dasik','teapot','honey'],1.8],['c4','부자 상인',['ginseng','teapot','honey','yakgwa'],1.6],['c5','포졸',['black','sikhye','injeolmi'],1]];
 const SEASON=['봄','여름','가을','겨울'];const DAYSEC=60,SEASONDAY=12;
 // 일손
@@ -292,11 +295,14 @@ function beanPrice(){const p=S.beanP.at(-1)||12;return Math.max(3,Math.round(p*(
 function rollBean(){const prev=S.beanP.at(-1)||12;let p=prev*Math.exp((Math.random()-.5)*.35+(12-prev)*.02);if(S.ev==='seonwoo'&&Date.now()<S.evUntil)p*=1.15;S.beanP.push(Math.max(5,Math.min(30,+p.toFixed(1))));if(S.beanP.length>20)S.beanP.shift()}
 // ---------- 무대 ----------
 const scene=$('scene'),CU=[];let brewProg=0,spawnT=.6,cuN=0;
-function setStage(){const st=STAGES[S.stage];$('bg').src=st.bg;const h=$('heroimg');h.style.left=st.hero.x+'%';h.style.bottom=st.hero.b+'%';CU.splice(0).forEach(c=>c.el.remove())}
+function helpers(){const st=STAGES[S.stage],sm=$('sam'),mh=$('mae');sm.hidden=!L(S.staff,'samwol');sm.style.left=(st.hero.x+(S.stage?-24:-13))+'%';sm.style.bottom=(st.hero.b-3)+'%';mh.hidden=!(S.stage>=1&&L(S.staff,'maehwa'));mh.style.left=(st.hero.x+24)+'%';mh.style.bottom=(st.hero.b-1)+'%'}
+function setStage(){const st=STAGES[S.stage];$('bg').src=st.bg;const h=$('heroimg');h.style.left=st.hero.x+'%';h.style.bottom=st.hero.b+'%';helpers();CU.splice(0).forEach(c=>c.el.remove())}
 function freeSeat(){const n=seats(),used=new Set(CU.map(c=>c.seat));for(let i=0;i<n;i++)if(!used.has(i))return i;return -1}
 function pickOrder(ct){const open=MENU.filter(m=>L(S.menu,m[0])>0).map(m=>m[0]);const fav=ct[2].filter(k=>open.includes(k));const r=Math.random();let k;if(r<.45)k=open[open.length-1];else if(r<.7&&open.length>1)k=open[open.length-2];else{const pool=fav.length?fav:open;k=pool[Math.floor(Math.random()*pool.length)]}if(!S.bean&&MENU[MI[k]][5]){const nb=open.filter(x=>!MENU[MI[x]][5]);if(nb.length)k=nb[Math.floor(Math.random()*nb.length)]}return k}
-function spawn(){const seat=freeSeat();if(seat<0)return;let w=[3,3,3,1,1,2];if(S.seen.seyun){w[3]=3;w[4]=3}if(gwageo())w[0]=8;let tot=w.reduce((a,b)=>a+b),r=Math.random()*tot,ti=0;while(r>=w[ti]){r-=w[ti];ti++}
- const ct=CUST[ti],k=pickOrder(ct),[x,b]=STAGES[S.stage].seats[seat];const el=document.createElement('div');el.className='cust'+(x>66?' l':'');el.style.left='112%';el.style.bottom=b+'%';el.style.zIndex=10+Math.round(30-b);
+function spawn(){const seat=freeSeat();if(seat<0)return;{const here=new Set(CU.map(c=>c.ti));for(let j=0;j<CUSTX.length;j++){const x=CUSTX[j];if(S.seen[x[4]]&&!here.has(6+j)&&Math.random()<.05)return spawnAs(6+j,seat)}}let w=[3,3,3,1,1,2];if(S.seen.seyun){w[3]=3;w[4]=3}if(gwageo())w[0]=8;let tot=w.reduce((a,b)=>a+b),r=Math.random()*tot,ti=0;while(r>=w[ti]){r-=w[ti];ti++}
+ spawnAs(ti,seat)}
+function spawnAs(ti,seat){
+ const ct=ti>=6?CUSTX[ti-6]:CUST[ti],k=pickOrder(ct),[x,b]=STAGES[S.stage].seats[seat];const el=document.createElement('div');el.className='cust'+(x>66?' l':'');el.style.left='112%';el.style.bottom=b+'%';el.style.zIndex=10+Math.round(30-b);
  el.innerHTML=`<img class="body" src="a/${ct[0]}.webp" alt="${ct[1]}"><div class="bub"><img src="a/m${MENU[MI[k]][2]}.webp" alt=""><i><b style="width:100%"></b></i></div>`;scene.appendChild(el);
  const c={id:++cuN,el,seat,k,ti,pat:32,max:32,mul:ct[3],arr:false};CU.push(c);requestAnimationFrame(()=>{el.style.left=x+'%'});setTimeout(()=>c.arr=true,1400)}
 function queue(){return CU.filter(c=>c.arr&&!c.done).sort((a,b)=>a.id-b.id)}
@@ -313,7 +319,7 @@ function brewTap(amt,auto){
  const c=nextOrder();if(c){brewProg+=amt||tapPow();if(brewProg>=workOf(c.k)){brewProg=0;serve(c)}}
  drawBrew();hudLite()}
 const fmtv=v=>v<100?(Math.round(v*10)/10).toString():fmt(v);
-function serve(c){const m=MENU[MI[c.k]];if(m[5])S.bean--;let g=priceOf(c.k)*c.mul;if(c.pat/c.max>.6)g*=1.15;g=Math.round(g);S.money+=g;S.earned+=g;S.served++;S.pop+=1+L(S.shop,'sign')*.5;
+function serve(c){const m=MENU[MI[c.k]];if(m[5])S.bean--;let g=priceOf(c.k)*c.mul;if(c.ti===8){S.pop+=10;const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('외상이오 · 인기 +10',r.left-ar.left+r.width/2,r.top-ar.top);sfx('menu');leave(c,true);S.served++;hud();checkStory();return}if(c.ti===6)setTimeout(()=>toast('김세윤이 다녀가자 양반 손님들이 수군거려요'),300);if(c.ti===7)setTimeout(()=>toast('박선우가 값을 후하게 치르며 맛을 염탐하고 갔어요'),300);if(c.pat/c.max>.6)g*=1.15;g=Math.round(g);S.money+=g;S.earned+=g;S.served++;S.pop+=1+L(S.shop,'sign')*.5;
  const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('주문 완료 +'+fmt(g)+'냥',r.left-ar.left+r.width/2,r.top-ar.top);sfx('trade');leave(c,true);hud();checkStory()}
 function drawBrew(){const c=nextOrder();const f=$('brew').querySelector('.fill');const cm=comboMul(),live=performance.now()-lastTapT<800&&combo>1;$('combo').hidden=!live;if(live)$('combo').textContent=`연타 ${combo}${cm>1?' · ×'+cm:''}`;
  if(!c){f.style.width='0';$('brew-sub').textContent=`한 번에 ${fmtv(tapVal())}냥${autoRate()?' · 일손 초당 '+fmtv(tapVal()*autoRate())+'냥':''}`;CU.forEach(x=>x.el.querySelector('.bub')?.classList.remove('next'));return}
@@ -355,7 +361,7 @@ $('plist').addEventListener('pointerdown',()=>{lastPanelDown=performance.now()})
 $('plist').onclick=e=>{const b=e.target.closest('button[data-a]');if(!b||b.disabled)return;const a=b.dataset.a,k=b.dataset.k;
  if(a==='mopen'){const m=MENU[MI[k]],q=menuReq(k);if(S.money<m[4]||(q&&q.have<q.need))return;S.money-=m[4];S.menu[k]=1;sfx('trade');toast(`${m[1]}${josa(m[1])} 메뉴에 올렸어요`)}
  if(a==='mup'){const lv=L(S.menu,k),cost=mupCost(k);if(lv>=MMAX)return;if(S.money<cost)return;S.money-=cost;S.menu[k]=lv+1;sfx('trade')}
- if(a==='staff'){const s=STAFF.find(x=>x[0]===k),lv=L(S.staff,k),cost=s[5](lv);if(S.money<cost)return;S.money-=cost;S.staff[k]=lv+1;sfx('trade');if(!lv)toast(`${s[1]}${josa2(s[1])} 일손이 됐어요`)}
+ if(a==='staff'){const s=STAFF.find(x=>x[0]===k),lv=L(S.staff,k),cost=s[5](lv);if(S.money<cost)return;S.money-=cost;S.staff[k]=lv+1;sfx('trade');helpers();if(!lv)toast(`${s[1]}${josa2(s[1])} 일손이 됐어요`)}
  if(a==='shop'){const s=SHOP.find(x=>x[0]===k),lv=L(S.shop,k),cost=s[5](lv);if(S.money<cost)return;S.money-=cost;S.shop[k]=lv+1;sfx('trade');
   if(k==='pot')playStory('pot');if(k==='dawooga'){S.stage=1;S.shop.seat=0;setStage();closePanel();playStory('dawooga')}}
  if(a==='bean'){const n=+b.dataset.n,p=beanPrice();if(S.money<p*n)return;S.money-=p*n;S.bean+=n;sfx('trade');toast(`커피콩 ${n}개를 샀어요`)}
@@ -408,7 +414,7 @@ function tick(now){const dt=Math.min(.2,(now-last)/1000);last=now;
   spawnT-=dt;if(spawnT<=0){spawn();spawnT=spawnGap()*(.7+Math.random()*.6)}
   CU.forEach(c=>{if(!c.arr||c.done)return;c.pat-=dt;const b=c.el.querySelector('.bub i b');if(b){b.style.width=Math.max(0,c.pat/c.max*100)+'%';b.style.background=c.pat/c.max<.3?'#c0452f':''}
    if(c.pat<=0){S.pop=Math.max(0,S.pop-1);const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('기다리다 갔어요',r.left-ar.left+r.width/2,r.top-ar.top,true);leave(c,false);hud()}});
-  const ar=autoRate();if(ar){autoAcc+=ar*dt;while(autoAcc>=1){autoAcc-=1;brewTap(0,true)}}
+  const ar=autoRate();if(ar){autoAcc+=ar*dt;while(autoAcc>=1){autoAcc-=1;brewTap(0,true);const sm=$('sam');sm.classList.add('work');setTimeout(()=>sm.classList.remove('work'),120)}}
   saveT+=dt;if(saveT>5){saveT=0;save()}drawBrew()}
  requestAnimationFrame(tick)}
 // 화면 어디를 눌러도 가비 내리기 (창·메뉴·위 표시줄은 빼고). 손가락이 닿는 순간 셈
