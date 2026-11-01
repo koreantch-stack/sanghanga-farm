@@ -68,6 +68,18 @@ html,body{margin:0;height:100%;background:#2a1d13;color:var(--ink);font-family:'
 .chart{display:flex;align-items:flex-end;gap:3px;height:70px;margin:4px 4px 10px;padding:6px;background:#fff;border:1px solid #e3cfa6;border-radius:12px}
 .chart i{flex:1;background:#c99a55;border-radius:3px 3px 0 0}
 .chart i.now{background:var(--red)}
+#set-btn{border:1px solid #c79a5a;background:rgba(40,25,12,.72);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;padding:0;flex:none;cursor:pointer}
+#setwin,#confirm{position:absolute;inset:0;z-index:85;background:rgba(15,9,4,.6);display:none;align-items:center;justify-content:center;padding:20px}
+#setwin.on,#confirm.on{display:flex}#confirm{z-index:97}
+.sw{background:var(--paper);border-radius:18px;padding:16px;width:100%;max-width:360px;max-height:90%;overflow-y:auto}
+.sw h3{margin:0 0 10px;font:400 22px 'Do Hyeon';text-align:center}
+.sr{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid #e6d3ae;font:400 16px 'Do Hyeon'}
+.sr span{flex:1}.sr small{display:block;font:400 12px 'Gowun Dodum';color:#7b6247}
+.sr input[type=range]{width:120px;accent-color:var(--green)}.sr input[type=checkbox]{width:22px;height:22px;accent-color:var(--green)}
+.sr select{font:400 14px 'Gowun Dodum';padding:4px;border-radius:8px;border:1px solid #c9a978;background:#fff}
+.sw button{border:0;border-radius:10px;background:var(--green);color:#fff;font:400 15px 'Do Hyeon';padding:7px 12px;cursor:pointer}
+.sw button.danger{background:var(--red)}.sw button.close{display:block;margin:12px auto 0;background:#8a6a45;padding:9px 30px}
+#confirm p{font-size:15px;line-height:1.5;text-align:center;margin:0 0 14px}.cfb{display:flex;gap:10px;justify-content:center}#cf-no{background:#b9a888}
 #toast{position:absolute;left:50%;bottom:150px;transform:translateX(-50%);background:rgba(30,20,10,.88);color:#fff6e0;padding:8px 14px;border-radius:14px;font-size:14px;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none;max-width:86%;text-align:center}
 #toast.on{opacity:1}
 #story{position:absolute;inset:0;z-index:80;background:rgba(15,9,4,.82);display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px}
@@ -103,7 +115,7 @@ html,body{margin:0;height:100%;background:#2a1d13;color:var(--ink);font-family:'
   <div class="res"><img src="a/u0.webp" alt="엽전"><span id="r-money">0</span></div>
   <div class="res"><img src="a/u1.webp" alt="커피콩"><span id="r-bean">0</span></div>
   <div class="res"><img src="a/u4.webp" alt="인기"><span id="r-pop">0</span></div>
-  <div id="day"></div>
+  <div id="day"></div><button type="button" id="set-btn" aria-label="설정"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="#fff3d6" d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3.3h-4l-.4 2.6a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1l.4 2.6h4l.4-2.6a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg></button>
  </div>
  <div id="event" hidden></div>
  <div id="bottom">
@@ -117,6 +129,16 @@ html,body{margin:0;height:100%;background:#2a1d13;color:var(--ink);font-family:'
   </div>
  </div>
  <div id="panel"><header><span id="p-title"></span><small id="p-sub"></small><button type="button" id="p-x" aria-label="닫기">✕</button></header><div id="plist"></div></div>
+ <div id="setwin"><div class="sw"><h3>설정</h3>
+  <div class="sr"><span>효과음</span><input type="range" id="sv-vol" min="0" max="100" step="5"></div>
+  <label class="sr"><span>배경 음악<small>음악은 다음 업데이트에서 들어가요</small></span><input type="checkbox" id="sv-bgm"></label>
+  <label class="sr"><span>진동<small>폰에서 누를 때 살짝 떨려요</small></span><input type="checkbox" id="sv-vib"></label>
+  <label class="sr"><span>숫자 띄우기<small>누를 때 "+1"이 튀어 올라요</small></span><input type="checkbox" id="sv-pop"></label>
+  <div class="sr"><span>새 이야기<small>열리면 바로 볼지, 이야기 탭에 쌓아 둘지</small></span><select id="sv-story"><option value="now">바로 보기</option><option value="later">나중에 보기</option></select></div>
+  <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
+  <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
+  <button type="button" id="sv-x" class="close">닫기</button></div></div>
+ <div id="confirm"><div class="sw"><h3 id="cf-t"></h3><p id="cf-m"></p><div class="cfb"><button type="button" id="cf-no">그만두기</button><button type="button" id="cf-ok" class="danger">확인</button></div></div></div>
  <div id="toast"></div>
  <div id="story"><button type="button" class="skip" id="st-skip">건너뛰기</button><div id="cut"></div><div class="hint">화면을 눌러 넘기기</div></div>
  <div id="namebox"><div><h3>당신의 이름은?</h3><p>조선에서 불릴 이름을 지어 주세요.</p><input id="nm" maxlength="8" value="한가영"><small id="nm-err"></small><button type="button" id="nm-ok">정했어요</button></div></div>
@@ -233,14 +255,16 @@ const ST={
   {n:'무릉도원 이야기는\n다음 업데이트에서 이어집니다.'}]}};
 const STORDER=['start','first','samwol','pot','dawooga','seyun','gwageo','tired','seonwoo','cheap','hajun','murung'];
 // ---------- 상태 ----------
-const SAVE='cih-save-1';
+const SAVE='cih-save-1',SETK='cih-set-1';let RESET=false;
+let SET={vol:55,bgm:1,vib:1,pop:1,story:'now'};try{Object.assign(SET,JSON.parse(localStorage.getItem(SETK)||'{}'))}catch(_){}
+function saveSet(){try{localStorage.setItem(SETK,JSON.stringify(SET))}catch(_){}}
 let S={money:0,bean:20,pop:0,stage:0,name:'한가영',menu:{sikhye:1},staff:{},shop:{},seen:{},served:0,earned:0,day:1,dayT:0,beanP:[],ev:null,evUntil:0,lastTs:Date.now()};
 function load(){try{const d=JSON.parse(localStorage.getItem(SAVE)||'null');if(d)S=Object.assign(S,d)}catch(_){}}
-function save(){S.lastTs=Date.now();try{localStorage.setItem(SAVE,JSON.stringify(S))}catch(_){}}
+function save(){if(RESET)return;S.lastTs=Date.now();try{localStorage.setItem(SAVE,JSON.stringify(S))}catch(_){}}
 const L=(o,k)=>o[k]||0;
 // ---------- 소리 ----------
 const SND={};['trade','menu','open','act','water'].forEach(k=>{const a=new Audio(`a/s_${k}.mp3`);a.preload='auto';SND[k]=a});
-function sfx(k){const a=SND[k];if(!a)return;try{const c=a.cloneNode();c.volume=.55;c.play().catch(()=>{})}catch(_){}}
+function sfx(k){const a=SND[k];if(!a||!SET.vol)return;try{const c=a.cloneNode();c.volume=SET.vol/100;c.play().catch(()=>{})}catch(_){}}
 // ---------- 숫자 ----------
 const fmt=n=>{n=Math.floor(n);if(n>=1e8)return(Math.floor(n/1e7)/10)+'억';if(n>=1e4)return(Math.floor(n/1e3)/10)+'만';return n.toLocaleString('ko-KR')};
 const won=n=>fmt(n)+'냥';
@@ -260,7 +284,7 @@ const tapPow=()=>1+0.15*L(S.shop,'hand');
 const autoRate=()=>L(S.staff,'samwol');
 const nOpen=()=>MENU.filter(m=>L(S.menu,m[0])>0).length;
 function tapVal(){return baseMul()*bestMul()}
-function priceOf(k){let p=baseMul()*mulOf(k)*12;if(MENU[MI[k]][5]&&L(S.shop,'pot'))p*=1.3;if(gwageo()&&(k==='black'||k==='honey'))p*=1.5;return Math.round(p)}
+function priceOf(k){let p=baseMul()*mulOf(k)*30;if(MENU[MI[k]][5]&&L(S.shop,'pot'))p*=1.3;if(gwageo()&&(k==='black'||k==='honey'))p*=1.5;return Math.round(p)}
 let combo=0,lastTapT=0;const comboMul=()=>1+Math.min(2,Math.floor(combo/15)*.5);
 function spawnGap(){let g=4.2/(1+0.18*L(S.shop,'lamp'))/(1+Math.min(S.pop,3000)/600);if(market())g/=1.5;if(S.ev==='seonwoo'&&Date.now()<S.evUntil)g*=1.6;return Math.max(.9,g)}
 function beanPrice(){const p=S.beanP.at(-1)||12;return Math.max(3,Math.round(p*(1-0.06*L(S.staff,'dojin'))))}
@@ -283,8 +307,8 @@ function brewTap(amt,auto){
  // 누를 때마다 바로 엽전
  const now=performance.now();if(!auto){combo=now-lastTapT<550?combo+1:1;lastTapT=now}
  const v=tapVal()*(auto?1:comboMul());S.money+=v;S.earned+=v;S.taps=(S.taps||0)+1;
- if(!auto){const h=$('heroimg');h.classList.add('brew');setTimeout(()=>h.classList.remove('brew'),110);sfx('act');
-  const br=$('brew').getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('+'+fmtv(v),br.left-ar.left+br.width*(.25+Math.random()*.5),br.top-ar.top-6)}
+ if(!auto){const h=$('heroimg');h.classList.add('brew');setTimeout(()=>h.classList.remove('brew'),110);sfx('act');if(SET.vib&&navigator.vibrate)try{navigator.vibrate(8)}catch(_){}
+  const br=$('brew').getBoundingClientRect(),ar=$('app').getBoundingClientRect();if(SET.pop)pop('+'+fmtv(v),br.left-ar.left+br.width*(.25+Math.random()*.5),br.top-ar.top-6)}
  const c=nextOrder();if(c){brewProg+=amt||tapPow();if(brewProg>=workOf(c.k)){brewProg=0;serve(c)}}
  drawBrew();hudLite()}
 const fmtv=v=>v<100?(Math.round(v*10)/10).toString():fmt(v);
@@ -340,7 +364,8 @@ document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{tab===b.data
 $('p-x').onclick=closePanel;
 // ---------- 이야기 재생 ----------
 let SQ=null;
-function playStory(k,replay){const s=ST[k];if(!s)return;if(!replay){S.seen[k]='new'}SQ={k,i:0,replay};$('story').classList.add('on');showCut();sfx('open')}
+function storyFx(k){if(k==='cheap'&&!S.gotCheap){S.gotCheap=1;S.bean+=200;toast('커피콩 200개를 얻었어요')}if(k==='hajun'&&!S.gotHajun){S.gotHajun=1;S.pop+=50}if(k==='seonwoo'&&!S.evDone){S.ev='seonwoo';S.evUntil=Date.now()+DAYSEC*1000*4;S.evDone=1}}
+function playStory(k,replay){const s=ST[k];if(!s)return;if(!replay&&SET.story==='later'&&k!=='start'){S.seen[k]='new';storyFx(k);toast(`새 이야기 「${s.t}」 열렸어요`);hud();save();return}if(!replay){S.seen[k]='new'}SQ={k,i:0,replay};$('story').classList.add('on');showCut();sfx('open')}
 function nm(t){return t.replace(/\{name\}/g,S.name)}
 function showCut(){const c=ST[SQ.k].c[SQ.i];const cut=$('cut');if(!c){endStory();return}
  if(c.ask==='name'){if(SQ.replay){SQ.i++;showCut();return}$('namebox').classList.add('on');$('nm').value=S.name;return}
@@ -349,17 +374,29 @@ function showCut(){const c=ST[SQ.k].c[SQ.i];const cut=$('cut');if(!c){endStory()
  else cut.innerHTML=(c.p?`<div class="pic" style="background-image:url(a/p_${c.p}.webp)"></div>`:'')+`<div class="say"><b>${esc(nm(c.w))}</b><p>${esc(nm(c.s))}</p></div>`}
 function esc(t){return t.replace(/[<>&]/g,m=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[m]))}
 function endStory(){const k=SQ.k;$('story').classList.remove('on');if(S.seen[k]==='new')S.seen[k]=1;
- if(k==='cheap'&&!SQ.replay&&!S.gotCheap){S.gotCheap=1;S.bean+=200;toast('커피콩 200개를 얻었어요')}
- if(k==='hajun'&&!SQ.replay&&!S.gotHajun){S.gotHajun=1;S.pop+=50}
- if(k==='seonwoo'&&!SQ.replay&&!S.evDone){S.ev='seonwoo';S.evUntil=Date.now()+DAYSEC*1000*4;S.evDone=1}
+ if(!SQ.replay)storyFx(k);
  SQ=null;hud();drawPanel();save();checkStory()}
 $('story').onclick=e=>{if(e.target.id==='st-skip')return;if(!SQ)return;SQ.i++;sfx('menu');showCut()};
 $('st-skip').onclick=e=>{e.stopPropagation();if(!SQ)return;if(!SQ.replay&&ST[SQ.k].c.some((c,i)=>c.ask&&i>=SQ.i)){SQ.i=ST[SQ.k].c.findIndex(c=>c.ask);showCut();return}endStory()};
-$('nm-ok').onclick=()=>{const v=$('nm').value.replace(/[<>&]/g,'').trim();if(v.length<2){$('nm-err').textContent='두 글자 이상으로 지어 주세요';return}if(/[ㄱ-ㅎㅏ-ㅣ]/.test(v)){$('nm-err').textContent='자음이나 모음만 쓴 글자는 쓸 수 없어요';return}S.name=v;$('namebox').classList.remove('on');$('nm-err').textContent='';SQ.i++;showCut();save()};
+$('nm-ok').onclick=()=>{const v=$('nm').value.replace(/[<>&]/g,'').trim();if(v.length<2){$('nm-err').textContent='두 글자 이상으로 지어 주세요';return}if(/[ㄱ-ㅎㅏ-ㅣ]/.test(v)){$('nm-err').textContent='자음이나 모음만 쓴 글자는 쓸 수 없어요';return}S.name=v;$('namebox').classList.remove('on');$('nm-err').textContent='';if(SQ){SQ.i++;showCut()}else{toast(`이름을 ${v}(으)로 바꿨어요`);setDraw()}save()};
 function checkStory(){if(SQ)return;const T=[
  ['first',()=>S.served>=1],['samwol',()=>S.served>=12],['seyun',()=>S.stage>=1&&S.served>=90],['gwageo',()=>gwageo()&&S.served>=20],['tired',()=>S.stage>=1&&S.served>=160],
  ['seonwoo',()=>S.stage>=1&&S.earned>=5e6],['cheap',()=>S.evDone&&Date.now()>S.evUntil],['hajun',()=>S.stage>=1&&S.served>=260],['murung',()=>S.stage>=1&&S.earned>=3e7]];
  for(const [k,f] of T)if(!S.seen[k]&&f()){setTimeout(()=>{if(!SQ&&!S.seen[k])playStory(k)},500);return}}
+// ---------- 설정 ----------
+function setDraw(){$('sv-vol').value=SET.vol;$('sv-bgm').checked=!!SET.bgm;$('sv-vib').checked=!!SET.vib;$('sv-pop').checked=!!SET.pop;$('sv-story').value=SET.story;$('sv-name').textContent=S.name}
+$('set-btn').onclick=()=>{setDraw();$('setwin').classList.add('on');sfx('open')};
+$('sv-x').onclick=()=>$('setwin').classList.remove('on');
+$('setwin').onclick=e=>{if(e.target.id==='setwin')$('setwin').classList.remove('on')};
+$('sv-vol').oninput=e=>{SET.vol=+e.target.value;saveSet()};$('sv-vol').onchange=()=>sfx('act');
+$('sv-bgm').onchange=e=>{SET.bgm=e.target.checked?1:0;saveSet()};
+$('sv-vib').onchange=e=>{SET.vib=e.target.checked?1:0;saveSet();if(SET.vib&&navigator.vibrate)try{navigator.vibrate(20)}catch(_){}};
+$('sv-pop').onchange=e=>{SET.pop=e.target.checked?1:0;saveSet()};
+$('sv-story').onchange=e=>{SET.story=e.target.value;saveSet()};
+$('sv-rename').onclick=()=>{$('nm').value=S.name;$('nm-err').textContent='';$('namebox').classList.add('on')};
+let cfOk=null;function confirmBox(t,m,f,ok){$('cf-t').textContent=t;$('cf-m').textContent=m;$('cf-ok').textContent=ok||'확인';cfOk=f;$('confirm').classList.add('on')}
+$('cf-no').onclick=()=>{$('confirm').classList.remove('on');cfOk=null};$('cf-ok').onclick=()=>{$('confirm').classList.remove('on');const f=cfOk;cfOk=null;if(f)f()};
+$('sv-reset').onclick=()=>confirmBox('처음부터 할까요?','엽전, 메뉴, 일손, 가게, 이야기까지 모든 진행이 지워져요. 되돌릴 수 없어요.',()=>{RESET=true;try{localStorage.removeItem(SAVE)}catch(_){}location.reload()},'처음부터');
 // ---------- 시간 ----------
 let last=performance.now(),autoAcc=0,saveT=0;
 function tick(now){const dt=Math.min(.2,(now-last)/1000);last=now;
