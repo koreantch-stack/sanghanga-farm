@@ -104,6 +104,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
 .sw button{border:0;border-radius:10px;background:var(--green);color:#fff;font:400 15px 'Do Hyeon';padding:7px 12px;cursor:pointer}
 .sw button.danger{background:var(--red)}.sw button.close{display:block;margin:12px auto 0;background:#8a6a45;padding:9px 30px}
 #sv-test .adh{display:block;font:400 14px 'Do Hyeon';color:#7b6247;margin:12px 0 0}#adm-it button{display:flex;align-items:center;gap:6px;justify-content:center}#adm-it img{width:24px;height:24px}#adm-us{font:400 12px 'Gowun Dodum';color:#4a3826;margin-top:8px;max-height:260px;overflow:auto}#adm-us div{padding:6px 2px;border-bottom:1px solid #eadbbd}#adm-us b{font:400 14px 'Do Hyeon'}
+#crisis{margin:0 auto 8px;width:86%;background:rgba(60,20,10,.88);border:2px solid #e0603f;border-radius:14px;padding:8px 10px;color:#fff;text-align:center;animation:crs .5s ease-in-out infinite alternate}#crisis b{display:block;font:400 17px 'Do Hyeon'}#crisis i{display:block;height:14px;background:#3a2016;border-radius:7px;overflow:hidden;margin:6px 0 4px}#crisis u{display:block;height:100%;width:0;background:linear-gradient(90deg,#f0b040,#f06a3a);transition:width .08s}#crisis small{font:400 12px 'Gowun Dodum';color:#f5d9b8}@keyframes crs{from{box-shadow:0 0 0 rgba(224,96,63,0)}to{box-shadow:0 0 16px rgba(224,96,63,.8)}}#brew.cr{background:linear-gradient(#f08a5a,#c0452f);color:#fff}
 #sv-acc{background:#fff;border:1px solid #e3cfa6;border-radius:12px;padding:10px;margin-bottom:6px}#sv-acc .ab{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}#sv-acc small{display:block;font-size:12px;color:#7b6247;line-height:1.4}#sv-acc b{font:400 16px 'Do Hyeon'}
 #confirm p{white-space:pre-line;font-size:15px;line-height:1.5;text-align:center;margin:0 0 14px}.cfb{display:flex;gap:10px;justify-content:center}#cf-no{background:#b9a888}
 #toast{position:absolute;left:50%;bottom:150px;transform:translateX(-50%);background:rgba(30,20,10,.88);color:#fff6e0;padding:8px 14px;border-radius:14px;font-size:14px;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none;max-width:86%;text-align:center}
@@ -148,7 +149,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
  <div id="floors" hidden><button type="button" data-f="0">1층</button><button type="button" data-f="1">2층</button><button type="button" data-f="2">금남당</button><button type="button" data-f="b" class="fb-b">빙고 <img src="a/u2.webp" alt="얼음"><i id="fb-ice">0</i><img src="a/u3.webp" alt="별 조각"><i id="fb-star">0</i></button></div>
  <div id="event" hidden></div>
  <div id="bottom">
-  <div id="buffs" hidden></div><div id="combo" hidden></div><button id="brew" type="button"><div class="fill"></div><span>가비 내리기</span><small id="brew-sub">손님을 기다리는 중</small></button>
+  <div id="buffs" hidden></div><div id="combo" hidden></div><div id="crisis" hidden><b id="cr-t"></b><i><u id="cr-g"></u></i><small id="cr-s"></small></div><button id="brew" type="button"><div class="fill"></div><span>가비 내리기</span><small id="brew-sub">손님을 기다리는 중</small></button>
   <div id="tabs">
    <button type="button" data-t="menu"><img src="a/m0.webp" alt=""><i class="dot"></i>메뉴</button>
    <button type="button" data-t="staff"><img src="a/u5.webp" alt=""><i class="dot"></i>일손</button>
@@ -169,13 +170,13 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>새 이야기<small>열리면 바로 볼지, 이야기 탭에 쌓아 둘지</small></span><select id="sv-story"><option value="now">바로 보기</option><option value="later">나중에 보기</option></select></div>
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-운영자-1</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-위기-1</p>
   <div id="sv-test" hidden><div class="sr"><span>운영자 모드<small>운영자 계정에만 보여요</small></span></div><b class="adh">엽전·재료·날짜</b>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
     <button type="button" data-t="bean">콩 +1000</button><button type="button" data-t="ice">얼음 가득</button>
     <button type="button" data-t="star">별 조각 +10</button><button type="button" data-t="day">하루 넘기기</button>
-    <button type="button" data-t="sum">여름으로</button><button type="button" data-t="win">겨울로</button><button type="button" data-t="pop">인기 +5000</button><button type="button" data-t="m3">엽전 +100조</button>
+    <button type="button" data-t="sum">여름으로</button><button type="button" data-t="win">겨울로</button><button type="button" data-t="pop">인기 +5000</button><button type="button" data-t="cr">위기 일으키기</button><button type="button" data-t="m3">엽전 +100조</button>
    </div><b class="adh">특별 아이템</b><div id="adm-it" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px"></div>
    <b class="adh">손님 목록</b><button type="button" data-t="users" style="width:100%;margin-top:6px">카페 이용자 불러오기</button><div id="adm-us"></div></div></div></div>
  <div id="confirm"><div class="sw"><h3 id="cf-t"></h3><p id="cf-m"></p><div class="cfb"><button type="button" id="cf-no">그만두기</button><button type="button" id="cf-ok" class="danger">확인</button></div></div></div>
@@ -370,7 +371,7 @@ const SAVE='cih-save-1',SETK='cih-set-1';let RESET=false;
 let SET={vol:55,mvol:40,bgm:1,vib:1,pop:1,story:'now'};try{Object.assign(SET,JSON.parse(localStorage.getItem(SETK)||'{}'))}catch(_){}
 function saveSet(){try{localStorage.setItem(SETK,JSON.stringify(SET))}catch(_){}}
 let S={money:0,bean:60,pop:0,stage:0,name:'한가영',menu:{sikhye:1},staff:{},shop:{},seen:{},served:0,earned:0,day:1,dayT:0,beanP:[],ev:null,evUntil:0,lastTs:Date.now()};
-function load(){try{const d=JSON.parse(localStorage.getItem(SAVE)||'null');if(d)S=Object.assign(S,d)}catch(_){}}
+function load(){try{const d=JSON.parse(localStorage.getItem(SAVE)||'null');if(d)S=Object.assign(S,d)}catch(_){}if(S.ev==='prison'&&S.prDone&&!S.relDone&&!S.crisis)S.crisis={k:'prison',g:0}}
 function save(){if(RESET)return;S.lastTs=Date.now();try{localStorage.setItem(SAVE,JSON.stringify(S))}catch(_){}}
 const L=(o,k)=>o[k]||0;
 // ---------- 소리 ----------
@@ -403,7 +404,22 @@ const beanOn=()=>S.bean>0;
 const beanUse=()=>[.2,1,3][S.stage];let beanAcc=0;
 const buffOn=k=>(S.buff&&S.buff[k]||0)>Date.now();
 const autoRate=()=>staffRate()+(S.orn||0)+(buffOn('coffee')?15:0)+(buffOn('led')?15:0);
-const prisonOn=()=>S.ev==='prison'&&Date.now()<S.evUntil;
+const prisonOn=()=>!!(S.crisis&&S.crisis.k==='prison');
+const crisisOn=()=>!!S.crisis;
+const CRISIS={prison:{t:'가영이 포도청에 갇혔어요',s:'화면을 마구 두드려 다우가 식구들과 탄원서를 모아요',up:1.2,dn:4},
+ raid:{t:'포졸들이 들이닥쳐 장부를 뒤져요',s:'마구 두드려 포졸들에게 해명해요',up:2.5,dn:6},
+ rat:{t:'부엌에 쥐 떼가 나타났어요',s:'마구 두드려 쥐를 쫓아내요',up:2.6,dn:6},
+ fire:{t:'아궁이 불이 번졌어요',s:'마구 두드려 물을 퍼 날라요',up:2.3,dn:6},
+ thief:{t:'소매치기가 돈궤를 노려요',s:'마구 두드려 도둑을 붙잡아요',up:2.5,dn:6},
+ ice:{t:'빙고 문이 열려 얼음이 녹아요',s:'마구 두드려 빙고 문을 닫아요',up:2.4,dn:6}};
+const crStage=()=>S.stage===2?['raid','rat','fire','thief','ice']:['raid','rat','fire','thief'];
+function crisisStart(k){if(S.crisis)return;S.crisis={k,g:0};CU.splice(0).forEach(c=>c.el.remove());if(typeof closePanel==='function')closePanel();helpers();sfx('open');if(SET.vib&&navigator.vibrate)try{navigator.vibrate([60,40,60])}catch(_){}crisisDraw();hud()}
+function crisisEnd(){const k=S.crisis.k;S.crisis=null;S.crisisT=Date.now();crisisDraw();helpers();sfx('trade');
+ if(k==='prison'){S.evUntil=0;toast('탄원서가 모였어요. 가영이 풀려나요');setTimeout(checkStory,600)}
+ else{S.pop+=20;toast('위기를 넘겼어요. 단골들이 대견해해요 · 인기 +20')}hud();save()}
+function crisisDraw(){const c=S.crisis,e=$('crisis');e.hidden=!c;$('brew').classList.toggle('cr',!!c);if(!c)return;const d=CRISIS[c.k];$('cr-t').textContent=d.t;$('cr-s').textContent=d.s+' · '+Math.floor(c.g)+'%';$('cr-g').style.width=c.g+'%'}
+function crisisTap(){const c=S.crisis,d=CRISIS[c.k];c.g=Math.min(100,c.g+d.up);sfx('act');if(SET.vib&&navigator.vibrate)try{navigator.vibrate(8)}catch(_){}const h=$('heroimg');h.classList.add('brew');setTimeout(()=>h.classList.remove('brew'),110);if(c.g>=100)crisisEnd();else crisisDraw()}
+
 const ready=()=>Math.max(0,(S.star||0)-(S.warm||0));
 const iceCap=()=>50*(1+L(S.shop,'binggo'));
 const icePrice=()=>Math.max(500,Math.round(tapVal()*30*(season()===1?2:season()===3?.5:1)));
@@ -413,7 +429,7 @@ const nOpen=()=>MENU.filter(m=>L(S.menu,m[0])>0).length;
 function tapVal(){return baseMul()*bestMul()*(prisonOn()?.5:1)*(buffOn('tal')?2:1)*(beanOn()?1.5:1)}
 function priceOf(k){let p=baseMul()*mulOf(k)*30*(S.stage===2?cur().mul:1);if(MENU[MI[k]][10]){if(season()===1)p*=1.5;if(season()===3)p*=.8}if(MENU[MI[k]][5]&&L(S.shop,'pot'))p*=1.3;if(gwageo()&&(k==='black'||k==='honey'))p*=1.5;return Math.round(p)}
 let combo=0,lastTapT=0;const comboMul=()=>1+Math.min(2,Math.floor(combo/15)*.5);
-function spawnGap(){if(prisonOn())return 9999;let g=(S.stage===2?cur().gap:1)*4.2/(1+0.18*L(S.shop,'lamp'))/(1+Math.min(S.pop,3000)/600);if(market())g/=1.5;if(S.ev==='seonwoo'&&Date.now()<S.evUntil)g*=1.6;return Math.max(.9,g)}
+function spawnGap(){if(crisisOn())return 9999;let g=(S.stage===2?cur().gap:1)*4.2/(1+0.18*L(S.shop,'lamp'))/(1+Math.min(S.pop,3000)/600);if(market())g/=1.5;if(S.ev==='seonwoo'&&Date.now()<S.evUntil)g*=1.6;return Math.max(.9,g)}
 function beanPrice(){const p=S.beanP.at(-1)||12;return Math.max(3,Math.round(p*(1-0.06*L(S.staff,'dojin'))*[1,40,2000][S.stage]))}
 function rollBean(){const prev=S.beanP.at(-1)||12;let p=prev*Math.exp((Math.random()-.5)*.35+(12-prev)*.02);if(S.ev==='seonwoo'&&Date.now()<S.evUntil)p*=1.15;S.beanP.push(Math.max(5,Math.min(30,+p.toFixed(1))));if(S.beanP.length>20)S.beanP.shift()}
 // ---------- 무대 ----------
@@ -433,7 +449,7 @@ function nextOrder(){const q=queue();return q.find(c=>(!MENU[MI[c.k]][5]||S.bean
 function leave(c,ok){c.done=true;c.el.querySelector('.bub').style.display='none';c.el.style.left='112%';c.el.classList.add('gone');setTimeout(()=>{c.el.remove();const i=CU.indexOf(c);if(i>=0)CU.splice(i,1)},1300)}
 function pop(txt,x,y,bad){const e=document.createElement('div');e.className='pop'+(bad?' bad':'');e.textContent=txt;e.style.left=x+'px';e.style.top=y+'px';$('app').appendChild(e);setTimeout(()=>e.remove(),1000)}
 function workOf(k){return MENU[MI[k]][6]}
-function brewTap(amt,auto){
+function brewTap(amt,auto){if(S.crisis){if(!auto)crisisTap();return}
  // 누를 때마다 바로 엽전
  const now=performance.now();if(!auto){combo=now-lastTapT<800?combo+1:1;lastTapT=now}
  const v=tapVal()*(auto?1:comboMul());S.money+=v;S.earned+=v;S.taps=(S.taps||0)+1;
@@ -444,7 +460,7 @@ function brewTap(amt,auto){
 const fmtv=v=>v<100?(Math.round(v*10)/10).toString():fmt(v);
 function serve(c){const m=MENU[MI[c.k]];if(m[5])S.bean--;if(m[12])S.ice=Math.max(0,(S.ice||0)-1);if(grp(m)==='gm')S.pop+=2;if(m[10])S.warm=(S.warm||0)+1;let g=priceOf(c.k)*c.mul;if(c.ti===8){S.pop+=10;const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('외상이오 · 인기 +10',r.left-ar.left+r.width/2,r.top-ar.top);if(Math.random()<.3)giveItem('coffee',1,'허름한 손님이 각성 가배를 두고 갔어요');sfx('menu');leave(c,true);S.served++;hud();checkStory();return}if(c.ti===6){setTimeout(()=>toast('김세윤이 다녀가자 양반 손님들이 수군거려요'),300);if(Math.random()<.3)giveItem('tal',1,'김세윤이 합격 부적을 두고 갔어요')}if(c.ti===0&&gwageo()&&Math.random()<.05)giveItem('tal',1,'선비 손님이 합격 부적을 두고 갔어요');if(c.ti===7)setTimeout(()=>toast('박선우가 값을 후하게 치르며 맛을 염탐하고 갔어요'),300);if(c.pat/c.max>.6)g*=1.15;g=Math.round(g);S.money+=g;S.earned+=g;S.served++;S.pop+=1+L(S.shop,'sign')*.5;
  const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('주문 완료 +'+fmt(g)+'냥',r.left-ar.left+r.width/2,r.top-ar.top);sfx('trade');leave(c,true);hud();checkStory()}
-function drawBrew(){const c=nextOrder();const f=$('brew').querySelector('.fill');const cm=comboMul(),live=performance.now()-lastTapT<800&&combo>1;$('combo').hidden=!live;if(live)$('combo').textContent=`연타 ${combo}${cm>1?' · ×'+cm:''}`;
+function drawBrew(){if(S.crisis){$('combo').hidden=true;$('brew').querySelector('span').textContent='마구 두드리기';$('brew-sub').textContent='수입이 멈췄어요';$('brew').querySelector('.fill').style.width='0';return}$('brew').querySelector('span').textContent='가비 내리기';const c=nextOrder();const f=$('brew').querySelector('.fill');const cm=comboMul(),live=performance.now()-lastTapT<800&&combo>1;$('combo').hidden=!live;if(live)$('combo').textContent=`연타 ${combo}${cm>1?' · ×'+cm:''}`;
  if(!c){f.style.width='0';$('brew-sub').textContent=`한 번에 ${fmtv(tapVal())}냥${autoRate()?' · 일손 초당 '+fmtv(tapVal()*autoRate())+'냥':''}`;CU.forEach(x=>x.el.querySelector('.bub')?.classList.remove('next'));return}
  f.style.width=Math.min(100,brewProg/workOf(c.k)*100)+'%';$('brew-sub').textContent=`${MENU[MI[c.k]][1]} 주문 · 다 내리면 +${fmt(priceOf(c.k)*c.mul)}냥`;CU.forEach(x=>x.el.querySelector('.bub')?.classList.toggle('next',x===c))}
 // ---------- 화면 위 ----------
@@ -452,7 +468,7 @@ let hudT=0;function hudLite(){$('r-money').textContent=fmt(S.money);const n=perf
 function afford(){if(!tab)return;document.querySelectorAll('#plist button[data-c]').forEach(b=>{b.disabled=b.dataset.ok==='0'||S.money<+b.dataset.c})}
 function hud(){$('r-money').textContent=fmt(S.money);$('r-bean').textContent=fmt(S.bean);$('r-pop').textContent=fmt(S.pop);{const m2=S.stage===2;if(m2){$('fb-ice').textContent=S.ice||0;$('fb-star').textContent=`${ready()}/${S.star||0}`}$('app').classList.toggle('st2',m2)}
  $('day').innerHTML=`${SEASON[season()]} ${dayIn()}일<small>${cur().n}</small>`;
- const ev=$('event');let t='';if(prisonOn())t='무릉도원 폐쇄 · 손님이 끊겼어요';else if(S.ev==='seonwoo'&&Date.now()<S.evUntil)t='송상 다방 개업 · 손님이 줄었어요';else if(gwageo())t='과거 시험 철 · 선비 손님이 몰려요';else if(market())t='장날 · 손님이 많아요';ev.hidden=!t;ev.textContent=t;
+ const ev=$('event');let t='';if(prisonOn())t='무릉도원 폐쇄 · 수입이 멈췄어요';else if(S.crisis)t='위기 · 수입이 멈췄어요';else if(S.ev==='seonwoo'&&Date.now()<S.evUntil)t='송상 다방 개업 · 손님이 줄었어요';else if(gwageo())t='과거 시험 철 · 선비 손님이 몰려요';else if(market())t='장날 · 손님이 많아요';ev.hidden=!t;ev.textContent=t;
  const any=k=>{if(k==='menu')return MENU.some(m=>{const q=menuReq(m[0]);return!L(S.menu,m[0])&&m[7]<=S.stage&&floorOk(m)&&m[4]&&S.money>=m[4]&&(!q||q.have>=q.need)});if(k==='staff')return STAFF.some(s=>staffOpen(s[0])&&S.money>=s[5](L(S.staff,s[0])));if(k==='shop')return SHOP.some(s=>shopOk(s)&&S.money>=s[5](L(S.shop,s[0])));if(k==='story')return STORDER.some(k=>S.seen[k]==='new');return false};
  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',any(b.dataset.t)))}
 // ---------- 창 ----------
@@ -514,7 +530,7 @@ $('p-x').onclick=closePanel;
 // ---------- 이야기 재생 ----------
 let SQ=null;
 function giveItem(k,n,why){S.items=S.items||{};S.items[k]=(S.items[k]||0)+n;if(why)setTimeout(()=>toast(why),900)}
-function storyFx(k){if(k!=='start')giveItem('coffee',1,'이야기 보상으로 각성 가배를 받았어요');if(k==='cheap'&&!S.gotCheap){S.gotCheap=1;S.bean+=200;toast('커피콩 200개를 얻었어요')}if(k==='hajun'&&!S.gotHajun){S.gotHajun=1;S.pop+=50}if(k==='seonwoo'&&!S.evDone){S.ev='seonwoo';S.evUntil=Date.now()+DAYSEC*1000*4;S.evDone=1}if(k==='prison'&&!S.prDone){S.ev='prison';S.evUntil=Date.now()+DAYSEC*1000*3;S.prDone=1;CU.splice(0).forEach(c=>c.el.remove());helpers()}if(k==='release'&&!S.relDone){S.relDone=1;S.ev=null;S.pop+=500;helpers()}}
+function storyFx(k){if(k!=='start')giveItem('coffee',1,'이야기 보상으로 각성 가배를 받았어요');if(k==='cheap'&&!S.gotCheap){S.gotCheap=1;S.bean+=200;toast('커피콩 200개를 얻었어요')}if(k==='hajun'&&!S.gotHajun){S.gotHajun=1;S.pop+=50}if(k==='seonwoo'&&!S.evDone){S.ev='seonwoo';S.evUntil=Date.now()+DAYSEC*1000*4;S.evDone=1}if(k==='prison'&&!S.prDone){S.ev='prison';S.evUntil=Date.now()+864e9;S.prDone=1;S.crisis=null;crisisStart('prison')}if(k==='release'&&!S.relDone){S.relDone=1;S.ev=null;S.pop+=500;helpers()}}
 function playStory(k,replay){const s=ST[k];if(!s)return;setTimeout(bgmSync,0);if(!replay&&SET.story==='later'&&k!=='start'){S.seen[k]='new';storyFx(k);toast(`새 이야기 「${s.t}」 열렸어요`);hud();save();return}if(!replay){S.seen[k]='new'}SQ={k,i:0,replay};$('story').classList.add('on');showCut();sfx('open')}
 function nm(t){return t.replace(/\{name\}/g,S.name)}
 function showCut(){const c=ST[SQ.k].c[SQ.i];const cut=$('cut');if(!c){endStory();return}
@@ -531,7 +547,7 @@ $('st-skip').onclick=e=>{e.stopPropagation();if(!SQ)return;if(!SQ.replay&&ST[SQ.
 $('nm-ok').onclick=()=>{const v=$('nm').value.replace(/[<>&]/g,'').trim();if(v.length<2){$('nm-err').textContent='두 글자 이상으로 지어 주세요';return}if(/[ㄱ-ㅎㅏ-ㅣ]/.test(v)){$('nm-err').textContent='자음이나 모음만 쓴 글자는 쓸 수 없어요';return}S.name=v;$('namebox').classList.remove('on');$('nm-err').textContent='';if(SQ){SQ.i++;showCut()}else{toast(`이름을 ${v}(으)로 바꿨어요`);setDraw()}save()};
 function checkStory(){if(SQ)return;const T=[
  ['first',()=>S.served>=1],['samwol',()=>S.served>=12],['seyun',()=>S.stage>=1&&S.served>=90],['gwageo',()=>gwageo()&&S.served>=20],['tired',()=>S.stage>=1&&S.served>=160],
- ['seonwoo',()=>S.stage>=1&&S.earned>=5e6],['cheap',()=>S.evDone&&Date.now()>S.evUntil],['hajun',()=>S.stage>=1&&S.served>=260],['murung',()=>S.stage>=1&&S.earned>=3e8],['prison',()=>S.stage===2&&L(S.menu,'icesujeong')>0],['release',()=>S.prDone&&Date.now()>S.evUntil]];
+ ['seonwoo',()=>S.stage>=1&&S.earned>=5e6],['cheap',()=>S.evDone&&Date.now()>S.evUntil],['hajun',()=>S.stage>=1&&S.served>=260],['murung',()=>S.stage>=1&&S.earned>=3e8],['prison',()=>S.stage===2&&L(S.menu,'icesujeong')>0],['release',()=>S.prDone&&!S.crisis]];
  for(const [k,f] of T)if(!S.seen[k]&&f()){setTimeout(()=>{if(!SQ&&!S.seen[k])playStory(k)},500);return}}
 // ---------- 특별 아이템 ----------
 function itemAct(a,k){S.items=S.items||{};S.buff=S.buff||{};
@@ -564,7 +580,7 @@ async function admUsers(){const e=$('adm-us');e.textContent='불러오는 중이
  e.innerHTML=`<p style="margin:4px 0">${L.length}명 · 오늘 들어온 사람 ${L.filter(u=>new Date(u.ts||0).toDateString()===today).length}명</p>`+L.map(u=>`<div><b>${esc(u.name||'이름 없음')}</b> · ${stName(u.stage||0)}<br>${esc(u.email||u.id.slice(0,8))}<br>번 돈 ${won(u.earned||0)} · ${u.ts?new Date(u.ts).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'}):'-'}</div>`).join('')}catch(err){e.textContent='불러오지 못했어요: '+(err.code||err.message)}}
 $('sv-test').onclick=e=>{const b=e.target.closest('button[data-t]');if(!b||!ADMIN)return;const t=b.dataset.t;if(t==='users'){admUsers();return}
  if(t==='it'||t==='itall'){(t==='it'?[b.dataset.k]:ITEMS.map(x=>x[0])).forEach(k=>{if(k==='orn')S.orn=Math.min(20,(S.orn||0)+(t==='it'?1:10));else giveItem(k,10)});if(tab==='market')drawPanel()}
- if(t==='pop')S.pop=(S.pop||0)+5000;if(t==='m3')S.money+=1e14;
+ if(t==='pop')S.pop=(S.pop||0)+5000;if(t==='cr'){$('setwin').classList.remove('on');S.crisisT=0;const L2=crStage();crisisStart(L2[Math.floor(Math.random()*L2.length)]);return}if(t==='m3')S.money+=1e14;
  if(t==='m1')S.money+=8e10;if(t==='m2')S.money+=1e12;if(t==='bean')S.bean+=1000;if(t==='ice')S.ice=iceCap();if(t==='star')S.star=(S.star||0)+10;
  if(t==='day'){S.day++;rollBean();dailyIce()}if(t==='sum')S.day=SEASONDAY+1;if(t==='win')S.day=SEASONDAY*3+1;
  sfx('trade');toast(b.textContent+' 했어요');hud();save();checkStory()};
@@ -577,7 +593,9 @@ function tick(now){const dt=Math.min(.2,(now-last)/1000);last=now;
   spawnT-=dt;if(spawnT<=0){spawn();spawnT=spawnGap()*(.7+Math.random()*.6)}
   CU.forEach(c=>{if(!c.arr||c.done)return;c.pat-=dt;const b=c.el.querySelector('.bub i b');if(b){b.style.width=Math.max(0,c.pat/c.max*100)+'%';b.style.background=c.pat/c.max<.3?'#c0452f':''}
    if(c.pat<=0){S.pop=Math.max(0,S.pop-1);const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('기다리다 갔어요',r.left-ar.left+r.width/2,r.top-ar.top,true);leave(c,false);hud()}});
-  const ar=autoRate();if(ar){const v=tapVal()*ar*dt;S.money+=v;S.earned+=v;autoAcc+=ar*dt;if(autoAcc>=1){const n=Math.floor(autoAcc);autoAcc-=n;const c=nextOrder();if(c){brewProg+=n*tapPow();if(brewProg>=workOf(c.k)){brewProg=0;serve(c)}}const sm=$('sam');sm.classList.add('work');setTimeout(()=>sm.classList.remove('work'),120)}hudLite()}
+  if(S.crisis){const c=S.crisis;c.g=Math.max(0,c.g-CRISIS[c.k].dn*dt);crisisDraw()}
+  else if(S.seen.first&&!SQ&&!document.hidden&&S.ev!=='prison'&&Date.now()-(S.crisisT||0)>25*60e3&&Math.random()<dt/2400){const L2=crStage();crisisStart(L2[Math.floor(Math.random()*L2.length)])}
+  const ar=S.crisis?0:autoRate();if(ar){const v=tapVal()*ar*dt;S.money+=v;S.earned+=v;autoAcc+=ar*dt;if(autoAcc>=1){const n=Math.floor(autoAcc);autoAcc-=n;const c=nextOrder();if(c){brewProg+=n*tapPow();if(brewProg>=workOf(c.k)){brewProg=0;serve(c)}}const sm=$('sam');sm.classList.add('work');setTimeout(()=>sm.classList.remove('work'),120)}hudLite()}
   useT+=dt;if(useT>=1){useT-=1;
    if(S.bean>0){beanAcc+=beanUse();const u=Math.floor(beanAcc);beanAcc-=u;S.bean=Math.max(0,S.bean-u);if(!S.bean)toast('커피콩이 떨어져서 수입 보너스가 꺼졌어요. 장터에서 사 오세요')}
    if(S.stage===2){starT++;if(starT>=10&&ready()>0){starT=0;S.warm=(S.warm||0)+1;if(!ready())toast('차가운 별 조각이 다 떨어졌어요. 빙고에서 식혀 주세요')}
@@ -590,11 +608,11 @@ function tick(now){const dt=Math.min(.2,(now-last)/1000);last=now;
 const NOTAP='#floors,#top,#tabs,#panel,#story,#namebox,#setwin,#confirm,#title';
 $('app').addEventListener('pointerdown',e=>{if(e.button>0)return;if(e.target.closest(NOTAP))return;if(SQ)return;e.preventDefault();brewTap();if(e.target.closest('#brew')){const b=$('brew');b.classList.add('down');setTimeout(()=>b.classList.remove('down'),90)}},{passive:false});
 // ---------- 자리 비운 동안 ----------
-function offline(){const raw=(Date.now()-(S.lastTs||Date.now()))/1000,sec=Math.min(7200,raw),sec2=Math.min(S.stage?28800:7200,raw);if(sec<30)return;const days=Math.floor(sec/DAYSEC);for(let i=0;i<Math.min(days,20);i++){rollBean();S.day++;dailyIce()}S.day+=Math.max(0,days-20);
+function offline(){if(S.crisis){if((Date.now()-(S.lastTs||Date.now()))>30e3)setTimeout(()=>toast('위기를 넘기지 못한 채 자리를 비워서 그동안 한 푼도 못 벌었어요'),800);S.lastTs=Date.now();return}const raw=(Date.now()-(S.lastTs||Date.now()))/1000,sec=Math.min(7200,raw),sec2=Math.min(S.stage?28800:7200,raw);if(sec<30)return;const days=Math.floor(sec/DAYSEC);for(let i=0;i<Math.min(days,20);i++){rollBean();S.day++;dailyIce()}S.day+=Math.max(0,days-20);
  {const need=Math.floor(sec2*beanUse());S.bean=Math.max(0,S.bean-need)}const lu=(S.buff&&S.buff.led)||0,ledSec=Math.max(0,Math.min(Date.now(),lu)-(S.lastTs||Date.now()))/1000;if(ledSec>30){const g2=Math.round(ledSec*15*tapVal()+Math.max(sec2,ledSec)*(staffRate()+(S.orn||0))*tapVal()*(S.stage?1:.5));S.money+=g2;S.earned+=g2;setTimeout(()=>toast(`대리 장부 덕분에 자리를 비운 동안 ${won(g2)}을 벌었어요`),800);return}const ar=staffRate()+(S.orn||0);if(!ar)return;const g=Math.round(sec2*ar*tapVal()*(S.stage?1:.5));if(g>0){S.money+=g;S.earned+=g;setTimeout(()=>toast(`자리를 비운 동안 일손들이 ${won(g)}을 벌었어요`),800)}}
 // ---------- 시작 ----------
 load();if(!S.beanP.length)for(let i=0;i<10;i++)rollBean();
-setStage();hud();drawBrew();
+setStage();hud();drawBrew();crisisDraw();
 $('t-go').onclick=()=>{$('title').style.display='none';bgmSync();sfx('open');offline();if(S.seen.start)dailyGift();hud();if(!S.seen.start)playStory('start');else checkStory()};
 requestAnimationFrame(tick);
 addEventListener('pagehide',()=>{save();syUp(false)});document.addEventListener('visibilitychange',()=>{if(document.hidden){save();syUp(false)}else if(SY.user)prBeat();bgmSync()});
