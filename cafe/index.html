@@ -134,7 +134,8 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
  <div id="panel"><header><span id="p-title"></span><small id="p-sub"></small><button type="button" id="p-x" aria-label="닫기">✕</button></header><div id="plist"></div></div>
  <div id="setwin"><div class="sw"><h3>설정</h3>
   <div class="sr"><span>효과음</span><input type="range" id="sv-vol" min="0" max="100" step="5"></div>
-  <label class="sr"><span>배경 음악<small>음악은 다음 업데이트에서 들어가요</small></span><input type="checkbox" id="sv-bgm"></label>
+  <label class="sr"><span>배경 음악</span><input type="checkbox" id="sv-bgm"></label>
+  <div class="sr"><span>음악 크기</span><input type="range" id="sv-mvol" min="0" max="100" step="5"></div>
   <label class="sr"><span>진동<small>폰에서 누를 때 살짝 떨려요</small></span><input type="checkbox" id="sv-vib"></label>
   <label class="sr"><span>숫자 띄우기<small>누를 때 "+1"이 튀어 올라요</small></span><input type="checkbox" id="sv-pop"></label>
   <div class="sr"><span>새 이야기<small>열리면 바로 볼지, 이야기 탭에 쌓아 둘지</small></span><select id="sv-story"><option value="now">바로 보기</option><option value="later">나중에 보기</option></select></div>
@@ -260,13 +261,17 @@ const ST={
 const STORDER=['start','first','samwol','pot','dawooga','seyun','gwageo','tired','seonwoo','cheap','hajun','murung'];
 // ---------- 상태 ----------
 const SAVE='cih-save-1',SETK='cih-set-1';let RESET=false;
-let SET={vol:55,bgm:1,vib:1,pop:1,story:'now'};try{Object.assign(SET,JSON.parse(localStorage.getItem(SETK)||'{}'))}catch(_){}
+let SET={vol:55,mvol:40,bgm:1,vib:1,pop:1,story:'now'};try{Object.assign(SET,JSON.parse(localStorage.getItem(SETK)||'{}'))}catch(_){}
 function saveSet(){try{localStorage.setItem(SETK,JSON.stringify(SET))}catch(_){}}
 let S={money:0,bean:20,pop:0,stage:0,name:'한가영',menu:{sikhye:1},staff:{},shop:{},seen:{},served:0,earned:0,day:1,dayT:0,beanP:[],ev:null,evUntil:0,lastTs:Date.now()};
 function load(){try{const d=JSON.parse(localStorage.getItem(SAVE)||'null');if(d)S=Object.assign(S,d)}catch(_){}}
 function save(){if(RESET)return;S.lastTs=Date.now();try{localStorage.setItem(SAVE,JSON.stringify(S))}catch(_){}}
 const L=(o,k)=>o[k]||0;
 // ---------- 소리 ----------
+// 배경 음악: 0 만상 창고, 1 다우가, 2 이야기 장면. 바뀔 때 부드럽게 넘어감
+const BGM=[0,1,2].map(i=>{const a=new Audio(`a/bgm${i}.mp3`);a.loop=true;a.preload='none';a.volume=0;return a});let bgmCur=-1,bgmFade=null;
+function bgmWant(){if(!SET.bgm||!SET.mvol||document.hidden||$('title').style.display!=='none')return -1;return (typeof SQ!=='undefined'&&SQ)?2:Math.min(1,S.stage)}
+function bgmSync(){const w=bgmWant(),tv=SET.mvol/100;if(w!==bgmCur){const old=bgmCur;bgmCur=w;if(w>=0){const a=BGM[w];a.volume=0;a.play().catch(()=>{})}clearInterval(bgmFade);bgmFade=setInterval(()=>{let done=true;BGM.forEach((a,i)=>{const t=i===bgmCur?tv:0;const v=a.volume+(t-a.volume)*.15;a.volume=Math.max(0,Math.min(1,Math.abs(t-v)<.01?t:v));if(a.volume!==t)done=false;if(i!==bgmCur&&a.volume===0&&!a.paused)a.pause()});if(done)clearInterval(bgmFade)},60)}else if(w>=0)BGM[w].volume=tv}
 const SND={};['trade','menu','open','act','water'].forEach(k=>{const a=new Audio(`a/s_${k}.mp3`);a.preload='auto';SND[k]=a});
 function sfx(k){const a=SND[k];if(!a||!SET.vol)return;try{const c=a.cloneNode();c.volume=SET.vol/100;c.play().catch(()=>{})}catch(_){}}
 // ---------- 숫자 ----------
@@ -296,7 +301,7 @@ function rollBean(){const prev=S.beanP.at(-1)||12;let p=prev*Math.exp((Math.rand
 // ---------- 무대 ----------
 const scene=$('scene'),CU=[];let brewProg=0,spawnT=.6,cuN=0;
 function helpers(){const st=STAGES[S.stage],sm=$('sam'),mh=$('mae');sm.hidden=!L(S.staff,'samwol');sm.style.left=(st.hero.x+(S.stage?-24:-13))+'%';sm.style.bottom=(st.hero.b-3)+'%';mh.hidden=!(S.stage>=1&&L(S.staff,'maehwa'));mh.style.left=(st.hero.x+24)+'%';mh.style.bottom=(st.hero.b-1)+'%'}
-function setStage(){const st=STAGES[S.stage];$('bg').src=st.bg;const h=$('heroimg');h.style.left=st.hero.x+'%';h.style.bottom=st.hero.b+'%';helpers();CU.splice(0).forEach(c=>c.el.remove())}
+function setStage(){setTimeout(()=>{if(typeof bgmSync==='function')bgmSync()},0);const st=STAGES[S.stage];$('bg').src=st.bg;const h=$('heroimg');h.style.left=st.hero.x+'%';h.style.bottom=st.hero.b+'%';helpers();CU.splice(0).forEach(c=>c.el.remove())}
 function freeSeat(){const n=seats(),used=new Set(CU.map(c=>c.seat));for(let i=0;i<n;i++)if(!used.has(i))return i;return -1}
 function pickOrder(ct){const open=MENU.filter(m=>L(S.menu,m[0])>0).map(m=>m[0]);const fav=ct[2].filter(k=>open.includes(k));const r=Math.random();let k;if(r<.45)k=open[open.length-1];else if(r<.7&&open.length>1)k=open[open.length-2];else{const pool=fav.length?fav:open;k=pool[Math.floor(Math.random()*pool.length)]}if(!S.bean&&MENU[MI[k]][5]){const nb=open.filter(x=>!MENU[MI[x]][5]);if(nb.length)k=nb[Math.floor(Math.random()*nb.length)]}return k}
 function spawn(){const seat=freeSeat();if(seat<0)return;{const here=new Set(CU.map(c=>c.ti));for(let j=0;j<CUSTX.length;j++){const x=CUSTX[j];if(S.seen[x[4]]&&!here.has(6+j)&&Math.random()<.05)return spawnAs(6+j,seat)}}let w=[3,3,3,1,1,2];if(S.seen.seyun){w[3]=3;w[4]=3}if(gwageo())w[0]=8;let tot=w.reduce((a,b)=>a+b),r=Math.random()*tot,ti=0;while(r>=w[ti]){r-=w[ti];ti++}
@@ -374,7 +379,7 @@ $('p-x').onclick=closePanel;
 // ---------- 이야기 재생 ----------
 let SQ=null;
 function storyFx(k){if(k==='cheap'&&!S.gotCheap){S.gotCheap=1;S.bean+=200;toast('커피콩 200개를 얻었어요')}if(k==='hajun'&&!S.gotHajun){S.gotHajun=1;S.pop+=50}if(k==='seonwoo'&&!S.evDone){S.ev='seonwoo';S.evUntil=Date.now()+DAYSEC*1000*4;S.evDone=1}}
-function playStory(k,replay){const s=ST[k];if(!s)return;if(!replay&&SET.story==='later'&&k!=='start'){S.seen[k]='new';storyFx(k);toast(`새 이야기 「${s.t}」 열렸어요`);hud();save();return}if(!replay){S.seen[k]='new'}SQ={k,i:0,replay};$('story').classList.add('on');showCut();sfx('open')}
+function playStory(k,replay){const s=ST[k];if(!s)return;setTimeout(bgmSync,0);if(!replay&&SET.story==='later'&&k!=='start'){S.seen[k]='new';storyFx(k);toast(`새 이야기 「${s.t}」 열렸어요`);hud();save();return}if(!replay){S.seen[k]='new'}SQ={k,i:0,replay};$('story').classList.add('on');showCut();sfx('open')}
 function nm(t){return t.replace(/\{name\}/g,S.name)}
 function showCut(){const c=ST[SQ.k].c[SQ.i];const cut=$('cut');if(!c){endStory();return}
  if(c.ask==='name'){if(SQ.replay){SQ.i++;showCut();return}$('namebox').classList.add('on');$('nm').value=S.name;return}
@@ -382,7 +387,7 @@ function showCut(){const c=ST[SQ.k].c[SQ.i];const cut=$('cut');if(!c){endStory()
  if(c.n){cut.innerHTML=`<div class="nar">${esc(nm(c.n))}</div>`}
  else cut.innerHTML=(c.p?`<div class="pic" style="background-image:url(a/p_${c.p}.webp)"></div>`:'')+`<div class="say"><b>${esc(nm(c.w))}</b><p>${esc(nm(c.s))}</p></div>`}
 function esc(t){return t.replace(/[<>&]/g,m=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[m]))}
-function endStory(){const k=SQ.k;$('story').classList.remove('on');if(S.seen[k]==='new')S.seen[k]=1;
+function endStory(){setTimeout(bgmSync,0);const k=SQ.k;$('story').classList.remove('on');if(S.seen[k]==='new')S.seen[k]=1;
  if(!SQ.replay)storyFx(k);
  SQ=null;hud();drawPanel();save();checkStory()}
 $('story').onclick=e=>{if(e.target.id==='st-skip')return;if(!SQ)return;SQ.i++;sfx('menu');showCut()};
@@ -393,12 +398,13 @@ function checkStory(){if(SQ)return;const T=[
  ['seonwoo',()=>S.stage>=1&&S.earned>=5e6],['cheap',()=>S.evDone&&Date.now()>S.evUntil],['hajun',()=>S.stage>=1&&S.served>=260],['murung',()=>S.stage>=1&&S.earned>=3e7]];
  for(const [k,f] of T)if(!S.seen[k]&&f()){setTimeout(()=>{if(!SQ&&!S.seen[k])playStory(k)},500);return}}
 // ---------- 설정 ----------
-function setDraw(){$('sv-vol').value=SET.vol;$('sv-bgm').checked=!!SET.bgm;$('sv-vib').checked=!!SET.vib;$('sv-pop').checked=!!SET.pop;$('sv-story').value=SET.story;$('sv-name').textContent=S.name}
+function setDraw(){$('sv-vol').value=SET.vol;$('sv-mvol').value=SET.mvol;$('sv-bgm').checked=!!SET.bgm;$('sv-vib').checked=!!SET.vib;$('sv-pop').checked=!!SET.pop;$('sv-story').value=SET.story;$('sv-name').textContent=S.name}
 $('set-btn').onclick=()=>{setDraw();$('setwin').classList.add('on');sfx('open')};
 $('sv-x').onclick=()=>$('setwin').classList.remove('on');
 $('setwin').onclick=e=>{if(e.target.id==='setwin')$('setwin').classList.remove('on')};
 $('sv-vol').oninput=e=>{SET.vol=+e.target.value;saveSet()};$('sv-vol').onchange=()=>sfx('act');
-$('sv-bgm').onchange=e=>{SET.bgm=e.target.checked?1:0;saveSet()};
+$('sv-bgm').onchange=e=>{SET.bgm=e.target.checked?1:0;saveSet();bgmSync()};
+$('sv-mvol').oninput=e=>{SET.mvol=+e.target.value;saveSet();bgmSync()};
 $('sv-vib').onchange=e=>{SET.vib=e.target.checked?1:0;saveSet();if(SET.vib&&navigator.vibrate)try{navigator.vibrate(20)}catch(_){}};
 $('sv-pop').onchange=e=>{SET.pop=e.target.checked?1:0;saveSet()};
 $('sv-story').onchange=e=>{SET.story=e.target.value;saveSet()};
@@ -426,9 +432,9 @@ function offline(){const sec=Math.min(7200,(Date.now()-(S.lastTs||Date.now()))/1
 // ---------- 시작 ----------
 load();if(!S.beanP.length)for(let i=0;i<10;i++)rollBean();
 setStage();hud();drawBrew();
-$('t-go').onclick=()=>{$('title').style.display='none';sfx('open');offline();hud();if(!S.seen.start)playStory('start');else checkStory()};
+$('t-go').onclick=()=>{$('title').style.display='none';bgmSync();sfx('open');offline();hud();if(!S.seen.start)playStory('start');else checkStory()};
 requestAnimationFrame(tick);
-addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});
+addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.hidden)save();bgmSync()});
 </script>
 </body>
 </html>
