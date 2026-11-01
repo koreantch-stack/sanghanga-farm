@@ -413,7 +413,7 @@ const CRISIS={prison:{t:'가영이 포도청에 갇혔어요',s:'화면을 마�
  thief:{t:'소매치기가 돈궤를 노려요',s:'마구 두드려 도둑을 붙잡아요',up:2.5,dn:6},
  ice:{t:'빙고 문이 열려 얼음이 녹아요',s:'마구 두드려 빙고 문을 닫아요',up:2.4,dn:6}};
 const crStage=()=>S.stage===2?['raid','rat','fire','thief','ice']:['raid','rat','fire','thief'];
-function crisisStart(k){if(S.crisis)return;S.crisis={k,g:0};CU.splice(0).forEach(c=>c.el.remove());if(typeof closePanel==='function')closePanel();helpers();sfx('open');if(SET.vib&&navigator.vibrate)try{navigator.vibrate([60,40,60])}catch(_){}crisisDraw();hud()}
+function crisisStart(k){if(S.crisis)return;S.crisis={k,g:0};CU.splice(0).forEach(c=>c.el.remove());spawnT=3;if(typeof closePanel==='function')closePanel();helpers();sfx('open');if(SET.vib&&navigator.vibrate)try{navigator.vibrate([60,40,60])}catch(_){}crisisDraw();hud()}
 function crisisEnd(){const k=S.crisis.k;S.crisis=null;S.crisisT=Date.now();crisisDraw();helpers();sfx('trade');
  if(k==='prison'){S.evUntil=0;toast('탄원서가 모였어요. 가영이 풀려나요');setTimeout(checkStory,600)}
  else{S.pop+=20;toast('위기를 넘겼어요. 단골들이 대견해해요 · 인기 +20')}hud();save()}
@@ -554,7 +554,7 @@ function itemAct(a,k){S.items=S.items||{};S.buff=S.buff||{};
  if(a==='ibuy'){const c=itemCost(k);if(S.pop<c)return;if(k==='orn'&&(S.orn||0)>=20)return;S.pop-=c;if(k==='orn'){S.orn=(S.orn||0)+1;toast('유기 별 조각 장식을 걸었어요')}else{S.items[k]=(S.items[k]||0)+1;toast('장터에서 샀어요')}sfx('trade')}
  if(a==='iuse'){if(!(S.items[k]>0))return;S.items[k]--;if(LEDH[k]){S.buff.led=Math.max(Date.now(),S.buff.led||0)+LEDH[k]*3600e3;sfx('trade');toast(`대리 장부를 맡겼어요. ${LEDH[k]}시간 동안 꺼 두어도 장사가 돌아가요`)}else{const dur=k==='coffee'?1800e3:600e3;S.buff[k]=Math.max(Date.now(),S.buff[k]||0)+dur;sfx('trade');toast(k==='coffee'?'각성 가배를 마셨어요. 30분 동안 저절로 연타해요':'합격 부적을 붙였어요. 10분 동안 수입이 두 배예요')}}
  hud();drawPanel();save()}
-let buffT=0;function buffDraw(){const n=performance.now();if(n-buffT<500)return;buffT=n;const e=$('buffs');const L3=[];[['coffee','각성 가배'],['tal','합격 부적'],['led','대리 장부']].forEach(([k,nm])=>{const r=(S.buff&&S.buff[k]||0)-Date.now();if(r>0){const h=Math.floor(r/3600000),m=Math.floor(r/60000)%60,s2=Math.floor(r/1000)%60;L3.push(`${nm} ${h?h+':'+String(m).padStart(2,'0'):m}:${String(s2).padStart(2,'0')}`)}});if(beanOn())L3.push('커피콩 ×1.5');if(S.stage===2){if(ready()>0)L3.push('별 조각 +30%');if(S.ice>0)L3.push('얼음 +30%')}e.hidden=!L3.length;e.textContent=L3.join(' · ')}
+let buffT=0;function buffDraw(){const n=performance.now();if(n-buffT<500)return;buffT=n;const e=$('buffs');if(S.crisis){e.hidden=true;return}const L3=[];[['coffee','각성 가배'],['tal','합격 부적'],['led','대리 장부']].forEach(([k,nm])=>{const r=(S.buff&&S.buff[k]||0)-Date.now();if(r>0){const h=Math.floor(r/3600000),m=Math.floor(r/60000)%60,s2=Math.floor(r/1000)%60;L3.push(`${nm} ${h?h+':'+String(m).padStart(2,'0'):m}:${String(s2).padStart(2,'0')}`)}});if(beanOn())L3.push('커피콩 ×1.5');if(S.stage===2){if(ready()>0)L3.push('별 조각 +30%');if(S.ice>0)L3.push('얼음 +30%')}e.hidden=!L3.length;e.textContent=L3.join(' · ')}
 function dailyGift(){const d=new Date().toDateString();if(S.giftDay===d)return;S.giftDay=d;const r=Math.random(),k=r<.2?'l2':r<.6?'coffee':'tal';giveItem(k,1);setTimeout(()=>toast(`오늘의 선물로 ${{coffee:'각성 가배',tal:'합격 부적',l2:'대리 장부 · 소'}[k]}를 받았어요. 장터에서 쓸 수 있어요`),2600)}
 // ---------- 무릉도원 층 ----------
 function floorsDraw(){const fb=$('floors');fb.hidden=S.stage!==2;if(fb.hidden)return;fb.querySelectorAll('button').forEach(b=>{const f=b.dataset.f;b.classList.toggle('on',f===String(S.floor||0)&&tab!=='binggo'||f==='b'&&tab==='binggo');if(f==='1')b.disabled=!L(S.shop,'floor2');if(f==='2')b.disabled=!L(S.shop,'geum')})}
@@ -590,7 +590,7 @@ let useT=0,starT=0,iceT=0,coolT=0,last=performance.now(),autoAcc=0,saveT=0;
 function tick(now){const dt=Math.min(.2,(now-last)/1000);last=now;
  const paused=!!SQ||$('title').style.display!=='none';
  if(!paused){S.dayT+=dt;if(S.dayT>=DAYSEC){S.dayT-=DAYSEC;S.day++;rollBean();dailyIce();hud();if(tab==='market'&&performance.now()-lastPanelDown>1500)drawPanel();checkStory()}
-  spawnT-=dt;if(spawnT<=0){spawn();spawnT=spawnGap()*(.7+Math.random()*.6)}
+  spawnT-=dt;if(spawnT<=0&&!S.crisis){spawn();spawnT=spawnGap()*(.7+Math.random()*.6)}
   CU.forEach(c=>{if(!c.arr||c.done)return;c.pat-=dt;const b=c.el.querySelector('.bub i b');if(b){b.style.width=Math.max(0,c.pat/c.max*100)+'%';b.style.background=c.pat/c.max<.3?'#c0452f':''}
    if(c.pat<=0){S.pop=Math.max(0,S.pop-1);const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('기다리다 갔어요',r.left-ar.left+r.width/2,r.top-ar.top,true);leave(c,false);hud()}});
   if(S.crisis){const c=S.crisis;c.g=Math.max(0,c.g-CRISIS[c.k].dn*dt);crisisDraw()}
