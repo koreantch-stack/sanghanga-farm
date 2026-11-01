@@ -39,6 +39,8 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
 #app.st2 #event{top:calc(90px + env(safe-area-inset-top))}
 #floors{position:absolute;top:calc(46px + env(safe-area-inset-top));left:8px;right:8px;display:flex;gap:4px;z-index:21}
 #floors button{flex:1;border:1px solid #c79a5a;background:rgba(40,25,12,.72);color:#fff3d6;border-radius:14px;padding:5px 0;font:400 14px 'Do Hyeon';cursor:pointer}
+#floors .fb-b{flex:1.9;display:flex;align-items:center;justify-content:center;gap:2px}#floors .fb-b img{width:18px;height:18px;object-fit:contain}#floors .fb-b i{font-style:normal;font-size:13px;margin-right:3px}
+.res{flex:none}#day{flex:none;white-space:nowrap}#top{flex-wrap:nowrap}
 #floors button.on{background:#f5d27a;color:#4a2a0c}
 #floors button:disabled{opacity:.45}
 .res{font-size:15px}
@@ -131,7 +133,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="res" id="res-star" hidden><img src="a/u3.webp" alt="별 조각"><span id="r-star">0</span></div>
   <div id="day"></div><button type="button" id="set-btn" aria-label="설정"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="#fff3d6" d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3.3h-4l-.4 2.6a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1l.4 2.6h4l.4-2.6a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg></button>
  </div>
- <div id="floors" hidden><button type="button" data-f="0">1층</button><button type="button" data-f="1">2층</button><button type="button" data-f="2">금남당</button><button type="button" data-f="b">빙고</button></div>
+ <div id="floors" hidden><button type="button" data-f="0">1층</button><button type="button" data-f="1">2층</button><button type="button" data-f="2">금남당</button><button type="button" data-f="b" class="fb-b">빙고 <img src="a/u2.webp" alt="얼음"><i id="fb-ice">0</i><img src="a/u3.webp" alt="별 조각"><i id="fb-star">0</i></button></div>
  <div id="event" hidden></div>
  <div id="bottom">
   <div id="combo" hidden></div><button id="brew" type="button"><div class="fill"></div><span>가비 내리기</span><small id="brew-sub">손님을 기다리는 중</small></button>
@@ -153,7 +155,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>새 이야기<small>열리면 바로 볼지, 이야기 탭에 쌓아 둘지</small></span><select id="sv-story"><option value="now">바로 보기</option><option value="later">나중에 보기</option></select></div>
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-무릉도원-4</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-무릉도원-5</p>
   <div id="sv-test" hidden><div class="sr"><span>시험용</span></div>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
@@ -405,7 +407,7 @@ function drawBrew(){const c=nextOrder();const f=$('brew').querySelector('.fill')
 // ---------- 화면 위 ----------
 let hudT=0;function hudLite(){$('r-money').textContent=fmt(S.money);const n=performance.now();if(n-hudT>400){hudT=n;hud();afford()}}
 function afford(){if(!tab)return;document.querySelectorAll('#plist button[data-c]').forEach(b=>{b.disabled=b.dataset.ok==='0'||S.money<+b.dataset.c})}
-function hud(){$('r-money').textContent=fmt(S.money);$('r-bean').textContent=fmt(S.bean);$('r-pop').textContent=fmt(S.pop);{const m2=S.stage===2;$('res-ice').hidden=$('res-star').hidden=!m2;if(m2){$('r-ice').textContent=S.ice||0;$('r-star').textContent=`${ready()}/${S.star||0}`}$('app').classList.toggle('st2',m2)}
+function hud(){$('r-money').textContent=fmt(S.money);$('r-bean').textContent=fmt(S.bean);$('r-pop').textContent=fmt(S.pop);{const m2=S.stage===2;if(m2){$('fb-ice').textContent=S.ice||0;$('fb-star').textContent=`${ready()}/${S.star||0}`}$('app').classList.toggle('st2',m2)}
  $('day').innerHTML=`${SEASON[season()]} ${dayIn()}일<small>${cur().n}</small>`;
  const ev=$('event');let t='';if(prisonOn())t='무릉도원 폐쇄 · 손님이 끊겼어요';else if(S.ev==='seonwoo'&&Date.now()<S.evUntil)t='송상 다방 개업 · 손님이 줄었어요';else if(gwageo())t='과거 시험 철 · 선비 손님이 몰려요';else if(market())t='장날 · 손님이 많아요';ev.hidden=!t;ev.textContent=t;
  const any=k=>{if(k==='menu')return MENU.some(m=>{const q=menuReq(m[0]);return!L(S.menu,m[0])&&m[7]<=S.stage&&m[4]&&S.money>=m[4]&&(!q||q.have>=q.need)});if(k==='staff')return STAFF.some(s=>staffOpen(s[0])&&S.money>=s[5](L(S.staff,s[0])));if(k==='shop')return SHOP.some(s=>shopOk(s)&&S.money>=s[5](L(S.shop,s[0])));if(k==='story')return STORDER.some(k=>S.seen[k]==='new');return false};
