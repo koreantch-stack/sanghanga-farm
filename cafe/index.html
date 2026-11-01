@@ -10,7 +10,7 @@
 <style>
 :root{--ink:#3a2718;--paper:#fbf3e2;--paper2:#f1e2c4;--wood:#6b4426;--gold:#e7b84a;--red:#b4432f;--green:#4f7d45}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:#2a1d13;color:var(--ink);font-family:'Gowun Dodum',sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none}
+html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;color:var(--ink);font-family:'Gowun Dodum',sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none}
 #app{position:relative;margin:0 auto;height:100%;max-width:min(100vw,calc(100vh*9/16));aspect-ratio:auto;overflow:hidden;background:#3b2a1c}
 #scene{position:absolute;inset:0}
 #bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%}
@@ -39,7 +39,8 @@ html,body{margin:0;height:100%;background:#2a1d13;color:var(--ink);font-family:'
 #bottom{position:absolute;left:0;right:0;bottom:0;padding:0 8px calc(6px + env(safe-area-inset-bottom));z-index:45;background:linear-gradient(#0000,#000c 40%)}
 #combo{position:absolute;left:0;right:0;top:-30px;pointer-events:none;text-align:center;font:400 20px 'Do Hyeon';color:#ffe9a0;text-shadow:0 2px 0 #5a3410,0 0 6px #000;margin-bottom:2px}
 #brew{touch-action:manipulation;position:relative;display:block;margin:0 auto 8px;width:70%;height:64px;border:0;border-radius:32px;background:linear-gradient(#f5d27a,#d99a35);box-shadow:0 5px 0 #8a5a1c,0 8px 14px rgba(0,0,0,.4);font:400 26px 'Do Hyeon';color:#4a2a0c;overflow:hidden;cursor:pointer}
-#brew:active{transform:translateY(3px);box-shadow:0 2px 0 #8a5a1c}
+#brew:active,#brew.down{transform:translateY(3px);box-shadow:0 2px 0 #8a5a1c}
+#scene{touch-action:none}
 #brew .fill{position:absolute;left:0;top:0;bottom:0;background:rgba(255,255,255,.45);width:0;transition:width .1s}
 #brew span{position:relative}
 #brew small{position:relative;display:block;font:400 13px 'Gowun Dodum';margin-top:-4px}
@@ -297,7 +298,7 @@ function pickOrder(ct){const open=MENU.filter(m=>L(S.menu,m[0])>0).map(m=>m[0]);
 function spawn(){const seat=freeSeat();if(seat<0)return;let w=[3,3,3,1,1,2];if(S.seen.seyun){w[3]=3;w[4]=3}if(gwageo())w[0]=8;let tot=w.reduce((a,b)=>a+b),r=Math.random()*tot,ti=0;while(r>=w[ti]){r-=w[ti];ti++}
  const ct=CUST[ti],k=pickOrder(ct),[x,b]=STAGES[S.stage].seats[seat];const el=document.createElement('div');el.className='cust'+(x>66?' l':'');el.style.left='112%';el.style.bottom=b+'%';el.style.zIndex=10+Math.round(30-b);
  el.innerHTML=`<img class="body" src="a/${ct[0]}.webp" alt="${ct[1]}"><div class="bub"><img src="a/m${MENU[MI[k]][2]}.webp" alt=""><i><b style="width:100%"></b></i></div>`;scene.appendChild(el);
- const c={id:++cuN,el,seat,k,ti,pat:32,max:32,mul:ct[3],arr:false};CU.push(c);requestAnimationFrame(()=>{el.style.left=x+'%'});setTimeout(()=>c.arr=true,1400);el.onclick=()=>brewTap()}
+ const c={id:++cuN,el,seat,k,ti,pat:32,max:32,mul:ct[3],arr:false};CU.push(c);requestAnimationFrame(()=>{el.style.left=x+'%'});setTimeout(()=>c.arr=true,1400)}
 function queue(){return CU.filter(c=>c.arr&&!c.done).sort((a,b)=>a.id-b.id)}
 function nextOrder(){const q=queue();return q.find(c=>!MENU[MI[c.k]][5]||S.bean>0)||null}
 function leave(c,ok){c.done=true;c.el.querySelector('.bub').style.display='none';c.el.style.left='112%';c.el.classList.add('gone');setTimeout(()=>{c.el.remove();const i=CU.indexOf(c);if(i>=0)CU.splice(i,1)},1300)}
@@ -305,7 +306,7 @@ function pop(txt,x,y,bad){const e=document.createElement('div');e.className='pop
 function workOf(k){return MENU[MI[k]][6]}
 function brewTap(amt,auto){
  // 누를 때마다 바로 엽전
- const now=performance.now();if(!auto){combo=now-lastTapT<550?combo+1:1;lastTapT=now}
+ const now=performance.now();if(!auto){combo=now-lastTapT<800?combo+1:1;lastTapT=now}
  const v=tapVal()*(auto?1:comboMul());S.money+=v;S.earned+=v;S.taps=(S.taps||0)+1;
  if(!auto){const h=$('heroimg');h.classList.add('brew');setTimeout(()=>h.classList.remove('brew'),110);sfx('act');if(SET.vib&&navigator.vibrate)try{navigator.vibrate(8)}catch(_){}
   const br=$('brew').getBoundingClientRect(),ar=$('app').getBoundingClientRect();if(SET.pop)pop('+'+fmtv(v),br.left-ar.left+br.width*(.25+Math.random()*.5),br.top-ar.top-6)}
@@ -314,7 +315,7 @@ function brewTap(amt,auto){
 const fmtv=v=>v<100?(Math.round(v*10)/10).toString():fmt(v);
 function serve(c){const m=MENU[MI[c.k]];if(m[5])S.bean--;let g=priceOf(c.k)*c.mul;if(c.pat/c.max>.6)g*=1.15;g=Math.round(g);S.money+=g;S.earned+=g;S.served++;S.pop+=1+L(S.shop,'sign')*.5;
  const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('주문 완료 +'+fmt(g)+'냥',r.left-ar.left+r.width/2,r.top-ar.top);sfx('trade');leave(c,true);hud();checkStory()}
-function drawBrew(){const c=nextOrder();const f=$('brew').querySelector('.fill');const cm=comboMul(),live=performance.now()-lastTapT<550&&combo>1;$('combo').hidden=!live;if(live)$('combo').textContent=`연타 ${combo}${cm>1?' · ×'+cm:''}`;
+function drawBrew(){const c=nextOrder();const f=$('brew').querySelector('.fill');const cm=comboMul(),live=performance.now()-lastTapT<800&&combo>1;$('combo').hidden=!live;if(live)$('combo').textContent=`연타 ${combo}${cm>1?' · ×'+cm:''}`;
  if(!c){f.style.width='0';$('brew-sub').textContent=`한 번에 ${fmtv(tapVal())}냥${autoRate()?' · 일손 초당 '+fmtv(tapVal()*autoRate())+'냥':''}`;CU.forEach(x=>x.el.querySelector('.bub')?.classList.remove('next'));return}
  f.style.width=Math.min(100,brewProg/workOf(c.k)*100)+'%';$('brew-sub').textContent=`${MENU[MI[c.k]][1]} 주문 · 다 내리면 +${fmt(priceOf(c.k)*c.mul)}냥`;CU.forEach(x=>x.el.querySelector('.bub')?.classList.toggle('next',x===c))}
 // ---------- 화면 위 ----------
@@ -408,7 +409,9 @@ function tick(now){const dt=Math.min(.2,(now-last)/1000);last=now;
   const ar=autoRate();if(ar){autoAcc+=ar*dt;while(autoAcc>=1){autoAcc-=1;brewTap(0,true)}}
   saveT+=dt;if(saveT>5){saveT=0;save()}drawBrew()}
  requestAnimationFrame(tick)}
-$('brew').onclick=()=>brewTap();
+// 화면 어디를 눌러도 가비 내리기 (창·메뉴·위 표시줄은 빼고). 손가락이 닿는 순간 셈
+const NOTAP='#top,#tabs,#panel,#story,#namebox,#setwin,#confirm,#title';
+$('app').addEventListener('pointerdown',e=>{if(e.button>0)return;if(e.target.closest(NOTAP))return;if(SQ)return;e.preventDefault();brewTap();if(e.target.closest('#brew')){const b=$('brew');b.classList.add('down');setTimeout(()=>b.classList.remove('down'),90)}},{passive:false});
 // ---------- 자리 비운 동안 ----------
 function offline(){const sec=Math.min(7200,(Date.now()-(S.lastTs||Date.now()))/1000);if(sec<30)return;const days=Math.floor(sec/DAYSEC);for(let i=0;i<Math.min(days,20);i++)rollBean();S.day+=days;
  const ar=autoRate();if(!ar)return;const g=Math.round(sec*ar*tapVal()*.5);if(g>0){S.money+=g;S.earned+=g;setTimeout(()=>toast(`자리를 비운 동안 삼월이가 ${won(g)}을 벌었어요`),800)}}
