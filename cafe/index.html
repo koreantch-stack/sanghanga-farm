@@ -153,7 +153,14 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>새 이야기<small>열리면 바로 볼지, 이야기 탭에 쌓아 둘지</small></span><select id="sv-story"><option value="now">바로 보기</option><option value="later">나중에 보기</option></select></div>
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0">판 11.01-무릉도원-3</p></div></div>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-무릉도원-4</p>
+  <div id="sv-test" hidden><div class="sr"><span>시험용</span></div>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+    <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
+    <button type="button" data-t="bean">콩 +1000</button><button type="button" data-t="ice">얼음 가득</button>
+    <button type="button" data-t="star">별 조각 +10</button><button type="button" data-t="day">하루 넘기기</button>
+    <button type="button" data-t="sum">여름으로</button><button type="button" data-t="win">겨울로</button>
+   </div></div></div></div>
  <div id="confirm"><div class="sw"><h3 id="cf-t"></h3><p id="cf-m"></p><div class="cfb"><button type="button" id="cf-no">그만두기</button><button type="button" id="cf-ok" class="danger">확인</button></div></div></div>
  <div id="toast"></div>
  <div id="story"><button type="button" class="skip" id="st-skip">건너뛰기</button><div id="cut"></div><div class="hint">화면을 눌러 넘기기</div></div>
@@ -491,6 +498,12 @@ $('sv-story').onchange=e=>{SET.story=e.target.value;saveSet()};
 $('sv-rename').onclick=()=>{$('nm').value=S.name;$('nm-err').textContent='';$('namebox').classList.add('on')};
 let cfOk=null;function confirmBox(t,m,f,ok){$('cf-t').textContent=t;$('cf-m').textContent=m;$('cf-ok').textContent=ok||'확인';cfOk=f;$('confirm').classList.add('on')}
 $('cf-no').onclick=()=>{$('confirm').classList.remove('on');cfOk=null};$('cf-ok').onclick=()=>{$('confirm').classList.remove('on');const f=cfOk;cfOk=null;if(f)f()};
+// 비밀 버튼: 판 표시를 빠르게 일곱 번 누르면 시험용 단추가 열려요
+{let n=0,t=0;$('sv-ver').onclick=()=>{const now=Date.now();n=now-t<600?n+1:1;t=now;if(n>=7){n=0;$('sv-test').hidden=!$('sv-test').hidden;toast($('sv-test').hidden?'시험용 단추를 닫았어요':'시험용 단추가 열렸어요')}}}
+$('sv-test').onclick=e=>{const b=e.target.closest('button[data-t]');if(!b)return;const t=b.dataset.t;
+ if(t==='m1')S.money+=8e10;if(t==='m2')S.money+=1e12;if(t==='bean')S.bean+=1000;if(t==='ice')S.ice=iceCap();if(t==='star')S.star=(S.star||0)+10;
+ if(t==='day'){S.day++;rollBean();dailyIce()}if(t==='sum')S.day=SEASONDAY+1;if(t==='win')S.day=SEASONDAY*3+1;
+ sfx('trade');toast(b.textContent+' 했어요');hud();save();checkStory()};
 $('sv-reset').onclick=()=>confirmBox('처음부터 할까요?','엽전, 메뉴, 일손, 가게, 이야기까지 모든 진행이 지워져요. 되돌릴 수 없어요.',()=>{RESET=true;try{localStorage.removeItem(SAVE)}catch(_){}location.reload()},'처음부터');
 // ---------- 시간 ----------
 let coolT=0,last=performance.now(),autoAcc=0,saveT=0;
@@ -511,7 +524,7 @@ $('app').addEventListener('pointerdown',e=>{if(e.button>0)return;if(e.target.clo
 function offline(){const sec=Math.min(7200,(Date.now()-(S.lastTs||Date.now()))/1000);if(sec<30)return;const days=Math.floor(sec/DAYSEC);for(let i=0;i<Math.min(days,20);i++){rollBean();S.day++;dailyIce()}S.day+=Math.max(0,days-20);
  const ar=autoRate();if(!ar)return;const g=Math.round(sec*ar*tapVal()*.5);if(g>0){S.money+=g;S.earned+=g;setTimeout(()=>toast(`자리를 비운 동안 삼월이가 ${won(g)}을 벌었어요`),800)}}
 // ---------- 시작 ----------
-load();if(/[?&]gift800/.test(location.search)&&!S.gift800){S.gift800=1;S.money+=8e10;save();setTimeout(()=>toast('시험용 800억 냥을 넣었어요'),1500);history.replaceState(null,'',location.pathname)}if(!S.beanP.length)for(let i=0;i<10;i++)rollBean();
+load();if(!S.beanP.length)for(let i=0;i<10;i++)rollBean();
 setStage();hud();drawBrew();
 $('t-go').onclick=()=>{$('title').style.display='none';bgmSync();sfx('open');offline();hud();if(!S.seen.start)playStory('start');else checkStory()};
 requestAnimationFrame(tick);
