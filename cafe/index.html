@@ -36,7 +36,8 @@ html,body{margin:0;height:100%;background:#2a1d13;color:var(--ink);font-family:'
 #app.pan #brew{visibility:hidden}
 #tabs button.cur{background:#f5d27a}
 #bottom{position:absolute;left:0;right:0;bottom:0;padding:0 8px calc(6px + env(safe-area-inset-bottom));z-index:45;background:linear-gradient(#0000,#000c 40%)}
-#brew{position:relative;display:block;margin:0 auto 8px;width:70%;height:64px;border:0;border-radius:32px;background:linear-gradient(#f5d27a,#d99a35);box-shadow:0 5px 0 #8a5a1c,0 8px 14px rgba(0,0,0,.4);font:400 26px 'Do Hyeon';color:#4a2a0c;overflow:hidden;cursor:pointer}
+#combo{position:absolute;left:0;right:0;top:-30px;pointer-events:none;text-align:center;font:400 20px 'Do Hyeon';color:#ffe9a0;text-shadow:0 2px 0 #5a3410,0 0 6px #000;margin-bottom:2px}
+#brew{touch-action:manipulation;position:relative;display:block;margin:0 auto 8px;width:70%;height:64px;border:0;border-radius:32px;background:linear-gradient(#f5d27a,#d99a35);box-shadow:0 5px 0 #8a5a1c,0 8px 14px rgba(0,0,0,.4);font:400 26px 'Do Hyeon';color:#4a2a0c;overflow:hidden;cursor:pointer}
 #brew:active{transform:translateY(3px);box-shadow:0 2px 0 #8a5a1c}
 #brew .fill{position:absolute;left:0;top:0;bottom:0;background:rgba(255,255,255,.45);width:0;transition:width .1s}
 #brew span{position:relative}
@@ -105,7 +106,7 @@ html,body{margin:0;height:100%;background:#2a1d13;color:var(--ink);font-family:'
  </div>
  <div id="event" hidden></div>
  <div id="bottom">
-  <button id="brew" type="button"><div class="fill"></div><span>가비 내리기</span><small id="brew-sub">손님을 기다리는 중</small></button>
+  <div id="combo" hidden></div><button id="brew" type="button"><div class="fill"></div><span>가비 내리기</span><small id="brew-sub">손님을 기다리는 중</small></button>
   <div id="tabs">
    <button type="button" data-t="menu"><img src="a/m0.webp" alt=""><i class="dot"></i>메뉴</button>
    <button type="button" data-t="staff"><img src="a/u5.webp" alt=""><i class="dot"></i>일손</button>
@@ -131,15 +132,15 @@ const STAGES=[
 const MENU=[
  ['sikhye','식혜',3,4,0,0,3,0],
  ['black','흑가비',0,10,0,1,4,0],
- ['sujeong','수정과',4,7,80,0,3,0],
- ['omija','오미자차',5,9,220,0,3,0],
- ['misut','미숫가루',6,12,500,0,4,0],
- ['honey','꿀가비',1,22,900,1,5,0],
- ['yakgwa','약과',8,16,1500,0,3,1],
- ['ginseng','인삼차',7,30,2600,0,5,1],
- ['dasik','다식',9,26,4000,0,4,1],
- ['injeolmi','인절미',10,34,6500,0,4,1],
- ['teapot','차 한 주전자',11,60,11000,0,7,1],
+ ['sujeong','수정과',4,7,300,0,3,0],
+ ['omija','오미자차',5,9,800,0,3,0],
+ ['misut','미숫가루',6,12,2000,0,4,0],
+ ['honey','꿀가비',1,22,3500,1,5,0],
+ ['yakgwa','약과',8,16,8000,0,3,1],
+ ['ginseng','인삼차',7,30,14000,0,5,1],
+ ['dasik','다식',9,26,22000,0,4,1],
+ ['injeolmi','인절미',10,34,35000,0,4,1],
+ ['teapot','차 한 주전자',11,60,60000,0,7,1],
  ['iced','별 조각 아이스 가비',2,0,0,1,6,9]];
 const MI={};MENU.forEach((m,i)=>MI[m[0]]=i);
 // 손님: 그림, 이름, 좋아하는 것, 돈 배율
@@ -147,17 +148,17 @@ const CUST=[['c0','가난한 선비',['black','honey','ginseng'],1],['c1','장�
 const SEASON=['봄','여름','가을','겨울'];const DAYSEC=60,SEASONDAY=12;
 // 일손
 const STAFF=[
- ['samwol','삼월이','p_samwol','혼자서도 가비를 내려요',lv=>`초당 ${(0.6*lv).toFixed(1)}번 내리기`,lv=>Math.round(150*Math.pow(1.7,lv)),'s_samwol'],
- ['maehwa','매화','p_maehwa','장부를 맡아 값을 잘 받아요',lv=>`모든 값 +${lv*10}%`,lv=>Math.round(1200*Math.pow(1.8,lv)),'s_maehwa'],
- ['dojin','임도진','p_dojin','만상 줄로 콩을 싸게 들여와요',lv=>`커피콩 값 −${lv*6}%`,lv=>Math.round(2000*Math.pow(1.8,lv)),'s_dojin']];
+ ['samwol','삼월이','p_samwol','혼자서도 가비를 내려요',lv=>`초당 ${lv}번 대신 내리기`,lv=>Math.round(250*Math.pow(1.7,lv)),'s_samwol'],
+ ['maehwa','매화','p_maehwa','장부를 맡아 값을 잘 받아요',lv=>`모든 값 +${lv*10}%`,lv=>Math.round(12000*Math.pow(1.8,lv)),'s_maehwa'],
+ ['dojin','임도진','p_dojin','만상 줄로 콩을 싸게 들여와요',lv=>`커피콩 값 −${lv*6}%`,lv=>Math.round(15000*Math.pow(1.8,lv)),'s_dojin']];
 // 가게 설비: k, 이름, 아이콘, 설명, 최대, 값(lv), 단계
 const SHOP=[
- ['seat','자리 늘리기','u4','손님이 앉을 자리가 하나 늘어요',st=>STAGES[st].seats.length-STAGES[st].base,lv=>Math.round(60*Math.pow(2.1,lv)),-1],
- ['lamp','등불 달기','u6','손님이 더 자주 와요',()=>8,lv=>Math.round(90*Math.pow(1.9,lv)),-1],
- ['hand','손에 익히기','u5','한 번 누를 때 더 많이 내려요',()=>10,lv=>Math.round(70*Math.pow(1.8,lv)),-1],
- ['pot','놋쇠 드립 포트','m11','유기장에게 맡긴 조선식 드립 포트. 가비 값이 두 배가 돼요',()=>1,()=>800,0],
- ['dawooga','다우가 열기','u7','만상 별채에 첫 가비집을 열어요',()=>1,()=>3500,0],
- ['sign','현판 걸기','u4','인기가 더 빨리 올라요',()=>5,lv=>Math.round(3000*Math.pow(2,lv)),1],
+ ['seat','자리 늘리기','u4','손님이 앉을 자리가 하나 늘어요',st=>STAGES[st].seats.length-STAGES[st].base,lv=>Math.round(150*Math.pow(2.1,lv)),-1],
+ ['lamp','등불 달기','u6','손님이 더 자주 와요',()=>8,lv=>Math.round(200*Math.pow(1.9,lv)),-1],
+ ['hand','손에 익히기','u5','한 번 누를 때 버는 엽전 +1',()=>60,lv=>Math.round(25*Math.pow(1.38,lv)),-1],
+ ['pot','놋쇠 드립 포트','m11','유기장에게 맡긴 조선식 드립 포트. 한 번 누를 때 버는 엽전이 1.5배, 가비 주문 값이 두 배가 돼요',()=>1,()=>2500,0],
+ ['dawooga','다우가 열기','u7','만상 별채에 첫 가비집을 열어요',()=>1,()=>15000,0],
+ ['sign','현판 걸기','u4','인기가 더 빨리 올라요',()=>5,lv=>Math.round(20000*Math.pow(2,lv)),1],
  ['murung','무릉도원 짓기','u3','곧 열려요',()=>0,()=>0,1]];
 // ---------- 이야기 ----------
 const ST={
@@ -247,8 +248,11 @@ const gwageo=()=>(season()===0||season()===2)&&dayIn()>=8;
 const market=()=>S.day%5===0;
 function priceOf(k){const m=MENU[MI[k]];const lv=L(S.menu,k);let p=m[3]*(1+0.35*(lv-1));if(m[5])p*=L(S.shop,'pot')?2:1;p*=1+0.1*L(S.staff,'maehwa');if(gwageo()&&(k==='black'||k==='honey'))p*=1.5;return Math.round(p)}
 const seats=()=>STAGES[S.stage].base+L(S.shop,'seat');
-const tapPow=()=>1+0.5*L(S.shop,'hand');
-const autoRate=()=>0.6*L(S.staff,'samwol');
+const tapPow=()=>1+0.15*L(S.shop,'hand');
+const autoRate=()=>L(S.staff,'samwol');
+const nOpen=()=>MENU.filter(m=>L(S.menu,m[0])>0).length;
+function tapVal(){return (1+L(S.shop,'hand'))*(1+0.15*Math.max(0,nOpen()-2))*(L(S.shop,'pot')?1.5:1)*(1+0.1*L(S.staff,'maehwa'))*(S.stage?1.3:1)}
+let combo=0,lastTapT=0;const comboMul=()=>1+Math.min(2,Math.floor(combo/15)*.5);
 function spawnGap(){let g=4.2/(1+0.18*L(S.shop,'lamp'))/(1+Math.min(S.pop,3000)/600);if(market())g/=1.5;if(S.ev==='seonwoo'&&Date.now()<S.evUntil)g*=1.6;return Math.max(.9,g)}
 function beanPrice(){const p=S.beanP.at(-1)||12;return Math.max(3,Math.round(p*(1-0.06*L(S.staff,'dojin'))))}
 function rollBean(){const prev=S.beanP.at(-1)||12;let p=prev*Math.exp((Math.random()-.5)*.35+(12-prev)*.02);if(S.ev==='seonwoo'&&Date.now()<S.evUntil)p*=1.15;S.beanP.push(Math.max(5,Math.min(30,+p.toFixed(1))));if(S.beanP.length>20)S.beanP.shift()}
@@ -266,15 +270,22 @@ function nextOrder(){const q=queue();return q.find(c=>!MENU[MI[c.k]][5]||S.bean>
 function leave(c,ok){c.done=true;c.el.querySelector('.bub').style.display='none';c.el.style.left='112%';c.el.classList.add('gone');setTimeout(()=>{c.el.remove();const i=CU.indexOf(c);if(i>=0)CU.splice(i,1)},1300)}
 function pop(txt,x,y,bad){const e=document.createElement('div');e.className='pop'+(bad?' bad':'');e.textContent=txt;e.style.left=x+'px';e.style.top=y+'px';$('app').appendChild(e);setTimeout(()=>e.remove(),1000)}
 function workOf(k){return MENU[MI[k]][6]}
-function brewTap(amt,auto){const q=queue();if(!q.length){if(!auto)toast('손님을 기다리는 중이에요');return}
- const c=nextOrder();if(!c){if(!auto)toast('커피콩이 떨어졌어요. 장터에서 사 오세요');return}
- brewProg+=amt||tapPow();if(!auto){const h=$('heroimg');h.classList.add('brew');setTimeout(()=>h.classList.remove('brew'),120);sfx('act')}
- if(brewProg>=workOf(c.k)){brewProg=0;serve(c)}drawBrew()}
-function serve(c){const m=MENU[MI[c.k]];if(m[5])S.bean--;let g=priceOf(c.k)*c.mul;if(c.pat/c.max>.6)g*=1.15;g=Math.round(g);S.money+=g;S.earned+=g;S.served++;S.pop+=1+L(S.shop,'sign')*.5;
- const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('+'+fmt(g)+'냥',r.left-ar.left+r.width/2,r.top-ar.top);sfx('trade');leave(c,true);hud();checkStory()}
-function drawBrew(){const c=nextOrder();const f=$('brew').querySelector('.fill');if(!c){f.style.width='0';$('brew-sub').textContent='손님을 기다리는 중';CU.forEach(x=>x.el.querySelector('.bub')?.classList.remove('next'));return}
- f.style.width=Math.min(100,brewProg/workOf(c.k)*100)+'%';$('brew-sub').textContent=`${MENU[MI[c.k]][1]} · ${won(priceOf(c.k)*c.mul)}`;CU.forEach(x=>x.el.querySelector('.bub')?.classList.toggle('next',x===c))}
+function brewTap(amt,auto){
+ // 누를 때마다 바로 엽전
+ const now=performance.now();if(!auto){combo=now-lastTapT<550?combo+1:1;lastTapT=now}
+ const v=tapVal()*(auto?1:comboMul());S.money+=v;S.earned+=v;S.taps=(S.taps||0)+1;
+ if(!auto){const h=$('heroimg');h.classList.add('brew');setTimeout(()=>h.classList.remove('brew'),110);sfx('act');
+  const br=$('brew').getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('+'+fmtv(v),br.left-ar.left+br.width*(.25+Math.random()*.5),br.top-ar.top-6)}
+ const c=nextOrder();if(c){brewProg+=amt||tapPow();if(brewProg>=workOf(c.k)){brewProg=0;serve(c)}}
+ drawBrew();hudLite()}
+const fmtv=v=>v<100?(Math.round(v*10)/10).toString():fmt(v);
+function serve(c){const m=MENU[MI[c.k]];if(m[5])S.bean--;let g=priceOf(c.k)*c.mul*5;if(c.pat/c.max>.6)g*=1.15;g=Math.round(g);S.money+=g;S.earned+=g;S.served++;S.pop+=1+L(S.shop,'sign')*.5;
+ const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('주문 완료 +'+fmt(g)+'냥',r.left-ar.left+r.width/2,r.top-ar.top);sfx('trade');leave(c,true);hud();checkStory()}
+function drawBrew(){const c=nextOrder();const f=$('brew').querySelector('.fill');const cm=comboMul(),live=performance.now()-lastTapT<550&&combo>1;$('combo').hidden=!live;if(live)$('combo').textContent=`연타 ${combo}${cm>1?' · ×'+cm:''}`;
+ if(!c){f.style.width='0';$('brew-sub').textContent=`한 번에 ${fmtv(tapVal())}냥${autoRate()?' · 일손 초당 '+fmtv(tapVal()*autoRate())+'냥':''}`;CU.forEach(x=>x.el.querySelector('.bub')?.classList.remove('next'));return}
+ f.style.width=Math.min(100,brewProg/workOf(c.k)*100)+'%';$('brew-sub').textContent=`${MENU[MI[c.k]][1]} 주문 · 다 내리면 +${fmt(priceOf(c.k)*c.mul*5)}냥`;CU.forEach(x=>x.el.querySelector('.bub')?.classList.toggle('next',x===c))}
 // ---------- 화면 위 ----------
+let hudT=0;function hudLite(){$('r-money').textContent=fmt(S.money);const n=performance.now();if(n-hudT>400){hudT=n;hud();if(tab&&tab!=='story')drawPanel()}}
 function hud(){$('r-money').textContent=fmt(S.money);$('r-bean').textContent=fmt(S.bean);$('r-pop').textContent=fmt(S.pop);
  $('day').innerHTML=`${SEASON[season()]} ${dayIn()}일<small>${STAGES[S.stage].n}</small>`;
  const ev=$('event');let t='';if(S.ev==='seonwoo'&&Date.now()<S.evUntil)t='송상 다방 개업 · 손님이 줄었어요';else if(gwageo())t='과거 시험 철 · 선비 손님이 몰려요';else if(market())t='장날 · 손님이 많아요';ev.hidden=!t;ev.textContent=t;
@@ -338,7 +349,7 @@ $('st-skip').onclick=e=>{e.stopPropagation();if(!SQ)return;if(!SQ.replay&&ST[SQ.
 $('nm-ok').onclick=()=>{const v=$('nm').value.replace(/[<>&]/g,'').trim();if(v.length<2){$('nm-err').textContent='두 글자 이상으로 지어 주세요';return}if(/[ㄱ-ㅎㅏ-ㅣ]/.test(v)){$('nm-err').textContent='자음이나 모음만 쓴 글자는 쓸 수 없어요';return}S.name=v;$('namebox').classList.remove('on');$('nm-err').textContent='';SQ.i++;showCut();save()};
 function checkStory(){if(SQ)return;const T=[
  ['first',()=>S.served>=1],['samwol',()=>S.served>=12],['seyun',()=>S.stage>=1&&S.served>=90],['gwageo',()=>gwageo()&&S.served>=20],['tired',()=>S.stage>=1&&S.served>=160],
- ['seonwoo',()=>S.stage>=1&&S.earned>=15000],['cheap',()=>S.evDone&&Date.now()>S.evUntil],['hajun',()=>S.stage>=1&&S.served>=260],['murung',()=>S.stage>=1&&S.earned>=60000]];
+ ['seonwoo',()=>S.stage>=1&&S.earned>=80000],['cheap',()=>S.evDone&&Date.now()>S.evUntil],['hajun',()=>S.stage>=1&&S.served>=260],['murung',()=>S.stage>=1&&S.earned>=400000]];
  for(const [k,f] of T)if(!S.seen[k]&&f()){setTimeout(()=>{if(!SQ&&!S.seen[k])playStory(k)},500);return}}
 // ---------- 시간 ----------
 let last=performance.now(),autoAcc=0,saveT=0;
@@ -347,15 +358,14 @@ function tick(now){const dt=Math.min(.2,(now-last)/1000);last=now;
  if(!paused){S.dayT+=dt;if(S.dayT>=DAYSEC){S.dayT-=DAYSEC;S.day++;rollBean();hud();if(tab==='market')drawPanel();checkStory()}
   spawnT-=dt;if(spawnT<=0){spawn();spawnT=spawnGap()*(.7+Math.random()*.6)}
   CU.forEach(c=>{if(!c.arr||c.done)return;c.pat-=dt;const b=c.el.querySelector('.bub i b');if(b){b.style.width=Math.max(0,c.pat/c.max*100)+'%';b.style.background=c.pat/c.max<.3?'#c0452f':''}
-   if(c.pat<=0){S.pop=Math.max(0,S.pop-2);const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('기다리다 갔어요',r.left-ar.left+r.width/2,r.top-ar.top,true);leave(c,false);hud()}});
-  const ar=autoRate();if(ar){autoAcc+=ar*dt;while(autoAcc>=1){autoAcc-=1;brewTap(1,true)}}
+   if(c.pat<=0){S.pop=Math.max(0,S.pop-1);const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('기다리다 갔어요',r.left-ar.left+r.width/2,r.top-ar.top,true);leave(c,false);hud()}});
+  const ar=autoRate();if(ar){autoAcc+=ar*dt;while(autoAcc>=1){autoAcc-=1;brewTap(0,true)}}
   saveT+=dt;if(saveT>5){saveT=0;save()}drawBrew()}
  requestAnimationFrame(tick)}
 $('brew').onclick=()=>brewTap();
 // ---------- 자리 비운 동안 ----------
 function offline(){const sec=Math.min(7200,(Date.now()-(S.lastTs||Date.now()))/1000);if(sec<30)return;const days=Math.floor(sec/DAYSEC);for(let i=0;i<Math.min(days,20);i++)rollBean();S.day+=days;
- const ar=autoRate();if(!ar)return;const open=MENU.filter(m=>L(S.menu,m[0])>0&&!m[5]);if(!open.length)return;const avgW=open.reduce((a,m)=>a+m[6],0)/open.length,avgP=open.reduce((a,m)=>a+priceOf(m[0]),0)/open.length;
- const cups=Math.floor(sec*ar/avgW*.5),g=Math.round(cups*avgP);if(g>0){S.money+=g;S.earned+=g;S.served+=cups;setTimeout(()=>toast(`자리를 비운 동안 삼월이가 ${cups}잔을 팔아 ${won(g)}을 벌었어요`),800)}}
+ const ar=autoRate();if(!ar)return;const g=Math.round(sec*ar*tapVal()*.5);if(g>0){S.money+=g;S.earned+=g;setTimeout(()=>toast(`자리를 비운 동안 삼월이가 ${won(g)}을 벌었어요`),800)}}
 // ---------- 시작 ----------
 load();if(!S.beanP.length)for(let i=0;i<10;i++)rollBean();
 setStage();hud();drawBrew();
