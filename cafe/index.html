@@ -128,11 +128,11 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
 #namebox input{width:100%;font:400 20px 'Do Hyeon';text-align:center;padding:10px;border:2px solid #c9a978;border-radius:12px;background:#fff}
 #namebox small{display:block;color:var(--red);min-height:18px;margin-top:6px;font-size:13px}
 #namebox button{margin-top:8px;border:0;border-radius:12px;background:var(--green);color:#fff;font:400 18px 'Do Hyeon';padding:10px 26px}
-#title{position:absolute;inset:0;z-index:95;background:#2a1d13 url(a/bg1.webp) center/cover;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:18%}
-#title:before{content:"";position:absolute;inset:0;background:linear-gradient(#0000 30%,#000b)}
-#title h1{position:relative;margin:0;font:400 54px 'Do Hyeon';color:#fff1d2;text-shadow:0 3px 0 #6b4426,0 0 18px #000}
+#title{position:absolute;inset:0;z-index:95;background:url(a/title.webp) center top/100% auto no-repeat,#2e201e;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:calc(9% + env(safe-area-inset-bottom))}
+#title:before{content:"";position:absolute;inset:0;background:linear-gradient(#0000 78%,#0007)}
+#title h1,#title p{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}#title h1{position:relative;margin:0;font:400 54px 'Do Hyeon';color:#fff1d2;text-shadow:0 3px 0 #6b4426,0 0 18px #000}
 #title p{position:relative;margin:6px 0 26px;color:#f2dcb3;font-size:15px}
-#title button{position:relative;border:0;border-radius:28px;background:linear-gradient(#f5d27a,#d99a35);box-shadow:0 5px 0 #8a5a1c;font:400 24px 'Do Hyeon';color:#4a2a0c;padding:12px 40px}
+#title button{position:relative;box-shadow:0 5px 0 #8a5a1c,0 6px 18px rgba(0,0,0,.5)!important;border:0;border-radius:28px;background:linear-gradient(#f5d27a,#d99a35);box-shadow:0 5px 0 #8a5a1c;font:400 24px 'Do Hyeon';color:#4a2a0c;padding:12px 40px}
 </style>
 </head>
 <body>
@@ -170,7 +170,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>새 이야기<small>열리면 바로 볼지, 이야기 탭에 쌓아 둘지</small></span><select id="sv-story"><option value="now">바로 보기</option><option value="later">나중에 보기</option></select></div>
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.0.1</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.0.2</p>
   <div id="sv-test" hidden><div class="sr"><span>운영자 모드<small>운영자 계정에만 보여요</small></span></div><b class="adh">엽전·재료·날짜</b>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
