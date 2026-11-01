@@ -156,7 +156,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
    <button type="button" data-t="shop"><img src="a/u6.webp" alt=""><i class="dot"></i>가게</button>
    <button type="button" data-t="market"><img src="a/u1.webp" alt=""><i class="dot"></i>장터</button>
    <button type="button" data-t="story"><img src="a/u7.webp" alt=""><i class="dot"></i>이야기</button>
-   <button type="button" data-t="world"><img src="a/u3.webp" alt=""><i class="dot"></i>세계로</button>
+   <button type="button" data-t="world"><img src="a/u3.webp" alt=""><i class="dot"></i>팔도로</button>
   </div>
  </div>
  <div id="panel"><header><span id="p-title"></span><small id="p-sub"></small><button type="button" id="p-x" aria-label="닫기">✕</button></header><div id="plist"></div></div>
@@ -170,7 +170,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>새 이야기<small>열리면 바로 볼지, 이야기 탭에 쌓아 둘지</small></span><select id="sv-story"><option value="now">바로 보기</option><option value="later">나중에 보기</option></select></div>
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-위기-3</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-팔도-1</p>
   <div id="sv-test" hidden><div class="sr"><span>운영자 모드<small>운영자 계정에만 보여요</small></span></div><b class="adh">엽전·재료·날짜</b>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
@@ -503,7 +503,7 @@ function drawPanel(){if(!tab)return;const P=$('plist');let h='';
   [100,1000,10000].forEach(n=>{h+=`<div class="row"><img src="a/u1.webp" alt=""><div><b>커피콩 ${n.toLocaleString('ko-KR')}개</b><span>${won(p*n)}</span></div><button type="button" data-a="bean" data-n="${n}" data-c="${p*n}" ${S.money<p*n?'disabled':''}>사기</button></div>`});
   const I=S.items||{};h+=`<h4 class="ih">특별 아이템 <small>인기 ${fmt(S.pop)} · 그림을 누르면 바로 써요</small></h4><div class="items">`+ITEMS.map(([k,n,ic,d])=>{const c=itemCost(k),own=k==='orn'?(S.orn||0):(I[k]||0);return`<div class="it"><button type="button" class="ib" data-a="iuse" data-k="${k}" ${k==='orn'||!own?'disabled':''}><img src="a/${ic}.webp" alt=""><i>${own}</i></button><b>${n}</b><span>${d}</span><button type="button" data-a="ibuy" data-k="${k}" ${S.pop<c||(k==='orn'&&(S.orn||0)>=20)?'disabled':''}>인기 ${c}</button></div>`}).join('')+'</div>'}
  if(tab==='bak'){$('p-title').textContent='백업에서 되살리기';$('p-sub').textContent='가장 최근 것이 위에 있어요';h+=BAKS.length?BAKS.map((b,i)=>`<div class="row"><img src="a/u7.webp" alt=""><div><b>${stName(b.stage)} · ${won(b.money||0)}</b><span>${new Date(+b.id).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'})} · ${b.why||''}</span></div><button type="button" data-a="bakgo" data-i="${i}">되살리기</button></div>`).join(''):'<p class="note">아직 계정에 남은 백업이 없어요.</p>'}
- if(tab==='world'){$('p-title').textContent='세계로';$('p-sub').textContent='';h+=`<img class="bghead" src="a/bg2.webp" alt=""><p class="note" style="font-size:15px;text-align:center;margin-top:14px">세계로 나가는 길은<br>다음 업데이트에서 열려요.</p><p class="note" style="text-align:center">의주에서 인삼과 커피콩을 맞바꾸고,<br>베이징에서 직거래를 트고,<br>마지막엔 이탈리아 항구에 조선 다방을 열어요.</p>`}
+ if(tab==='world'){$('p-title').textContent='팔도로';$('p-sub').textContent='';h+=`<img class="bghead" src="a/bg2.webp" alt=""><p class="note" style="font-size:15px;text-align:center;margin-top:14px">무릉도원을 마치면 팔도로 나서요.<br>다음 업데이트에서 열려요.</p><p class="note" style="text-align:center">개성의 송상, 동래의 왜관 상인, 의주의 만상과 겨루며<br>조선 팔도에 가맹점을 내요.</p><p class="note" style="text-align:center;opacity:.7">팔도를 모두 차지하면 세계로 가는 뱃길이 열려요.</p>`}
  if(tab==='story'){$('p-title').textContent='이야기';$('p-sub').textContent='지금까지 열린 장면';
   STORDER.forEach(k=>{const o=S.seen[k];h+=o?`<div class="row"><img src="a/u7.webp" alt=""><div><b>${ST[k].t}${o==='new'?' <small style="color:var(--red)">새 이야기</small>':''}</b></div><button type="button" data-a="replay" data-k="${k}">보기</button></div>`:`<div class="row lock"><img src="a/u7.webp" alt=""><div><b>???</b><span>아직 열리지 않았어요</span></div></div>`})}
  P.innerHTML=h}
