@@ -511,7 +511,7 @@ $('app').addEventListener('pointerdown',e=>{if(e.button>0)return;if(e.target.clo
 function offline(){const sec=Math.min(7200,(Date.now()-(S.lastTs||Date.now()))/1000);if(sec<30)return;const days=Math.floor(sec/DAYSEC);for(let i=0;i<Math.min(days,20);i++){rollBean();S.day++;dailyIce()}S.day+=Math.max(0,days-20);
  const ar=autoRate();if(!ar)return;const g=Math.round(sec*ar*tapVal()*.5);if(g>0){S.money+=g;S.earned+=g;setTimeout(()=>toast(`자리를 비운 동안 삼월이가 ${won(g)}을 벌었어요`),800)}}
 // ---------- 시작 ----------
-load();if(!S.beanP.length)for(let i=0;i<10;i++)rollBean();
+load();if(/[?&]gift800/.test(location.search)&&!S.gift800){S.gift800=1;S.money+=8e10;save();setTimeout(()=>toast('시험용 800억 냥을 넣었어요'),1500);history.replaceState(null,'',location.pathname)}if(!S.beanP.length)for(let i=0;i<10;i++)rollBean();
 setStage();hud();drawBrew();
 $('t-go').onclick=()=>{$('title').style.display='none';bgmSync();sfx('open');offline();hud();if(!S.seen.start)playStory('start');else checkStory()};
 requestAnimationFrame(tick);
