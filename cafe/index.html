@@ -170,7 +170,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>새 이야기<small>열리면 바로 볼지, 이야기 탭에 쌓아 둘지</small></span><select id="sv-story"><option value="now">바로 보기</option><option value="later">나중에 보기</option></select></div>
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-위기-1</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-위기-2</p>
   <div id="sv-test" hidden><div class="sr"><span>운영자 모드<small>운영자 계정에만 보여요</small></span></div><b class="adh">엽전·재료·날짜</b>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
@@ -406,7 +406,7 @@ const buffOn=k=>(S.buff&&S.buff[k]||0)>Date.now();
 const autoRate=()=>staffRate()+(S.orn||0)+(buffOn('coffee')?15:0)+(buffOn('led')?15:0);
 const prisonOn=()=>!!(S.crisis&&S.crisis.k==='prison');
 const crisisOn=()=>!!S.crisis;
-const CRISIS={prison:{t:'가영이 포도청에 갇혔어요',s:'화면을 마구 두드려 다우가 식구들과 탄원서를 모아요',up:1.2,dn:4},
+const CRISIS={prison:{t:'가영이 포도청에 갇혔어요',s:'그냥 두면 3분, 마구 두드리면 더 빨리 탄원서가 모여요',up:.8,dn:-100/180},
  raid:{t:'포졸들이 들이닥쳐 장부를 뒤져요',s:'마구 두드려 포졸들에게 해명해요',up:2.5,dn:6},
  rat:{t:'부엌에 쥐 떼가 나타났어요',s:'마구 두드려 쥐를 쫓아내요',up:2.6,dn:6},
  fire:{t:'아궁이 불이 번졌어요',s:'마구 두드려 물을 퍼 날라요',up:2.3,dn:6},
@@ -593,7 +593,7 @@ function tick(now){const dt=Math.min(.2,(now-last)/1000);last=now;
   spawnT-=dt;if(spawnT<=0&&!S.crisis){spawn();spawnT=spawnGap()*(.7+Math.random()*.6)}
   CU.forEach(c=>{if(!c.arr||c.done)return;c.pat-=dt;const b=c.el.querySelector('.bub i b');if(b){b.style.width=Math.max(0,c.pat/c.max*100)+'%';b.style.background=c.pat/c.max<.3?'#c0452f':''}
    if(c.pat<=0){S.pop=Math.max(0,S.pop-1);const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('기다리다 갔어요',r.left-ar.left+r.width/2,r.top-ar.top,true);leave(c,false);hud()}});
-  if(S.crisis){const c=S.crisis;c.g=Math.max(0,c.g-CRISIS[c.k].dn*dt);crisisDraw()}
+  if(S.crisis){const c=S.crisis;c.g=Math.max(0,c.g-CRISIS[c.k].dn*dt);if(c.g>=100)crisisEnd();else crisisDraw()}
   else if(S.seen.first&&!SQ&&!document.hidden&&S.ev!=='prison'&&Date.now()-(S.crisisT||0)>25*60e3&&Math.random()<dt/2400){const L2=crStage();crisisStart(L2[Math.floor(Math.random()*L2.length)])}
   const ar=S.crisis?0:autoRate();if(ar){const v=tapVal()*ar*dt;S.money+=v;S.earned+=v;autoAcc+=ar*dt;if(autoAcc>=1){const n=Math.floor(autoAcc);autoAcc-=n;const c=nextOrder();if(c){brewProg+=n*tapPow();if(brewProg>=workOf(c.k)){brewProg=0;serve(c)}}const sm=$('sam');sm.classList.add('work');setTimeout(()=>sm.classList.remove('work'),120)}hudLite()}
   useT+=dt;if(useT>=1){useT-=1;
@@ -608,7 +608,7 @@ function tick(now){const dt=Math.min(.2,(now-last)/1000);last=now;
 const NOTAP='#floors,#top,#tabs,#panel,#story,#namebox,#setwin,#confirm,#title';
 $('app').addEventListener('pointerdown',e=>{if(e.button>0)return;if(e.target.closest(NOTAP))return;if(SQ)return;e.preventDefault();brewTap();if(e.target.closest('#brew')){const b=$('brew');b.classList.add('down');setTimeout(()=>b.classList.remove('down'),90)}},{passive:false});
 // ---------- 자리 비운 동안 ----------
-function offline(){if(S.crisis){if((Date.now()-(S.lastTs||Date.now()))>30e3)setTimeout(()=>toast('위기를 넘기지 못한 채 자리를 비워서 그동안 한 푼도 못 벌었어요'),800);S.lastTs=Date.now();return}const raw=(Date.now()-(S.lastTs||Date.now()))/1000,sec=Math.min(7200,raw),sec2=Math.min(S.stage?28800:7200,raw);if(sec<30)return;const days=Math.floor(sec/DAYSEC);for(let i=0;i<Math.min(days,20);i++){rollBean();S.day++;dailyIce()}S.day+=Math.max(0,days-20);
+function offline(){if(S.crisis&&S.crisis.k==='prison'){const away=(Date.now()-(S.lastTs||Date.now()))/1000;S.crisis.g+=away*100/180;if(S.crisis.g>=100){S.crisis.g=99.9}}if(S.crisis){if((Date.now()-(S.lastTs||Date.now()))>30e3)setTimeout(()=>toast('위기를 넘기지 못한 채 자리를 비워서 그동안 한 푼도 못 벌었어요'),800);S.lastTs=Date.now();return}const raw=(Date.now()-(S.lastTs||Date.now()))/1000,sec=Math.min(7200,raw),sec2=Math.min(S.stage?28800:7200,raw);if(sec<30)return;const days=Math.floor(sec/DAYSEC);for(let i=0;i<Math.min(days,20);i++){rollBean();S.day++;dailyIce()}S.day+=Math.max(0,days-20);
  {const need=Math.floor(sec2*beanUse());S.bean=Math.max(0,S.bean-need)}const lu=(S.buff&&S.buff.led)||0,ledSec=Math.max(0,Math.min(Date.now(),lu)-(S.lastTs||Date.now()))/1000;if(ledSec>30){const g2=Math.round(ledSec*15*tapVal()+Math.max(sec2,ledSec)*(staffRate()+(S.orn||0))*tapVal()*(S.stage?1:.5));S.money+=g2;S.earned+=g2;setTimeout(()=>toast(`대리 장부 덕분에 자리를 비운 동안 ${won(g2)}을 벌었어요`),800);return}const ar=staffRate()+(S.orn||0);if(!ar)return;const g=Math.round(sec2*ar*tapVal()*(S.stage?1:.5));if(g>0){S.money+=g;S.earned+=g;setTimeout(()=>toast(`자리를 비운 동안 일손들이 ${won(g)}을 벌었어요`),800)}}
 // ---------- 시작 ----------
 load();if(!S.beanP.length)for(let i=0;i<10;i++)rollBean();
