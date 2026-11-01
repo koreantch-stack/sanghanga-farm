@@ -103,7 +103,8 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
 .sr select{font:400 14px 'Gowun Dodum';padding:4px;border-radius:8px;border:1px solid #c9a978;background:#fff}
 .sw button{border:0;border-radius:10px;background:var(--green);color:#fff;font:400 15px 'Do Hyeon';padding:7px 12px;cursor:pointer}
 .sw button.danger{background:var(--red)}.sw button.close{display:block;margin:12px auto 0;background:#8a6a45;padding:9px 30px}
-#confirm p{font-size:15px;line-height:1.5;text-align:center;margin:0 0 14px}.cfb{display:flex;gap:10px;justify-content:center}#cf-no{background:#b9a888}
+#sv-acc{background:#fff;border:1px solid #e3cfa6;border-radius:12px;padding:10px;margin-bottom:6px}#sv-acc .ab{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}#sv-acc small{display:block;font-size:12px;color:#7b6247;line-height:1.4}#sv-acc b{font:400 16px 'Do Hyeon'}
+#confirm p{white-space:pre-line;font-size:15px;line-height:1.5;text-align:center;margin:0 0 14px}.cfb{display:flex;gap:10px;justify-content:center}#cf-no{background:#b9a888}
 #toast{position:absolute;left:50%;bottom:150px;transform:translateX(-50%);background:rgba(30,20,10,.88);color:#fff6e0;padding:8px 14px;border-radius:14px;font-size:14px;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none;max-width:86%;text-align:center}
 #toast.on{opacity:1}
 #story{position:absolute;inset:0;z-index:80;background:rgba(15,9,4,.82);display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px}
@@ -158,6 +159,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
  </div>
  <div id="panel"><header><span id="p-title"></span><small id="p-sub"></small><button type="button" id="p-x" aria-label="닫기">✕</button></header><div id="plist"></div></div>
  <div id="setwin"><div class="sw"><h3>설정</h3>
+  <div id="sv-acc"></div>
   <div class="sr"><span>효과음</span><input type="range" id="sv-vol" min="0" max="100" step="5"></div>
   <label class="sr"><span>배경 음악</span><input type="checkbox" id="sv-bgm"></label>
   <div class="sr"><span>음악 크기</span><input type="range" id="sv-mvol" min="0" max="100" step="5"></div>
@@ -166,7 +168,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>새 이야기<small>열리면 바로 볼지, 이야기 탭에 쌓아 둘지</small></span><select id="sv-story"><option value="now">바로 보기</option><option value="later">나중에 보기</option></select></div>
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-자원-1</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-로그인-1</p>
   <div id="sv-test" hidden><div class="sr"><span>시험용</span></div>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
@@ -481,12 +483,13 @@ function drawPanel(){if(!tab)return;const P=$('plist');let h='';
   h+=`<div class="chart">${S.beanP.map((v,i)=>`<i class="${i===S.beanP.length-1?'now':''}" style="height:${Math.max(6,v/mx*100)}%"></i>`).join('')}</div><p class="note">오늘 값 커피콩 1개 ${won(p)}. 막대가 낮은 날 사 두면 이득이에요. 커피콩이 남아 있는 동안 모든 수입이 1.5배예요. ${S.stage?`초당 ${beanUse()}개씩`:'5초에 1개씩'} 줄고, 커피 메뉴 주문은 한 잔에 1개를 더 써요.</p>`;
   [100,1000,10000].forEach(n=>{h+=`<div class="row"><img src="a/u1.webp" alt=""><div><b>커피콩 ${n.toLocaleString('ko-KR')}개</b><span>${won(p*n)}</span></div><button type="button" data-a="bean" data-n="${n}" data-c="${p*n}" ${S.money<p*n?'disabled':''}>사기</button></div>`});
   const I=S.items||{};h+=`<h4 class="ih">특별 아이템 <small>인기 ${fmt(S.pop)} · 그림을 누르면 바로 써요</small></h4><div class="items">`+ITEMS.map(([k,n,ic,d])=>{const c=itemCost(k),own=k==='orn'?(S.orn||0):(I[k]||0);return`<div class="it"><button type="button" class="ib" data-a="iuse" data-k="${k}" ${k==='orn'||!own?'disabled':''}><img src="a/${ic}.webp" alt=""><i>${own}</i></button><b>${n}</b><span>${d}</span><button type="button" data-a="ibuy" data-k="${k}" ${S.pop<c||(k==='orn'&&(S.orn||0)>=20)?'disabled':''}>인기 ${c}</button></div>`}).join('')+'</div>'}
+ if(tab==='bak'){$('p-title').textContent='백업에서 되살리기';$('p-sub').textContent='가장 최근 것이 위에 있어요';h+=BAKS.length?BAKS.map((b,i)=>`<div class="row"><img src="a/u7.webp" alt=""><div><b>${stName(b.stage)} · ${won(b.money||0)}</b><span>${new Date(+b.id).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'})} · ${b.why||''}</span></div><button type="button" data-a="bakgo" data-i="${i}">되살리기</button></div>`).join(''):'<p class="note">아직 계정에 남은 백업이 없어요.</p>'}
  if(tab==='world'){$('p-title').textContent='세계로';$('p-sub').textContent='';h+=`<img class="bghead" src="a/bg2.webp" alt=""><p class="note" style="font-size:15px;text-align:center;margin-top:14px">세계로 나가는 길은<br>다음 업데이트에서 열려요.</p><p class="note" style="text-align:center">의주에서 인삼과 커피콩을 맞바꾸고,<br>베이징에서 직거래를 트고,<br>마지막엔 이탈리아 항구에 조선 다방을 열어요.</p>`}
  if(tab==='story'){$('p-title').textContent='이야기';$('p-sub').textContent='지금까지 열린 장면';
   STORDER.forEach(k=>{const o=S.seen[k];h+=o?`<div class="row"><img src="a/u7.webp" alt=""><div><b>${ST[k].t}${o==='new'?' <small style="color:var(--red)">새 이야기</small>':''}</b></div><button type="button" data-a="replay" data-k="${k}">보기</button></div>`:`<div class="row lock"><img src="a/u7.webp" alt=""><div><b>???</b><span>아직 열리지 않았어요</span></div></div>`})}
  P.innerHTML=h}
 $('plist').addEventListener('pointerdown',()=>{lastPanelDown=performance.now()});
-$('plist').onclick=e=>{{const ib=e.target.closest('button[data-a=iuse],button[data-a=ibuy]');if(ib){if(!ib.disabled)itemAct(ib.dataset.a,ib.dataset.k);return}}{const t=e.target.closest('button[data-mt]');if(t){mTab=t.dataset.mt;sfx('menu');drawPanel();return}}const b=e.target.closest('button[data-a]');if(!b||b.disabled)return;const a=b.dataset.a,k=b.dataset.k;
+$('plist').onclick=e=>{{const bb=e.target.closest('button[data-a=bakgo]');if(bb){bakGo(+bb.dataset.i);return}}{const ib=e.target.closest('button[data-a=iuse],button[data-a=ibuy]');if(ib){if(!ib.disabled)itemAct(ib.dataset.a,ib.dataset.k);return}}{const t=e.target.closest('button[data-mt]');if(t){mTab=t.dataset.mt;sfx('menu');drawPanel();return}}const b=e.target.closest('button[data-a]');if(!b||b.disabled)return;const a=b.dataset.a,k=b.dataset.k;
  if(a==='mopen'){const m=MENU[MI[k]],q=menuReq(k);if(S.money<m[4]||(q&&q.have<q.need)||!floorOk(m))return;S.money-=m[4];S.menu[k]=1;sfx('trade');toast(`${m[1]}${josa(m[1])} 메뉴에 올렸어요`)}
  if(a==='mup'){const lv=L(S.menu,k),cost=mupCost(k);if(lv>=MMAX)return;if(S.money<cost)return;S.money-=cost;S.menu[k]=lv+1;sfx('trade')}
  if(a==='staff'){const s=STAFF.find(x=>x[0]===k),lv=L(S.staff,k),cost=s[5](lv);if(S.money<cost||lv>=(s[7]||10))return;S.money-=cost;S.staff[k]=lv+1;sfx('trade');helpers();if(!lv)toast(`${s[1]}${josa2(s[1])} 일손이 됐어요`)}
@@ -538,7 +541,7 @@ function dailyGift(){const d=new Date().toDateString();if(S.giftDay===d)return;S
 function floorsDraw(){const fb=$('floors');fb.hidden=S.stage!==2;if(fb.hidden)return;fb.querySelectorAll('button').forEach(b=>{const f=b.dataset.f;b.classList.toggle('on',f===String(S.floor||0)&&tab!=='binggo'||f==='b'&&tab==='binggo');if(f==='1')b.disabled=!L(S.shop,'floor2');if(f==='2')b.disabled=!L(S.shop,'geum')})}
 $('floors').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const f=b.dataset.f;sfx('menu');if(f==='b'){tab==='binggo'?closePanel():openPanel('binggo');floorsDraw();return}if(+f===(S.floor||0)){floorsDraw();return}S.floor=+f;setStage();hud();save()};
 // ---------- 설정 ----------
-function setDraw(){$('sv-vol').value=SET.vol;$('sv-mvol').value=SET.mvol;$('sv-bgm').checked=!!SET.bgm;$('sv-vib').checked=!!SET.vib;$('sv-pop').checked=!!SET.pop;$('sv-story').value=SET.story;$('sv-name').textContent=S.name}
+function setDraw(){accDraw();$('sv-vol').value=SET.vol;$('sv-mvol').value=SET.mvol;$('sv-bgm').checked=!!SET.bgm;$('sv-vib').checked=!!SET.vib;$('sv-pop').checked=!!SET.pop;$('sv-story').value=SET.story;$('sv-name').textContent=S.name}
 $('set-btn').onclick=()=>{setDraw();$('setwin').classList.add('on');sfx('open')};
 $('sv-x').onclick=()=>$('setwin').classList.remove('on');
 $('setwin').onclick=e=>{if(e.target.id==='setwin')$('setwin').classList.remove('on')};
@@ -549,8 +552,8 @@ $('sv-vib').onchange=e=>{SET.vib=e.target.checked?1:0;saveSet();if(SET.vib&&navi
 $('sv-pop').onchange=e=>{SET.pop=e.target.checked?1:0;saveSet()};
 $('sv-story').onchange=e=>{SET.story=e.target.value;saveSet()};
 $('sv-rename').onclick=()=>{$('nm').value=S.name;$('nm-err').textContent='';$('namebox').classList.add('on')};
-let cfOk=null;function confirmBox(t,m,f,ok){$('cf-t').textContent=t;$('cf-m').textContent=m;$('cf-ok').textContent=ok||'확인';cfOk=f;$('confirm').classList.add('on')}
-$('cf-no').onclick=()=>{$('confirm').classList.remove('on');cfOk=null};$('cf-ok').onclick=()=>{$('confirm').classList.remove('on');const f=cfOk;cfOk=null;if(f)f()};
+let cfOk=null,cfNo=null;function confirmBox(t,m,f,ok,no,fno){$('cf-t').textContent=t;$('cf-m').textContent=m;$('cf-ok').textContent=ok||'확인';$('cf-no').textContent=no||'그만두기';cfOk=f;cfNo=fno||null;$('confirm').classList.add('on')}
+$('cf-no').onclick=()=>{$('confirm').classList.remove('on');cfOk=null;const f=cfNo;cfNo=null;if(f)f()};$('cf-ok').onclick=()=>{$('confirm').classList.remove('on');const f=cfOk;cfOk=null;if(f)f()};
 // 비밀 버튼: 판 표시를 빠르게 일곱 번 누르면 시험용 단추가 열려요
 {let n=0,t=0;$('sv-ver').onclick=()=>{const now=Date.now();n=now-t<600?n+1:1;t=now;if(n>=7){n=0;$('sv-test').hidden=!$('sv-test').hidden;toast($('sv-test').hidden?'시험용 단추를 닫았어요':'시험용 단추가 열렸어요')}}}
 $('sv-test').onclick=e=>{const b=e.target.closest('button[data-t]');if(!b)return;const t=b.dataset.t;
@@ -586,7 +589,52 @@ load();if(!S.beanP.length)for(let i=0;i<10;i++)rollBean();
 setStage();hud();drawBrew();
 $('t-go').onclick=()=>{$('title').style.display='none';bgmSync();sfx('open');offline();if(S.seen.start)dailyGift();hud();if(!S.seen.start)playStory('start');else checkStory()};
 requestAnimationFrame(tick);
-addEventListener('pagehide',save);document.addEventListener('visibilitychange',()=>{if(document.hidden)save();bgmSync()});
+addEventListener('pagehide',()=>{save();syUp(false)});document.addEventListener('visibilitychange',()=>{if(document.hidden){save();syUp(false)}else if(SY.user)prBeat();bgmSync()});
+// ---------- 계정 저장 (구글 로그인, 상한가 농장과 같은 파이어베이스, 저장 칸은 따로) ----------
+const FBCFG={apiKey:"AIzaSyB-nMHPbHBSnV2EgJpgUM1Tq7c2UH0tiz4",authDomain:"sanghanga-farm.firebaseapp.com",projectId:"sanghanga-farm",storageBucket:"sanghanga-farm.firebasestorage.app",messagingSenderId:"448777625232",appId:"1:448777625232:web:b139bcf16ab5d81e8f8215"};
+const lsG=k=>{try{return localStorage.getItem(k)}catch(_){return null}},lsS=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(_){}};
+const SY={ready:false,user:null,last:0,busy:false,blocked:false,kicked:false,hash:'',sid:(()=>{let v=lsG('cih-sid');if(!v){v=Math.random().toString(36).slice(2)+Date.now().toString(36);lsS('cih-sid',v)}return v})()};
+let BAKS=[];
+const stName=i=>['만상 창고','다우가','무릉도원'][i]||'';
+const sum=d=>({ts:d.lastTs||0,earned:d.earned||0,stage:d.stage||0,money:d.money||0});
+const fmtSum=x=>`${stName(x.stage)} · 엽전 ${won(x.money)} · ${new Date(x.ts).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'})} 저장`;
+function loadScript(u){return new Promise((ok,no)=>{const e=document.createElement('script');e.src=u;e.onload=ok;e.onerror=no;document.head.appendChild(e)})}
+async function syInit(){if(SY.ready)return true;try{const B='../lib/';await loadScript(B+'firebase-app-compat.js');await Promise.all([loadScript(B+'firebase-auth-compat.js'),loadScript(B+'firebase-firestore-compat.js')]);if(!firebase.apps.length)firebase.initializeApp(FBCFG);SY.ready=true;
+ firebase.auth().getRedirectResult().catch(()=>{});firebase.auth().onAuthStateChanged(u=>{SY.user=u;if(u)syOnLogin(u);accDraw()});return true}catch(e){return false}}
+async function gz(str){const cs=new Blob([str]).stream().pipeThrough(new CompressionStream('gzip'));return new Uint8Array(await new Response(cs).arrayBuffer())}
+async function gunz(u8){const ds=new Blob([u8]).stream().pipeThrough(new DecompressionStream('gzip'));return await new Response(ds).text()}
+const CD=uid=>firebase.firestore().collection('cafe').doc(uid),CP=uid=>firebase.firestore().collection('cafePres').doc(uid);
+async function syBackup(uid,str,why){try{const bin=await gz(str);await CD(uid).collection('backups').doc(String(Date.now())).set({data:firebase.firestore.Blob.fromUint8Array(bin),why,...sum(JSON.parse(str))})}catch(_){}}
+function syApply(str,msg){try{const d=JSON.parse(str);d.lastTs=Math.max(d.lastTs||0,Date.now()-1000);str=JSON.stringify(d)}catch(_){}RESET=true;lsS(SAVE,str);if(msg)lsS('cih-msg',msg);location.reload()}
+async function prBeat(){if(!SY.user||SY.blocked||SY.kicked)return;try{await CP(SY.user.uid).set({sid:SY.sid,hb:Date.now()})}catch(_){}}
+async function syOnLogin(u){
+ let ovr=false;try{ovr=!!sessionStorage.getItem('cih-ovr');sessionStorage.removeItem('cih-ovr')}catch(_){}
+ if(!ovr){try{const p=await CP(u.uid).get(),d=p.exists?p.data():null;if(d&&d.sid&&d.sid!==SY.sid&&Date.now()-(d.hb||0)<150000){SY.blocked=true;const ago=Math.round((Date.now()-d.hb)/1000);confirmBox('다른 곳에서 하고 있어요',`같은 계정으로 다른 기기에서 카페가 열려 있어요 (${ago}초 전 확인). 한 계정은 한 곳에서만 할 수 있어요.`,()=>{try{sessionStorage.setItem('cih-ovr','1')}catch(_){}SY.blocked=false;syOnLogin(u)},'저쪽 끊고 여기서 하기','그만두기',()=>toast('계정 저장 없이 이 기기에서만 해요'));return}}catch(_){}}
+ await prBeat();
+ try{const snap=await CD(u.uid).get();save();const local=lsG(SAVE),L=local?JSON.parse(local):S,linked=lsG('cih-uid')===u.uid;
+  if(!snap.exists){lsS('cih-uid',u.uid);await syUp(true);toast('카페를 계정에 저장했어요. 이제 다른 기기에서도 이어서 할 수 있어요');return}
+  const rd=snap.data(),rstr=await gunz(rd.data.toUint8Array()),R=sum(JSON.parse(rstr)),Ls=sum(L);
+  if(lsG('cih-forceup')){lsS('cih-forceup',null);lsS('cih-uid',u.uid);await syUp(true);return}
+  if(linked){const base=+(lsG('cih-base')||0);if(R.ts>base+1000&&R.ts>Ls.ts){await syBackup(u.uid,local,'다른 기기 진행을 받기 전');lsS('cih-base',String(R.ts));syApply(rstr,'다른 기기에서 한 진행을 불러왔어요')}else await syUp(true);return}
+  if((L.earned||0)<1000){lsS('cih-uid',u.uid);lsS('cih-base',String(R.ts));syApply(rstr,'계정에 있던 카페를 불러왔어요');return}
+  confirmBox('어느 진행을 쓸까요?',`계정: ${fmtSum(R)}\n이 기기: ${fmtSum(Ls)}\n\n고르지 않은 쪽도 지우지 않고 백업으로 남겨요.`,async()=>{await syBackup(u.uid,local,'이 기기에 있던 진행');lsS('cih-uid',u.uid);lsS('cih-base',String(R.ts));syApply(rstr,'계정 진행을 불러왔어요')},'계정 진행','이 기기 진행',async()=>{await syBackup(u.uid,rstr,'계정에 있던 진행');lsS('cih-uid',u.uid);await syUp(true);toast('이 기기 진행을 계정에 저장했어요')})
+ }catch(e){SY.err=e.code||e.message;toast('계정을 불러오지 못했어요. 잠시 뒤 다시 해 주세요')}}
+async function syUp(force){if(!SY.user||SY.busy||SY.blocked||SY.kicked||RESET)return;save();const str=lsG(SAVE);if(!str)return;const h=str.length+':'+str.slice(-80);if(!force&&h===SY.hash)return;SY.busy=true;
+ try{const p=await CP(SY.user.uid).get(),d=p.exists?p.data():null;if(d&&d.sid&&d.sid!==SY.sid){SY.busy=false;syKick();return}
+  const bin=await gz(str);const ts=JSON.parse(str).lastTs||Date.now();const b=firebase.firestore().batch();
+  b.set(CD(SY.user.uid),{data:firebase.firestore.Blob.fromUint8Array(bin),ts,sid:SY.sid,earned:S.earned,stage:S.stage,name:S.name,email:SY.user.email||''});b.set(CP(SY.user.uid),{sid:SY.sid,hb:document.hidden?0:Date.now()});await b.commit();
+  SY.hash=h;SY.last=Date.now();SY.err='';lsS('cih-base',String(ts));lsS('cih-uid',SY.user.uid)}catch(e){SY.err=e.code||e.message}SY.busy=false;accDraw()}
+function syKick(){if(SY.kicked)return;SY.kicked=true;confirmBox('다른 곳에서 접속했어요','같은 계정으로 다른 기기에서 카페를 열어서, 여기는 계정 저장을 멈췄어요.',()=>{try{sessionStorage.setItem('cih-ovr','1')}catch(_){}RESET=true;location.reload()},'여기서 다시 하기','닫기',()=>{})}
+setInterval(()=>{if(SY.user&&!document.hidden){syUp(false);prBeat()}},60000);
+async function syLogin(){toast('로그인 창을 여는 중이에요');if(!(await syInit())){toast('로그인을 불러오지 못했어요. 인터넷 연결을 확인해 주세요');return}const pv=new firebase.auth.GoogleAuthProvider();
+ try{await firebase.auth().signInWithPopup(pv)}catch(e){if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/cancelled-popup-request'].includes(e.code))firebase.auth().signInWithRedirect(pv);else if(e.code!=='auth/popup-closed-by-user')toast('로그인하지 못했어요: '+(e.code||''))}}
+async function bakOpen(){if(!SY.user)return;toast('백업을 불러오는 중이에요');try{const q=await CD(SY.user.uid).collection('backups').orderBy(firebase.firestore.FieldPath.documentId(),'desc').limit(12).get();BAKS=q.docs.map(d=>({id:d.id,...d.data()}));$('setwin').classList.remove('on');openPanel('bak')}catch(e){toast('백업을 불러오지 못했어요')}}
+function bakGo(i){const b=BAKS[i];if(!b)return;confirmBox('이 진행으로 되살릴까요?',`${stName(b.stage)} · 엽전 ${won(b.money||0)}\n지금 진행도 백업으로 남겨 둬요.`,async()=>{try{const str=await gunz(b.data.toUint8Array());save();const cur2=lsG(SAVE);if(cur2)await syBackup(SY.user.uid,cur2,'되살리기 전 진행');lsS('cih-forceup','1');syApply(str,'백업한 진행으로 되살렸어요')}catch(e){toast('되살리지 못했어요')}},'되살리기')}
+function accDraw(){const e=$('sv-acc');if(!e)return;if(!SY.user){e.innerHTML='<b>계정</b><small>구글로 로그인하면 진행이 계정에 저장돼서 폰·PC 어디서든 이어서 할 수 있어요. 상한가 농장과 같은 계정을 써도 저장은 따로예요.</small><div class="ab"><button type="button" id="acc-in">구글로 로그인</button></div>';$('acc-in').onclick=syLogin;return}
+ e.innerHTML=`<b>${esc(SY.user.displayName||'구글 계정')}</b><small>${esc(SY.user.email||'')}<br>${SY.err?'저장 오류: '+esc(SY.err):SY.last?'마지막 저장 '+new Date(SY.last).toLocaleTimeString('ko-KR',{hour:'numeric',minute:'2-digit'}):'저장 준비 중'}</small><div class="ab"><button type="button" id="acc-up">지금 저장</button><button type="button" id="acc-bak">백업에서 되살리기</button><button type="button" id="acc-out" style="background:#8a6a45">로그아웃</button></div>`;
+ $('acc-up').onclick=()=>syUp(true).then(()=>toast(SY.err?'저장하지 못했어요':'계정에 저장했어요'));$('acc-bak').onclick=bakOpen;$('acc-out').onclick=()=>confirmBox('로그아웃할까요?','이 기기의 진행은 그대로 남아요.',async()=>{await syUp(true);await firebase.auth().signOut();lsS('cih-uid',null);SY.user=null;accDraw();toast('로그아웃했어요')},'로그아웃')}
+if(lsG('cih-uid'))syInit();
+{const m=lsG('cih-msg');if(m){lsS('cih-msg',null);setTimeout(()=>toast(m),2500)}}
 </script>
 </body>
 </html>
