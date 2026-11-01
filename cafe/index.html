@@ -155,7 +155,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>새 이야기<small>열리면 바로 볼지, 이야기 탭에 쌓아 둘지</small></span><select id="sv-story"><option value="now">바로 보기</option><option value="later">나중에 보기</option></select></div>
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-무릉도원-5</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-무릉도원-6</p>
   <div id="sv-test" hidden><div class="sr"><span>시험용</span></div>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
@@ -194,17 +194,17 @@ const MENU=[
  ['honey','꿀가비',1,0,800000,1,5,0,20,9],
  ['yakgwa','약과',8,0,4e6,0,3,1,20,14],
  ['ginseng','인삼차',7,0,2e7,0,5,1,25,20],
- ['dasik','다식',9,0,1e8,0,4,1,25,30],
- ['injeolmi','인절미',10,0,5e8,0,4,1,30,45],
- ['teapot','차 한 주전자',11,0,2.5e9,0,7,1,30,70],
- ['iced','별 조각 아이스 가비','i0',0,1.2e10,1,5,2,30,100,1],
- ['omijaade','오미자 에이드','i1',0,6e10,0,4,2,30,140,1],
- ['icesujeong','냉 수정과','i2',0,3e11,0,4,2,35,200,1],
- ['icemisut','미숫가루 냉차','i3',0,1.5e12,0,5,2,35,280,1],
- ['iceginseng','인삼 꿀 냉차','i4',0,8e12,0,5,2,35,400,1],
- ['bingsu','팥빙수','i5',0,4e13,0,6,2,40,560,1],
- ['icesikhye','냉식혜','i6',0,2e14,0,4,2,40,800,1],
- ['premium','특 아이스 가비','i7',0,1e15,1,7,2,40,1200,1]];
+ ['dasik','다식',9,0,5e7,0,4,1,25,30],
+ ['injeolmi','인절미',10,0,1.5e8,0,4,1,30,45],
+ ['teapot','차 한 주전자',11,0,4e8,0,7,1,30,70],
+ ['iced','별 조각 아이스 가비','i0',0,1.5e9,1,5,2,30,100,1],
+ ['omijaade','오미자 에이드','i1',0,3e9,0,4,2,30,140,1],
+ ['icesujeong','냉 수정과','i2',0,6e9,0,4,2,35,200,1],
+ ['icemisut','미숫가루 냉차','i3',0,1.2e10,0,5,2,35,280,1],
+ ['iceginseng','인삼 꿀 냉차','i4',0,2.5e10,0,5,2,35,400,1],
+ ['bingsu','팥빙수','i5',0,5e10,0,6,2,40,560,1],
+ ['icesikhye','냉식혜','i6',0,1e11,0,4,2,40,800,1],
+ ['premium','특 아이스 가비','i7',0,2e11,1,7,2,40,1200,1]];
 const mic=m=>typeof m[2]==='number'?`a/m${m[2]}.webp`:`a/${m[2]}.webp`;
 const MMAX=40;
 const MI={};MENU.forEach((m,i)=>MI[m[0]]=i);
@@ -219,8 +219,8 @@ const STAFF=[
  ['samwol','삼월이','p_samwol','혼자서도 가비를 내려요',lv=>`초당 ${lv}번 대신 내리기`,lv=>Math.round(2000*Math.pow(1.9,lv)),'s_samwol'],
  ['maehwa','매화','p_maehwa','장부를 맡아 값을 잘 받아요',lv=>`모든 값 +${lv*10}%`,lv=>Math.round(2e5*Math.pow(2,lv)),'s_maehwa'],
  ['dojin','임도진','p_dojin','만상 줄로 콩을 싸게 들여와요',lv=>`커피콩 값 −${lv*6}%`,lv=>Math.round(3e5*Math.pow(2,lv)),'s_dojin'],
- ['servers','무릉도원 일꾼','v_server','하늘색 옷을 맞춰 입은 일꾼들이 손을 보태요',lv=>`일꾼 ${lv}명 · 초당 ${lv*3}번 대신 내리기`,lv=>Math.round(2e10*Math.pow(1.8,lv)),'',15],
- ['binggo','빙고지기','v_iceman','빙고에서 쓴 별 조각을 저절로 식혀요',lv=>`${(6/lv).toFixed(1)}초마다 식히기`,lv=>Math.round(5e10*Math.pow(2,lv)),'',10]];
+ ['servers','무릉도원 일꾼','v_server','하늘색 옷을 맞춰 입은 일꾼들이 손을 보태요',lv=>`일꾼 ${lv}명 · 초당 ${lv*3}번 대신 내리기`,lv=>Math.round(3e8*Math.pow(1.6,lv)),'',15],
+ ['binggo','빙고지기','v_iceman','빙고에서 쓴 별 조각을 저절로 식혀요',lv=>`${(6/lv).toFixed(1)}초마다 식히기`,lv=>Math.round(1e9*Math.pow(1.8,lv)),'',10]];
 // 가게 설비: k, 이름, 아이콘, 설명, 최대, 값(lv), 단계, 단계 이상이면 보임
 const SHOP=[
  ['seat','자리 늘리기','u4','손님이 앉을 자리가 하나 늘어요',st=>st<2?STAGES[st].seats.length-STAGES[st].base:3,lv=>Math.round(500*Math.pow(2.3,lv)),-1],
@@ -229,12 +229,12 @@ const SHOP=[
  ['pot','놋쇠 드립 포트','m11','유기장에게 맡긴 조선식 드립 포트. 한 번 누를 때 버는 엽전이 1.5배가 돼요',()=>1,()=>20000,0],
  ['dawooga','다우가 열기','u7','만상 별채에 첫 가비집을 열어요',()=>1,()=>1500000,0],
  ['sign','현판 걸기','u4','인기가 더 빨리 올라요',()=>5,lv=>Math.round(3e6*Math.pow(2.2,lv)),1,1],
- ['murung','무릉도원 짓기','u3','1층은 누구나, 2층은 양반, 지하엔 빙고. 한양 최고의 찻집을 지어요',()=>1,()=>8e9,1],
- ['floor2','2층 열기','u6','양반만 오르는 조용한 2층. 손님은 적지만 주문 값이 네 배예요',()=>1,()=>1.5e11,2],
- ['geum','금남당 열기','u4','여인들만의 쉼터. 족욕과 약재 팩을 즐기며 주문 값이 세 배예요',()=>1,()=>6e11,2],
- ['stars','유기 별 조각 더 만들기','u3','유기장에게 별 조각 10개를 더 맡겨요',()=>20,lv=>Math.round(1e10*Math.pow(1.9,lv)),2],
- ['binggo','빙고 늘리기','u2','얼음을 50개 더 쌓아 두고, 겨울 채빙이 늘어요',()=>10,lv=>Math.round(2e10*Math.pow(2.2,lv)),2],
- ['chosuk','초석 제빙','u2','철과 상관없이 날마다 얼음 10개를 만들어요',()=>5,lv=>Math.round(5e10*Math.pow(3,lv)),2]];
+ ['murung','무릉도원 짓기','u3','1층은 누구나, 2층은 양반, 지하엔 빙고. 한양 최고의 찻집을 지어요',()=>1,()=>1e9,1],
+ ['floor2','2층 열기','u6','양반만 오르는 조용한 2층. 손님은 적지만 주문 값이 네 배예요',()=>1,()=>4e9,2],
+ ['geum','금남당 열기','u4','여인들만의 쉼터. 족욕과 약재 팩을 즐기며 주문 값이 세 배예요',()=>1,()=>1.5e10,2],
+ ['stars','유기 별 조각 더 만들기','u3','유기장에게 별 조각 10개를 더 맡겨요',()=>20,lv=>Math.round(2e8*Math.pow(1.5,lv)),2],
+ ['binggo','빙고 늘리기','u2','얼음을 50개 더 쌓아 두고, 겨울 채빙이 늘어요',()=>10,lv=>Math.round(5e8*Math.pow(1.9,lv)),2],
+ ['chosuk','초석 제빙','u2','철과 상관없이 날마다 얼음 10개를 만들어요',()=>5,lv=>Math.round(1e9*Math.pow(2.5,lv)),2]];
 // ---------- 이야기 ----------
 const ST={
  start:{t:'눈을 뜨니 조선',c:[
@@ -481,7 +481,7 @@ $('st-skip').onclick=e=>{e.stopPropagation();if(!SQ)return;if(!SQ.replay&&ST[SQ.
 $('nm-ok').onclick=()=>{const v=$('nm').value.replace(/[<>&]/g,'').trim();if(v.length<2){$('nm-err').textContent='두 글자 이상으로 지어 주세요';return}if(/[ㄱ-ㅎㅏ-ㅣ]/.test(v)){$('nm-err').textContent='자음이나 모음만 쓴 글자는 쓸 수 없어요';return}S.name=v;$('namebox').classList.remove('on');$('nm-err').textContent='';if(SQ){SQ.i++;showCut()}else{toast(`이름을 ${v}(으)로 바꿨어요`);setDraw()}save()};
 function checkStory(){if(SQ)return;const T=[
  ['first',()=>S.served>=1],['samwol',()=>S.served>=12],['seyun',()=>S.stage>=1&&S.served>=90],['gwageo',()=>gwageo()&&S.served>=20],['tired',()=>S.stage>=1&&S.served>=160],
- ['seonwoo',()=>S.stage>=1&&S.earned>=5e6],['cheap',()=>S.evDone&&Date.now()>S.evUntil],['hajun',()=>S.stage>=1&&S.served>=260],['murung',()=>S.stage>=1&&S.earned>=3e9],['prison',()=>S.stage===2&&L(S.menu,'icesujeong')>0],['release',()=>S.prDone&&Date.now()>S.evUntil]];
+ ['seonwoo',()=>S.stage>=1&&S.earned>=5e6],['cheap',()=>S.evDone&&Date.now()>S.evUntil],['hajun',()=>S.stage>=1&&S.served>=260],['murung',()=>S.stage>=1&&S.earned>=3e8],['prison',()=>S.stage===2&&L(S.menu,'icesujeong')>0],['release',()=>S.prDone&&Date.now()>S.evUntil]];
  for(const [k,f] of T)if(!S.seen[k]&&f()){setTimeout(()=>{if(!SQ&&!S.seen[k])playStory(k)},500);return}}
 // ---------- 무릉도원 층 ----------
 function floorsDraw(){const fb=$('floors');fb.hidden=S.stage!==2;if(fb.hidden)return;fb.querySelectorAll('button').forEach(b=>{const f=b.dataset.f;b.classList.toggle('on',f===String(S.floor||0)&&tab!=='binggo'||f==='b'&&tab==='binggo');if(f==='1')b.disabled=!L(S.shop,'floor2');if(f==='2')b.disabled=!L(S.shop,'geum')})}
