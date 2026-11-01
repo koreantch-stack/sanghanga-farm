@@ -170,7 +170,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>새 이야기<small>열리면 바로 볼지, 이야기 탭에 쌓아 둘지</small></span><select id="sv-story"><option value="now">바로 보기</option><option value="later">나중에 보기</option></select></div>
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-위기-2</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">판 11.01-위기-3</p>
   <div id="sv-test" hidden><div class="sr"><span>운영자 모드<small>운영자 계정에만 보여요</small></span></div><b class="adh">엽전·재료·날짜</b>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
@@ -594,7 +594,7 @@ function tick(now){const dt=Math.min(.2,(now-last)/1000);last=now;
   CU.forEach(c=>{if(!c.arr||c.done)return;c.pat-=dt;const b=c.el.querySelector('.bub i b');if(b){b.style.width=Math.max(0,c.pat/c.max*100)+'%';b.style.background=c.pat/c.max<.3?'#c0452f':''}
    if(c.pat<=0){S.pop=Math.max(0,S.pop-1);const r=c.el.getBoundingClientRect(),ar=$('app').getBoundingClientRect();pop('기다리다 갔어요',r.left-ar.left+r.width/2,r.top-ar.top,true);leave(c,false);hud()}});
   if(S.crisis){const c=S.crisis;c.g=Math.max(0,c.g-CRISIS[c.k].dn*dt);if(c.g>=100)crisisEnd();else crisisDraw()}
-  else if(S.seen.first&&!SQ&&!document.hidden&&S.ev!=='prison'&&Date.now()-(S.crisisT||0)>25*60e3&&Math.random()<dt/2400){const L2=crStage();crisisStart(L2[Math.floor(Math.random()*L2.length)])}
+  else if(S.relDone&&!SQ&&!document.hidden&&Date.now()-(S.crisisT||0)>25*60e3&&Math.random()<dt/2400){const L2=crStage();crisisStart(L2[Math.floor(Math.random()*L2.length)])}
   const ar=S.crisis?0:autoRate();if(ar){const v=tapVal()*ar*dt;S.money+=v;S.earned+=v;autoAcc+=ar*dt;if(autoAcc>=1){const n=Math.floor(autoAcc);autoAcc-=n;const c=nextOrder();if(c){brewProg+=n*tapPow();if(brewProg>=workOf(c.k)){brewProg=0;serve(c)}}const sm=$('sam');sm.classList.add('work');setTimeout(()=>sm.classList.remove('work'),120)}hudLite()}
   useT+=dt;if(useT>=1){useT-=1;
    if(S.bean>0){beanAcc+=beanUse();const u=Math.floor(beanAcc);beanAcc-=u;S.bean=Math.max(0,S.bean-u);if(!S.bean)toast('커피콩이 떨어져서 수입 보너스가 꺼졌어요. 장터에서 사 오세요')}
