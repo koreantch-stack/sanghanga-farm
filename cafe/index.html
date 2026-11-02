@@ -171,7 +171,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>새 이야기<small>열리면 바로 볼지, 이야기 탭에 쌓아 둘지</small></span><select id="sv-story"><option value="now">바로 보기</option><option value="later">나중에 보기</option></select></div>
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.0.8</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.0.9</p>
   <div id="sv-test" hidden><div class="sr"><span>운영자 모드<small>운영자 계정에만 보여요</small></span></div><b class="adh">엽전·재료·날짜</b>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
@@ -612,9 +612,9 @@ function tick(now){const dt=Math.min(.2,(now-last)/1000);last=now;
 const NOTAP='#floors,#top,#tabs,#panel,#story,#namebox,#setwin,#confirm,#title';
 $('app').addEventListener('pointerdown',e=>{if(e.button>0)return;if(e.target.closest(NOTAP))return;if(SQ)return;e.preventDefault();brewTap();if(e.target.closest('#brew')){const b=$('brew');b.classList.add('down');setTimeout(()=>b.classList.remove('down'),90)}},{passive:false});
 // ---------- 자리 비운 동안 ----------
-function offline(){const raw=(Date.now()-(S.lastTs||Date.now()))/1000;if(raw<30)return;
- S.buff=S.buff||{};for(const k of ['coffee','tal'])if((S.buff[k]||0)>(S.lastTs||0))S.buff[k]+=raw*1000;
- const lu=S.buff.led||0,ledSec=Math.max(0,Math.min(Date.now(),lu)-(S.lastTs||Date.now()))/1000;
+function offline(t0){t0=t0||S.lastTs||Date.now();const raw=(Date.now()-t0)/1000;if(raw<30)return;
+ S.buff=S.buff||{};for(const k of ['coffee','tal'])if((S.buff[k]||0)>t0)S.buff[k]+=raw*1000;
+ const lu=S.buff.led||0,ledSec=Math.max(0,Math.min(Date.now(),lu)-t0)/1000;
  if(S.crisis){S.lastTs=Date.now();setTimeout(()=>toast(ledSec>30?'위기를 넘기지 못한 채 자리를 비워서 대리 장부도 손을 놓았어요':'위기를 넘기지 못한 채 자리를 비웠어요'),800);return}
  if(ledSec<30){if(raw>600)setTimeout(()=>toast('자리를 비운 동안 가게 문을 닫아 두었어요. 대리 장부를 맡기면 꺼 둔 동안에도 장사가 돌아가요'),800);return}
  const days=Math.floor(ledSec/DAYSEC);for(let i=0;i<Math.min(days,20);i++){rollBean();S.day++;dailyIce()}S.day+=Math.max(0,days-20);
@@ -623,9 +623,9 @@ function offline(){const raw=(Date.now()-(S.lastTs||Date.now()))/1000;if(raw<30)
  if(g2>0){S.money+=g2;S.earned+=g2;S.taxPaid=(S.taxPaid||0)+tax;setTimeout(()=>toast(`대리 장부 덕분에 자리를 비운 동안 ${won(gl)}을 벌었는데, 절반 ${won(tax)}은 조정에 세금으로 내고 ${won(g2)}이 남았어요`),800)}
  else setTimeout(()=>toast('일손이 없어서 대리 장부가 할 일이 없었어요. 일손 탭에서 사람을 들이세요'),800)}
 // ---------- 시작 ----------
-load();if(!S.beanP.length)for(let i=0;i<10;i++)rollBean();
+load();const AWAY0=S.lastTs||0;if(!S.beanP.length)for(let i=0;i<10;i++)rollBean();
 setStage();hud();drawBrew();crisisDraw();
-$('t-go').onclick=()=>{$('title').style.display='none';bgmSync();sfx('open');offline();if(S.seen.start)dailyGift();hud();if(!S.seen.start)playStory('start');else checkStory()};
+$('t-go').onclick=()=>{$('title').style.display='none';bgmSync();sfx('open');offline(AWAY0);S.lastTs=Date.now();if(S.seen.start)dailyGift();hud();if(!S.seen.start)playStory('start');else checkStory()};
 requestAnimationFrame(tick);
 addEventListener('pagehide',()=>{save();syUp(false)});document.addEventListener('visibilitychange',()=>{if(document.hidden){save();syUp(false)}else{if($('title').style.display==='none'){offline();S.lastTs=Date.now();hud()}if(SY.user)prBeat()}bgmSync()});
 // ---------- 계정 저장 (구글 로그인, 상한가 농장과 같은 파이어베이스, 저장 칸은 따로) ----------
