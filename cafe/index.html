@@ -192,7 +192,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div id="sv-reb"></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.3.2</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.3.3</p>
   <div id="sv-test" hidden><div class="sr"><span>운영자 모드<small>운영자 계정에만 보여요</small></span></div><b class="adh">엽전·재료·날짜</b>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
@@ -459,7 +459,7 @@ function palDraw(){const op=palOpen();$('phs').textContent=op?`차지한 도 ${p
 function popDraw(){const e=$('ppop');if(!palSel){e.classList.remove('on');return}e.classList.add('on');const op=palOpen(),i=PAL.findIndex(x=>x[0]===palSel);let c='';
  if(palSel==='pa')c=`<h3>평안</h3><div class="pl">의주 본점</div><p class="pd">만상의 터전, 의주 본점이에요.<br>처음부터 우리 편인 곳이에요.</p><div class="pg"><i><u style="width:100%"></u></i></div><div class="pp">점유율 100%</div>`;else if(i<0){const f=PALNEXT.find(x=>x[0]===palSel);c=`<h3>${f[1]}</h3><div class="pl">${f[2]}</div><p class="pd">아직 길이 닿지 않은 곳이에요.<br>다음 업데이트에서 열려요.</p>`}
  else{const p=PAL[i],st=palStep(p[0]);c=`<h3>${p[1]}</h3><div class="pl">${p[2]}</div><p class="pd">${p[3]}</p><div class="pg"><i><u style="width:${st*5}%"></u></i></div><div class="pp">점유율 ${st*5}%</div>`;
-  if(!op)c+=`<div class="pm">무릉도원 메뉴를 모두 열면 팔도로 나설 수 있어요</div><button type="button" class="pbtn" disabled>아직 못 가요</button>`;
+  if(!op)c+=`<div class="pm">모든 메뉴를 최고 레벨로 올리면 팔도로 나설 수 있어요</div><button type="button" class="pbtn" disabled>아직 못 가요</button>`;
   else if(!palAvail(i))c+=`<div class="pm">${PAL[i-1][2]}${josa2b(PAL[i-1][2])} 먼저 차지해야 해요</div><button type="button" class="pbtn" disabled>앞 도를 먼저</button>`;
   else if(st>=20)c+=`<div class="pm">이 도를 차지해서 모든 수입이 1.5배예요</div><button type="button" class="pbtn" disabled>차지했어요</button>`;
   else{const cc=palCost(p,st);c+=`<div class="pm">100%가 되어야 수입 ×1.5가 생겨요</div><button type="button" class="pbtn" id="pp-go" data-c="${cc}" ${S.money<cc?'disabled':''}>${st?'투자 +5%':'가맹점 내기'}<small>${won(cc)}</small></button>`}}
@@ -468,7 +468,7 @@ function palInvest(k){const i=PAL.findIndex(x=>x[0]===k),p=PAL[i],st=palStep(k);
 
 const palStep=k=>(S.pal&&S.pal[k]!=null)?S.pal[k]:(k==='gy'?3:0),palCost=(p,st)=>Math.round(p[4]*Math.pow(1.15,st));
 const palOwned=()=>PAL.filter(p=>palStep(p[0])>=20).length,palMul=()=>Math.pow(1.5,palOwned());
-const palOpen=()=>S.stage===2&&!!S.relDone&&MENU.filter(m=>m[7]===2).every(m=>L(S.menu,m[0])>0);
+const palOpen=()=>S.stage===2&&!!S.relDone&&allMax(2);
 const palAvail=i=>i===0||palStep(PAL[i-1][0])>=20;
 const MEMUP=[['hand','손에 익은 솜씨','두드리는 돈 ×2',[3,6,12,24,48]],['samwol','낯익은 얼굴들','삼월이를 데리고 시작',[5]],['cust','단골의 기억','손님이 더 자주 와요',[5]],['bean','먼저 아는 시세','커피콩 값 절반',[8]],['start','빠른 출발','조각 수만큼 시작 자금',[10]],['fast','빠른 소문','다우가·무릉도원 여는 값 절반',[15]],['led','미리 쓴 장부','대리 장부 시간 1.5배',[20]]];
 const mu=k=>(S.memUp&&S.memUp[k])||0,memMul=()=>1+0.05*(S.mem||0);
@@ -560,7 +560,8 @@ function openPanel(t){if(t==='world'){$('panel').classList.remove('on');palOpenW
 function closePanel(){tab=null;$('palwin').classList.remove('on');setTimeout(floorsDraw,0);$('panel').classList.remove('on');$('app').classList.remove('pan');document.querySelectorAll('#tabs button').forEach(b=>b.classList.remove('cur'))}
 function staffOpen(k){if(k==='samwol')return!!S.seen.samwol;if(k==='servers'||k==='binggo')return S.stage>=2;return S.stage>=1}
 const shopVis=s=>s[6]<0||(s[7]?S.stage>=s[6]:S.stage===s[6]);
-function shopWhy(s){if(s[0]==='dawooga'&&!L(S.shop,'pot'))return'포트 먼저';if(s[0]==='murung'&&!S.seen.murung)return'아직';if(s[0]==='geum'&&!L(S.shop,'floor2'))return'2층 먼저';return''}
+const allMax=st=>MENU.filter(m=>m[7]<=st).every(m=>L(S.menu,m[0])>=MMAX);const maxLeft=st=>MENU.filter(m=>m[7]<=st&&L(S.menu,m[0])<MMAX).length;
+function shopWhy(s){if(s[0]==='dawooga'&&!L(S.shop,'pot'))return'포트 먼저';if(s[0]==='dawooga'&&!allMax(0))return`메뉴 ${maxLeft(0)}개 더 최고로`;if(s[0]==='murung'&&!S.seen.murung)return'아직';if(s[0]==='murung'&&!allMax(1))return`메뉴 ${maxLeft(1)}개 더 최고로`;if(s[0]==='geum'&&!L(S.shop,'floor2'))return'2층 먼저';return''}
 function shopOk(s){return shopVis(s)&&L(S.shop,s[0])<s[4](S.stage)&&!shopWhy(s)}
 function drawPanel(){if(!tab)return;const P=$('plist');let h='';
  if(tab==='menu'){$('p-title').textContent='메뉴';$('p-sub').textContent=`지금 한 번에 ${fmtv(tapVal())}냥`;
@@ -586,7 +587,7 @@ function drawPanel(){if(!tab)return;const P=$('plist');let h='';
   [100,1000,10000].forEach(n=>{h+=`<div class="row"><img src="a/u1.webp" alt=""><div><b>커피콩 ${n.toLocaleString('ko-KR')}개</b><span>${won(p*n)}</span></div><button type="button" data-a="bean" data-n="${n}" data-c="${p*n}" ${S.money<p*n?'disabled':''}>사기</button></div>`});
   const I=S.items||{};h+=`<h4 class="ih">특별 아이템 <small>인기 ${fmt(S.pop)} · 그림을 누르면 바로 써요</small></h4><div class="items">`+ITEMS.map(([k,n,ic,d])=>{const c=itemCost(k),own=k==='orn'?(S.orn||0):(I[k]||0);return`<div class="it"><button type="button" class="ib" data-a="iuse" data-k="${k}" ${k==='orn'||!own?'disabled':''}><img src="a/${ic}.webp" alt=""><i>${own}</i></button><b>${n}</b><em class="itime" data-k="${k==='l2'||k==='l6'||k==='l12'?'led':k}"></em><span>${d}</span><button type="button" data-a="ibuy" data-k="${k}" ${S.pop<c||(k==='orn'&&(S.orn||0)>=20)?'disabled':''}>인기 ${c}</button></div>`}).join('')+'</div>'}
  if(tab==='bak'){$('p-title').textContent='백업에서 되살리기';$('p-sub').textContent='가장 최근 것이 위에 있어요';h+=BAKS.length?BAKS.map((b,i)=>`<div class="row"><img src="a/u7.webp" alt=""><div><b>${stName(b.stage)} · ${won(b.money||0)}</b><span>${new Date(+b.id).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'})} · ${b.why||''}</span></div><button type="button" data-a="bakgo" data-i="${i}">되살리기</button></div>`).join(''):'<p class="note">아직 계정에 남은 백업이 없어요.</p>'}
- if(tab==='world'){$('p-title').textContent='팔도로';if(!palOpen()){$('p-sub').textContent='';h+=`<img class="bghead" src="a/bg2.webp" alt=""><p class="note" style="font-size:15px;text-align:center;margin-top:14px">무릉도원 메뉴를 모두 열면 팔도로 나서요.</p><p class="note" style="text-align:center">개성의 송상, 강경 포구 객주, 전주 상단, 동래 왜관 상인과 겨루며<br>조선 팔도에 가맹점을 내요.</p><p class="note" style="text-align:center;opacity:.7">팔도를 모두 차지하면 세계로 가는 뱃길이 열려요.</p>`}
+ if(tab==='world'){$('p-title').textContent='팔도로';if(!palOpen()){$('p-sub').textContent='';h+=`<img class="bghead" src="a/bg2.webp" alt=""><p class="note" style="font-size:15px;text-align:center;margin-top:14px">무릉도원까지 모든 메뉴를 최고 레벨로 올리면 팔도로 나서요.</p><p class="note" style="text-align:center">개성의 송상, 강경 포구 객주, 전주 상단, 동래 왜관 상인과 겨루며<br>조선 팔도에 가맹점을 내요.</p><p class="note" style="text-align:center;opacity:.7">팔도를 모두 차지하면 세계로 가는 뱃길이 열려요.</p>`}
   else{$('p-sub').textContent=`차지한 도 ${palOwned()+1} / 8 · 모든 수입 ×${(+palMul().toFixed(2))}`;h+=`<p class="note">돈을 들여 점유율을 5%씩 올려요. 높아질수록 값이 비싸지고, 100%가 되어 그 도를 차지해야 그때부터 모든 수입이 1.5배가 돼요.</p>`;
    PAL.forEach((p,i)=>{const st=palStep(p[0]),pct=st*5;let btn;
     if(st>=20)btn='<button disabled>차지했어요</button>';else if(!palAvail(i))btn='<button disabled>앞 도를 먼저</button>';else{const c=palCost(p,st);btn=`<button type="button" data-a="pal" data-k="${p[0]}" data-c="${c}" ${S.money<c?'disabled':''}>${st?'투자 +5%':'가맹점 내기'}<small>${won(c)}</small></button>`}
@@ -698,7 +699,7 @@ async function admUsers(){const e=$('adm-us');e.textContent='불러오는 중이
  e.innerHTML=`<p style="margin:4px 0">${L.length}명 · 오늘 들어온 사람 ${L.filter(u=>new Date(u.ts||0).toDateString()===today).length}명</p>`+L.map(u=>`<div><b>${esc(u.name||'이름 없음')}</b> · ${stName(u.stage||0)}<br>${esc(u.email||u.id.slice(0,8))}<br>번 돈 ${won(u.earned||0)} · ${u.ts?new Date(u.ts).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'}):'-'}</div>`).join('')}catch(err){e.textContent='불러오지 못했어요: '+(err.code||err.message)}}
 $('sv-test').onclick=e=>{const b=e.target.closest('button[data-t]');if(!b||!ADMIN)return;const t=b.dataset.t;if(t==='users'){admUsers();return}
  if(t==='it'||t==='itall'){(t==='it'?[b.dataset.k]:ITEMS.map(x=>x[0])).forEach(k=>{if(k==='orn')S.orn=Math.min(20,(S.orn||0)+(t==='it'?1:10));else giveItem(k,10)});if(tab==='market')drawPanel()}
- if(t==='pop')S.pop=(S.pop||0)+5000;if(t==='mem'){S.mem=(S.mem||0)+20;S.memHave=(S.memHave||0)+20;rebDraw()}if(t==='pal'){S.stage=2;S.relDone=1;S.prDone=1;MENU.filter(m=>m[7]===2).forEach(m=>{if(!L(S.menu,m[0]))S.menu[m[0]]=1});S.shop.floor2=1;S.shop.geum=1;setStage();floorsDraw()}if(t==='cr'){$('setwin').classList.remove('on');S.crisisT=0;const L2=crStage();crisisStart(L2[Math.floor(Math.random()*L2.length)]);return}if(t==='m3')S.money+=1e14;
+ if(t==='pop')S.pop=(S.pop||0)+5000;if(t==='mem'){S.mem=(S.mem||0)+20;S.memHave=(S.memHave||0)+20;rebDraw()}if(t==='pal'){S.stage=2;S.relDone=1;S.prDone=1;MENU.forEach(m=>{S.menu[m[0]]=MMAX});S.shop.floor2=1;S.shop.geum=1;setStage();floorsDraw()}if(t==='cr'){$('setwin').classList.remove('on');S.crisisT=0;const L2=crStage();crisisStart(L2[Math.floor(Math.random()*L2.length)]);return}if(t==='m3')S.money+=1e14;
  if(t==='m1')S.money+=8e10;if(t==='m2')S.money+=1e12;if(t==='bean')S.bean+=1000;if(t==='ice')S.ice=iceCap();if(t==='star')S.star=(S.star||0)+10;
  if(t==='day'){S.day++;rollBean();dailyIce()}if(t==='sum')S.day=SEASONDAY+1;if(t==='win')S.day=SEASONDAY*3+1;
  sfx('trade');toast(b.textContent+' 했어요');hud();save();checkStory()};
