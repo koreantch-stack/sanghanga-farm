@@ -192,7 +192,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div id="sv-reb"></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.3.6</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.3.7</p>
   <div id="sv-test" hidden><div class="sr"><span>운영자 모드<small>운영자 계정에만 보여요</small></span></div><b class="adh">엽전·재료·날짜</b>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
@@ -572,10 +572,10 @@ function drawPanel(){if(!tab)return;const P=$('plist');let h='';
    if(!lv){const q=menuReq(k),okq=!q||q.have>=q.need;h+=`<div class="row"><img src="${mic(m)}" alt=""><div><b>${m[1]}</b><span>열면 누를 때 ×${m[9]}${m[5]?' · 커피콩 1개':''}${m[10]?' · 별 조각 1개':''}${m[12]?' · 얼음 1덩이':''}${GSEASON[k]?' · '+GSEASON[k].map(i=>SEASON[i]).join('·')+'에만':''}<br>${q?`${q.pn} ${q.need}단계 필요 (지금 ${q.have}단계)`:''}</span></div><button type="button" data-a="mopen" data-k="${k}" data-c="${m[4]}" data-ok="${okq?1:0}" ${S.money<m[4]||!okq?'disabled':''}>열기<small>${won(m[4])}</small></button></div>`;return}
    const cost=mupCost(k);h+=`<div class="row"><img src="${mic(m)}" alt=""><div><b>${m[1]} <small>${lv}단계</small></b><span>${m[9]===Math.max(...MENU.filter(x=>L(S.menu,x[0])).map(x=>x[9]))?`대표 메뉴 · 누를 때 ×${m[9]} · `:''}단계마다 누를 때 +3% · 주문 ${won(priceOf(k))}${m[5]?' · 콩 1개':''}</span></div>${lv>=MMAX?'<button disabled>최고</button>':`<button type="button" data-a="mup" data-k="${k}" data-c="${cost}" ${S.money<cost?'disabled':''}>올리기<small>${won(cost)}</small></button>`}</div>`})}
  if(tab==='staff'){$('p-title').textContent='일손';$('p-sub').textContent='들이면 누르지 않아도 장사가 돌아가요';const LK={samwol:'이야기가 진행되면 만나요',servers:'무릉도원을 열면 들일 수 있어요',binggo:'무릉도원을 열면 들일 수 있어요'};
-  STAFF.forEach(s=>{const lv=L(S.staff,s[0]),cost=s[5](lv);if(!staffOpen(s[0])){h+=`<div class="row lock"><img class="por" src="a/${s[2]}.webp" alt=""><div><b>???</b><span>${LK[s[0]]||'다우가를 열면 들일 수 있어요'}</span></div></div>`;return}
+  if(!STAFF.some(x=>staffOpen(x[0])))h+='<p class="note" style="text-align:center;margin-top:20px">아직 함께할 사람이 없어요.<br>장사를 하다 보면 만나게 돼요.</p>';STAFF.forEach(s=>{const lv=L(S.staff,s[0]),cost=s[5](lv);if(!staffOpen(s[0]))return;
    h+=`<div class="row"><img class="por" src="a/${s[2]}.webp" alt=""><div><b>${s[1]}${lv?` <small>${lv}단계</small>`:''}</b><span>${s[3]}<br>${lv?'지금 '+s[4](lv)+' → ':''}${s[4](lv+1)}</span></div>${lv>=(s[7]||10)?'<button disabled>최고</button>':`<button type="button" data-a="staff" data-k="${s[0]}" data-c="${cost}" ${S.money<cost?'disabled':''}>${lv?'키우기':'들이기'}<small>${won(cost)}</small></button>`}</div>`})}
  if(tab==='shop'){$('p-title').textContent='가게';$('p-sub').textContent=cur().n;
-  SHOP.forEach(s=>{const lv=L(S.shop,s[0]);if(!shopVis(s)){if(s[6]===S.stage+1&&!(s[7]&&S.stage>=s[6]))h+=`<div class="row lock"><img src="a/${s[2]}.webp" alt=""><div><b>${s[1]}</b><span>${s[6]===1?'다우가를 열면 생겨요':'무릉도원을 열면 생겨요'}</span></div></div>`;return}
+  SHOP.forEach(s=>{const lv=L(S.shop,s[0]);if(!shopVis(s))return;
    const max=s[4](S.stage),cost=shopCost(s,lv),why=shopWhy(s);let btn;if(lv>=max)btn='<button disabled>다 했어요</button>';else if(why)btn=`<button disabled>${why}</button>`;else btn=`<button type="button" data-a="shop" data-k="${s[0]}" data-c="${cost}" ${S.money<cost?'disabled':''}>${max>1?'올리기':'하기'}<small>${won(cost)}</small></button>`;
    h+=`<div class="row"><img src="a/${s[2]}.webp" alt=""><div><b>${s[1]}${max>1?` <small>${lv} / ${max}</small>`:''}</b><span>${s[3]}</span></div>${btn}</div>`})}
  if(tab==='binggo'){$('p-title').textContent='지하 빙고';$('p-sub').textContent=`얼음 ${S.ice||0}/${iceCap()} · 별 조각 ${ready()}/${S.star||0}`;const ip=icePrice();
