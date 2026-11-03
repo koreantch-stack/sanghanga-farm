@@ -123,6 +123,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
 .sw button.danger{background:var(--red)}.sw button.close{display:block;margin:12px auto 0;background:#8a6a45;padding:9px 30px}
 #sv-test .adh{display:block;font:400 14px 'Do Hyeon';color:#7b6247;margin:12px 0 0}#adm-it button{display:flex;align-items:center;gap:6px;justify-content:center}#adm-it img{width:24px;height:24px}#adm-us{font:400 12px 'Gowun Dodum';color:#4a3826;margin-top:8px;max-height:260px;overflow:auto}#adm-us div{padding:6px 2px;border-bottom:1px solid #eadbbd}#adm-us b{font:400 14px 'Do Hyeon'}
 #crisis{margin:0 auto 8px;width:86%;background:rgba(60,20,10,.88);border:2px solid #e0603f;border-radius:14px;padding:8px 10px;color:#fff;text-align:center;animation:crs .5s ease-in-out infinite alternate}#crisis b{display:block;font:400 17px 'Do Hyeon'}#crisis i{display:block;height:14px;background:#3a2016;border-radius:7px;overflow:hidden;margin:6px 0 4px}#crisis u{display:block;height:100%;width:0;background:linear-gradient(90deg,#f0b040,#f06a3a);transition:width .08s}#crisis small{font:400 12px 'Gowun Dodum';color:#f5d9b8}@keyframes crs{from{box-shadow:0 0 0 rgba(224,96,63,0)}to{box-shadow:0 0 16px rgba(224,96,63,.8)}}#brew.cr{background:linear-gradient(#f08a5a,#c0452f);color:#fff}
+#sv-reb{background:linear-gradient(#f3ecff,#fff);border:1px solid #b9a6e0;border-radius:12px;padding:10px;margin:8px 0}#sv-reb .rh{display:flex;align-items:center;gap:8px}#sv-reb .rh img{width:46px}#sv-reb b{font:400 17px 'Do Hyeon'}#sv-reb small{display:block;font-size:12px;color:#6a5a86;line-height:1.4}#sv-reb .rg{display:flex;align-items:center;gap:6px;margin:8px 0}#sv-reb .rg img{width:22px}#sv-reb .rb{width:100%;margin-top:4px;background:#6a4fa8;color:#fff}#sv-reb .mu{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px dashed #d6c8ef}#sv-reb .mu div{flex:1;font-size:13px}#sv-reb .mu div b{font-size:14px}#sv-reb .mu button{font-size:13px;white-space:nowrap}#sv-reb .mu button img{width:16px;vertical-align:-3px}
 #sv-acc{background:#fff;border:1px solid #e3cfa6;border-radius:12px;padding:10px;margin-bottom:6px}#sv-acc .ab{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}#sv-acc small{display:block;font-size:12px;color:#7b6247;line-height:1.4}#sv-acc b{font:400 16px 'Do Hyeon'}
 #confirm p{white-space:pre-line;font-size:15px;line-height:1.5;text-align:center;margin:0 0 14px}.cfb{display:flex;gap:10px;justify-content:center}#cf-no{background:#b9a888}
 #toast{position:absolute;left:50%;bottom:150px;transform:translateX(-50%);background:rgba(30,20,10,.88);color:#fff6e0;padding:8px 14px;border-radius:14px;font-size:14px;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none;max-width:86%;text-align:center}
@@ -188,14 +189,15 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <label class="sr"><span>숫자 띄우기<small>누를 때 "+1"이 튀어 올라요</small></span><input type="checkbox" id="sv-pop"></label>
   <div class="sr"><span>새 이야기<small>열리면 바로 볼지, 이야기 탭에 쌓아 둘지</small></span><select id="sv-story"><option value="now">바로 보기</option><option value="later">나중에 보기</option></select></div>
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
+  <div id="sv-reb"></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.2.1</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.3.0</p>
   <div id="sv-test" hidden><div class="sr"><span>운영자 모드<small>운영자 계정에만 보여요</small></span></div><b class="adh">엽전·재료·날짜</b>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
     <button type="button" data-t="bean">콩 +1000</button><button type="button" data-t="ice">얼음 가득</button>
     <button type="button" data-t="star">별 조각 +10</button><button type="button" data-t="day">하루 넘기기</button>
-    <button type="button" data-t="sum">여름으로</button><button type="button" data-t="win">겨울로</button><button type="button" data-t="pop">인기 +5000</button><button type="button" data-t="cr">위기 일으키기</button><button type="button" data-t="pal">팔도로 열기</button><button type="button" data-t="m3">엽전 +100조</button>
+    <button type="button" data-t="sum">여름으로</button><button type="button" data-t="win">겨울로</button><button type="button" data-t="pop">인기 +5000</button><button type="button" data-t="cr">위기 일으키기</button><button type="button" data-t="pal">팔도로 열기</button><button type="button" data-t="mem">기억 조각 +20</button><button type="button" data-t="m3">엽전 +100조</button>
    </div><b class="adh">특별 아이템</b><div id="adm-it" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px"></div>
    <b class="adh">손님 목록</b><button type="button" data-t="users" style="width:100%;margin-top:6px">카페 이용자 불러오기</button><div id="adm-us"></div></div></div></div>
  <div id="confirm"><div class="sw"><h3 id="cf-t"></h3><p id="cf-m"></p><div class="cfb"><button type="button" id="cf-no">그만두기</button><button type="button" id="cf-ok" class="danger">확인</button></div></div></div>
@@ -381,6 +383,12 @@ const ST={
   {p:'maehwa',w:'매화',s:'…제가 틀렸습니다. 용서를 빌 낯이 없습니다.'},
   {p:'gayoung',w:'{name}',s:'당신이 도진을 위해서 한 행동이라는 거 알아요. 그리고 당신이 틀렸다는 것도 이제 알잖아요.'},
   {n:'무릉도원이 다시 문을 열었다.\n\n(인기가 500 올랐어요.)'}]},
+ reborn:{t:'다시 눈을 뜨다',c:[
+  {n:'눈을 뜨자 형광등 불빛이 보였다.\n익숙한 카페, 식어 버린 커피 한 잔.'},
+  {p:'gayoung',w:'{name}',s:'…꿈이었나? 다우가도, 무릉도원도, 다들 얼굴도…'},
+  {n:'다시 눈을 감았다 떴을 때,\n그녀는 또 그 골목에 서 있었다.\n처음 조선에 떨어졌던 바로 그 자리.'},
+  {p:'gayoung',w:'{name}',s:'이번엔 다 기억하고 있어. 어디서 콩을 사고, 누구를 믿어야 하는지까지.'},
+  {n:'(기억 조각 하나마다 모든 수입이 5%씩 늘어요.\n설정의 "다시 눈을 뜨다"에서 조각으로 능력을 배울 수 있어요.)'}]},
  palstart:{t:'팔도로',c:[
   {n:'무릉도원이 다시 문을 연 지 석 달.\n한양 사람들 입에 오르내리는 이름은 여전히 송상의 다방이었다.'},
   {p:'dojin',w:'임도진',s:'의주 본점에서 서신이 왔소. 무릉도원이 소문만 요란하지, 한양 손님은 송상 다방의 절반도 안 된다고.'},
@@ -408,7 +416,7 @@ const ST={
 const ITEMS=[['coffee','각성 가배','x0','30분 동안 저절로 초당 5번 연타, 콤보 ×3'],['tal','합격 부적','x1','10분 동안 모든 수입 2배'],['orn','유기 별 조각 장식','x2','영원히 초당 1번 대신 누르기 (최대 20개)'],['l2','대리 장부 · 소','x3','2시간 동안 꺼 두어도 장사가 돌아가요 (번 돈 절반은 세금)'],['l6','대리 장부 · 중','x4','6시간 동안 꺼 두어도 장사가 돌아가요 (번 돈 절반은 세금)'],['l12','대리 장부 · 대','x5','12시간 동안 꺼 두어도 장사가 돌아가요 (번 돈 절반은 세금)']];
 const LEDH={l2:2,l6:6,l12:12};
 const itemCost=k=>k==='coffee'?100:k==='tal'?150:k==='l2'?800:k==='l6'?2000:k==='l12'?4000:Math.round(300*Math.pow(1.35,S.orn||0));
-const STORDER=['start','first','samwol','pot','dawooga','seyun','gwageo','tired','seonwoo','cheap','hajun','murung','murungopen','geumnam','prison','release','palstart','pal_cc','pal_jl','pal_gs','pal_half'];
+const STORDER=['start','first','samwol','pot','dawooga','seyun','gwageo','tired','seonwoo','cheap','hajun','murung','murungopen','geumnam','prison','release','palstart','pal_cc','pal_jl','pal_gs','pal_half','reborn'];
 // ---------- 상태 ----------
 const SAVE='cih-save-1',SETK='cih-set-1';let RESET=false;
 let SET={vol:55,mvol:40,bgm:1,vib:1,pop:1,story:'now'};try{Object.assign(SET,JSON.parse(localStorage.getItem(SETK)||'{}'))}catch(_){}
@@ -461,6 +469,11 @@ const palStep=k=>(S.pal&&S.pal[k]!=null)?S.pal[k]:(k==='gy'?3:0),palCost=(p,st)=
 const palOwned=()=>PAL.filter(p=>palStep(p[0])>=20).length,palMul=()=>Math.pow(1.5,palOwned());
 const palOpen=()=>S.stage===2&&!!S.relDone&&MENU.filter(m=>m[7]===2).every(m=>L(S.menu,m[0])>0);
 const palAvail=i=>i===0||palStep(PAL[i-1][0])>=20;
+const MEMUP=[['hand','손에 익은 솜씨','두드리는 돈 ×2',[3,6,12,24,48]],['samwol','낯익은 얼굴들','삼월이를 데리고 시작',[5]],['cust','단골의 기억','손님이 더 자주 와요',[5]],['bean','먼저 아는 시세','커피콩 값 절반',[8]],['start','빠른 출발','조각 수만큼 시작 자금',[10]],['fast','빠른 소문','다우가·무릉도원 여는 값 절반',[15]],['led','미리 쓴 장부','대리 장부 시간 1.5배',[20]]];
+const mu=k=>(S.memUp&&S.memUp[k])||0,memMul=()=>1+0.05*(S.mem||0);
+const memGain=()=>Math.floor(Math.cbrt((S.earned||0)/1e9))+5*(typeof palOwned==='function'?palOwned():0);
+const rebOpen=()=>!!S.relDone;
+const FASTK=['dawooga','murung','floor2','geum'];const shopCost=(s,lv)=>s[5](lv)*(mu('fast')&&FASTK.includes(s[0])?.5:1);
 function baseMul(){return (1+L(S.shop,'hand'))*(L(S.shop,'pot')?1.5:1)*(1+0.1*L(S.staff,'maehwa'))*[1,1.3,1.8][S.stage]}
 function mupCost(k){const m=MENU[MI[k]],lv=L(S.menu,k);return Math.round(Math.max(15,m[4]*0.06)*Math.pow(1.15,lv-1))}
 function menuReq(k){const i=MI[k];let j=i-1;while(j>=0&&grp(MENU[j])!==grp(MENU[i]))j--;if(j<0)return null;const pm=MENU[j];return {pk:pm[0],pn:pm[1],need:MENU[i][8],have:L(S.menu,pm[0])}}
@@ -495,11 +508,11 @@ const icePrice=()=>Math.max(500,Math.round(tapVal()*30*(season()===1?2:season()=
 function dailyIce(){if(S.stage<2)return;let g=10*L(S.shop,'chosuk');if(season()===3)g+=20*(1+L(S.shop,'binggo'));S.ice=Math.min(iceCap(),(S.ice||0)+g)}
 function coolStars(){if(!(S.ice>0)||!(S.warm>0))return false;S.ice--;S.warm=Math.max(0,S.warm-10);return true}
 const nOpen=()=>MENU.filter(m=>L(S.menu,m[0])>0).length;
-function tapVal(){return baseMul()*bestMul()*palMul()*(prisonOn()?.5:1)*(buffOn('tal')?2:1)*(beanOn()?1.5:1)}
+function tapVal(){return baseMul()*bestMul()*palMul()*memMul()*(prisonOn()?.5:1)*(buffOn('tal')?2:1)*(beanOn()?1.5:1)}
 function priceOf(k){let p=baseMul()*mulOf(k)*30*(S.stage===2?cur().mul:1);if(MENU[MI[k]][10]){if(season()===1)p*=1.5;if(season()===3)p*=.8}if(MENU[MI[k]][5]&&L(S.shop,'pot'))p*=1.3;if(gwageo()&&(k==='black'||k==='honey'))p*=1.5;return Math.round(p)}
 let combo=0,lastTapT=0;const comboMul=()=>1+Math.min(2,Math.floor(combo/15)*.5);
-function spawnGap(){if(crisisOn())return 9999;let g=(S.stage===2?cur().gap:1)*4.2/(1+0.18*L(S.shop,'lamp'))/(1+Math.min(S.pop,3000)/600);if(market())g/=1.5;if(S.ev==='seonwoo'&&Date.now()<S.evUntil)g*=1.6;return Math.max(.9,g)}
-function beanPrice(){const p=S.beanP.at(-1)||12;return Math.max(3,Math.round(p*(1-0.06*L(S.staff,'dojin'))*[1,40,2000][S.stage]))}
+function spawnGap(){if(crisisOn())return 9999;let g=(mu('cust')?.75:1)*(S.stage===2?cur().gap:1)*4.2/(1+0.18*L(S.shop,'lamp'))/(1+Math.min(S.pop,3000)/600);if(market())g/=1.5;if(S.ev==='seonwoo'&&Date.now()<S.evUntil)g*=1.6;return Math.max(.9,g)}
+function beanPrice(){const p=S.beanP.at(-1)||12;return Math.max(3,Math.round((mu('bean')?.5:1)*p*(1-0.06*L(S.staff,'dojin'))*[1,40,2000][S.stage]))}
 function rollBean(){const prev=S.beanP.at(-1)||12;let p=prev*Math.exp((Math.random()-.5)*.35+(12-prev)*.02);if(S.ev==='seonwoo'&&Date.now()<S.evUntil)p*=1.15;S.beanP.push(Math.max(5,Math.min(30,+p.toFixed(1))));if(S.beanP.length>20)S.beanP.shift()}
 // ---------- 무대 ----------
 const scene=$('scene'),CU=[];let brewProg=0,spawnT=.6,cuN=0;
@@ -521,7 +534,7 @@ function workOf(k){return MENU[MI[k]][6]}
 function brewTap(amt,auto){if(S.crisis){if(!auto)crisisTap();return}
  // 누를 때마다 바로 엽전
  const now=performance.now();if(!auto){combo=now-lastTapT<800?combo+1:1;lastTapT=now}
- const v=tapVal()*(auto?1:comboMul());S.money+=v;S.earned+=v;S.taps=(S.taps||0)+1;
+ const v=tapVal()*(auto?1:comboMul()*Math.pow(2,mu('hand')));S.money+=v;S.earned+=v;S.taps=(S.taps||0)+1;
  if(!auto){const h=$('heroimg');h.classList.add('brew');setTimeout(()=>h.classList.remove('brew'),110);sfx('act');if(SET.vib&&navigator.vibrate)try{navigator.vibrate(8)}catch(_){}
   const br=$('brew').getBoundingClientRect(),ar=$('app').getBoundingClientRect();if(SET.pop)pop('+'+fmtv(v),br.left-ar.left+br.width*(.25+Math.random()*.5),br.top-ar.top-6)}
  const c=nextOrder();if(c){brewProg+=amt||tapPow();if(brewProg>=workOf(c.k)){brewProg=0;serve(c)}}
@@ -538,7 +551,7 @@ function afford(){if(!tab)return;document.querySelectorAll('#plist button[data-c
 function hud(){if(tab==='world'&&$('palwin').classList.contains('on')){$('phm').textContent=`엽전 ${won(S.money)}`;const g=document.getElementById('pp-go');if(g)g.disabled=S.money<+g.dataset.c}$('r-money').textContent=fmtH(S.money);$('r-bean').textContent=fmtH(S.bean);$('r-pop').textContent=fmtH(S.pop);{const m2=S.stage===2;if(m2){$('fb-ice').textContent=S.ice||0;$('fb-star').textContent=`${ready()}/${S.star||0}`}$('app').classList.toggle('st2',m2)}
  $('day').innerHTML=`${SEASON[season()]} ${dayIn()}일<small>${cur().n}</small>`;
  const ev=$('event');let t='';if(prisonOn())t='무릉도원 폐쇄 · 수입이 멈췄어요';else if(S.crisis)t='위기 · 수입이 멈췄어요';else if(S.ev==='seonwoo'&&Date.now()<S.evUntil)t='송상 다방 개업 · 손님이 줄었어요';else if(gwageo())t='과거 시험 철 · 선비 손님이 몰려요';else if(market())t='장날 · 손님이 많아요';ev.hidden=!t;ev.textContent=t;
- const any=k=>{if(k==='menu')return MENU.some(m=>{const q=menuReq(m[0]);return!L(S.menu,m[0])&&m[7]<=S.stage&&floorOk(m)&&m[4]&&S.money>=m[4]&&(!q||q.have>=q.need)});if(k==='staff')return STAFF.some(s=>staffOpen(s[0])&&S.money>=s[5](L(S.staff,s[0])));if(k==='shop')return SHOP.some(s=>shopOk(s)&&S.money>=s[5](L(S.shop,s[0])));if(k==='story')return STORDER.some(k=>S.seen[k]==='new');if(k==='world')return palOpen()&&PAL.some((p,i)=>palAvail(i)&&palStep(p[0])<20&&S.money>=palCost(p,palStep(p[0])));return false};
+ const any=k=>{if(k==='menu')return MENU.some(m=>{const q=menuReq(m[0]);return!L(S.menu,m[0])&&m[7]<=S.stage&&floorOk(m)&&m[4]&&S.money>=m[4]&&(!q||q.have>=q.need)});if(k==='staff')return STAFF.some(s=>staffOpen(s[0])&&S.money>=s[5](L(S.staff,s[0])));if(k==='shop')return SHOP.some(s=>shopOk(s)&&S.money>=shopCost(s,L(S.shop,s[0])));if(k==='story')return STORDER.some(k=>S.seen[k]==='new');if(k==='world')return palOpen()&&PAL.some((p,i)=>palAvail(i)&&palStep(p[0])<20&&S.money>=palCost(p,palStep(p[0])));return false};
  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',any(b.dataset.t)))}
 // ---------- 창 ----------
 let mTab='',tab=null,lastPanelDown=0;
@@ -561,7 +574,7 @@ function drawPanel(){if(!tab)return;const P=$('plist');let h='';
    h+=`<div class="row"><img class="por" src="a/${s[2]}.webp" alt=""><div><b>${s[1]}${lv?` <small>${lv}단계</small>`:''}</b><span>${s[3]}<br>${lv?'지금 '+s[4](lv)+' → ':''}${s[4](lv+1)}</span></div>${lv>=(s[7]||10)?'<button disabled>최고</button>':`<button type="button" data-a="staff" data-k="${s[0]}" data-c="${cost}" ${S.money<cost?'disabled':''}>${lv?'키우기':'들이기'}<small>${won(cost)}</small></button>`}</div>`})}
  if(tab==='shop'){$('p-title').textContent='가게';$('p-sub').textContent=cur().n;
   SHOP.forEach(s=>{const lv=L(S.shop,s[0]);if(!shopVis(s)){if(s[6]===S.stage+1&&!(s[7]&&S.stage>=s[6]))h+=`<div class="row lock"><img src="a/${s[2]}.webp" alt=""><div><b>${s[1]}</b><span>${s[6]===1?'다우가를 열면 생겨요':'무릉도원을 열면 생겨요'}</span></div></div>`;return}
-   const max=s[4](S.stage),cost=s[5](lv),why=shopWhy(s);let btn;if(lv>=max)btn='<button disabled>다 했어요</button>';else if(why)btn=`<button disabled>${why}</button>`;else btn=`<button type="button" data-a="shop" data-k="${s[0]}" data-c="${cost}" ${S.money<cost?'disabled':''}>${max>1?'올리기':'하기'}<small>${won(cost)}</small></button>`;
+   const max=s[4](S.stage),cost=shopCost(s,lv),why=shopWhy(s);let btn;if(lv>=max)btn='<button disabled>다 했어요</button>';else if(why)btn=`<button disabled>${why}</button>`;else btn=`<button type="button" data-a="shop" data-k="${s[0]}" data-c="${cost}" ${S.money<cost?'disabled':''}>${max>1?'올리기':'하기'}<small>${won(cost)}</small></button>`;
    h+=`<div class="row"><img src="a/${s[2]}.webp" alt=""><div><b>${s[1]}${max>1?` <small>${lv} / ${max}</small>`:''}</b><span>${s[3]}</span></div>${btn}</div>`})}
  if(tab==='binggo'){$('p-title').textContent='지하 빙고';$('p-sub').textContent=`얼음 ${S.ice||0}/${iceCap()} · 별 조각 ${ready()}/${S.star||0}`;const ip=icePrice();
   h+=`<img class="bghead" src="a/bg5.webp" alt=""><p class="note">차가운 별 조각이 남아 있으면 일손 수입 +30%, 빙고 얼음이 남아 있으면 또 +30%예요. 별 조각은 10초마다 하나씩 데워지고, 얼음은 30초마다 한 덩이씩 녹아요. 아이스 메뉴 한 잔에 차가운 별 조각 하나를 써요. 쓴 별 조각은 얼음 한 덩이로 열 개씩 다시 식혀요. 겨울엔 날마다 채빙해서 얼음이 들어와요.${season()===1?' 여름이라 얼음이 비싸고 아이스 메뉴가 잘 팔려요.':''}</p>`;
@@ -586,7 +599,7 @@ $('plist').onclick=e=>{{const bb=e.target.closest('button[data-a=bakgo]');if(bb)
  if(a==='mopen'){const m=MENU[MI[k]],q=menuReq(k);if(S.money<m[4]||(q&&q.have<q.need)||!floorOk(m))return;S.money-=m[4];S.menu[k]=1;sfx('trade');toast(`${m[1]}${josa(m[1])} 메뉴에 올렸어요`)}
  if(a==='mup'){const lv=L(S.menu,k),cost=mupCost(k);if(lv>=MMAX)return;if(S.money<cost)return;S.money-=cost;S.menu[k]=lv+1;sfx('trade')}
  if(a==='staff'){const s=STAFF.find(x=>x[0]===k),lv=L(S.staff,k),cost=s[5](lv);if(S.money<cost||lv>=(s[7]||10))return;S.money-=cost;S.staff[k]=lv+1;sfx('trade');helpers();if(!lv)toast(`${s[1]}${josa2(s[1])} 일손이 됐어요`)}
- if(a==='shop'){const s=SHOP.find(x=>x[0]===k),lv=L(S.shop,k),cost=s[5](lv);if(S.money<cost)return;S.money-=cost;S.shop[k]=lv+1;sfx('trade');
+ if(a==='shop'){const s=SHOP.find(x=>x[0]===k),lv=L(S.shop,k),cost=shopCost(s,lv);if(S.money<cost)return;S.money-=cost;S.shop[k]=lv+1;sfx('trade');
   if(k==='pot')playStory('pot');if(k==='dawooga'){S.stage=1;S.shop.seat=0;setStage();closePanel();playStory('dawooga')}
   if(k==='murung'){S.stage=2;S.floor=0;S.shop.seat=0;S.ice=10;S.star=10;S.warm=0;setStage();closePanel();playStory('murungopen')}
   if(k==='stars'){S.star=(S.star||0)+10;toast('유기 별 조각 10개가 들어왔어요')}
@@ -614,7 +627,7 @@ $('p-x').onclick=closePanel;
 let SQ=null;
 function giveItem(k,n,why){S.items=S.items||{};S.items[k]=(S.items[k]||0)+n;if(why)setTimeout(()=>toast(why),900)}
 function storyFx(k){if(k!=='start')giveItem('coffee',1,'이야기 보상으로 각성 가배를 받았어요');if(k==='cheap'&&!S.gotCheap){S.gotCheap=1;S.bean+=200;toast('커피콩 200개를 얻었어요')}if(k==='hajun'&&!S.gotHajun){S.gotHajun=1;S.pop+=50}if(k==='seonwoo'&&!S.evDone){S.ev='seonwoo';S.evUntil=Date.now()+DAYSEC*1000*4;S.evDone=1}if(k==='prison'&&!S.prDone){S.ev='prison';S.evUntil=Date.now()+864e9;S.prDone=1;S.crisis=null;crisisStart('prison')}if(k==='release'&&!S.relDone){S.relDone=1;S.ev=null;S.pop+=500;helpers()}}
-function playStory(k,replay){const s=ST[k];if(!s)return;setTimeout(bgmSync,0);if(!replay&&SET.story==='later'&&k!=='start'){S.seen[k]='new';storyFx(k);toast(`새 이야기 「${s.t}」 열렸어요`);hud();save();return}if(!replay){S.seen[k]='new'}SQ={k,i:0,replay};$('story').classList.add('on');showCut();sfx('open')}
+function playStory(k,replay){const s=ST[k];if(!s)return;if(!replay&&S.seen[k]&&S.seen[k]!=='new')return;setTimeout(bgmSync,0);if(!replay&&SET.story==='later'&&k!=='start'){S.seen[k]='new';storyFx(k);toast(`새 이야기 「${s.t}」 열렸어요`);hud();save();return}if(!replay){S.seen[k]='new'}SQ={k,i:0,replay};$('story').classList.add('on');showCut();sfx('open')}
 function nm(t){return t.replace(/\{name\}/g,S.name)}
 function showCut(){const c=ST[SQ.k].c[SQ.i];const cut=$('cut');if(!c){endStory();return}
  if(c.ask==='name'){if(SQ.replay){SQ.i++;showCut();return}$('namebox').classList.add('on');$('nm').value=S.name;return}
@@ -630,12 +643,12 @@ $('st-skip').onclick=e=>{e.stopPropagation();if(!SQ)return;if(!SQ.replay&&ST[SQ.
 $('nm-ok').onclick=()=>{const v=$('nm').value.replace(/[<>&]/g,'').trim();if(v.length<2){$('nm-err').textContent='두 글자 이상으로 지어 주세요';return}if(/[ㄱ-ㅎㅏ-ㅣ]/.test(v)){$('nm-err').textContent='자음이나 모음만 쓴 글자는 쓸 수 없어요';return}S.name=v;$('namebox').classList.remove('on');$('nm-err').textContent='';if(SQ){SQ.i++;showCut()}else{toast(`이름을 ${v}(으)로 바꿨어요`);setDraw()}save()};
 function checkStory(){if(SQ)return;const T=[
  ['first',()=>S.served>=1],['samwol',()=>S.served>=12],['seyun',()=>S.stage>=1&&S.served>=90],['gwageo',()=>gwageo()&&S.served>=20],['tired',()=>S.stage>=1&&S.served>=160],
- ['seonwoo',()=>S.stage>=1&&S.earned>=5e6],['cheap',()=>S.evDone&&Date.now()>S.evUntil],['hajun',()=>S.stage>=1&&S.served>=260],['murung',()=>S.stage>=1&&S.earned>=3e8],['prison',()=>S.stage===2&&L(S.menu,'icesujeong')>0],['release',()=>S.prDone&&!S.crisis],['palstart',()=>palOpen()],['pal_cc',()=>palStep('gy')>=20],['pal_jl',()=>palStep('cc')>=20],['pal_gs',()=>palStep('jl')>=20],['pal_half',()=>palStep('gs')>=20]];
+ ['seonwoo',()=>S.stage>=1&&S.earned>=5e6],['cheap',()=>S.evDone&&Date.now()>S.evUntil],['hajun',()=>S.stage>=1&&S.served>=260],['murung',()=>S.stage>=1&&S.earned>=3e8],['prison',()=>S.stage===2&&L(S.menu,'icesujeong')>0],['release',()=>S.prDone&&!S.crisis],['reborn',()=>(S.reb||0)>=1],['palstart',()=>palOpen()],['pal_cc',()=>palStep('gy')>=20],['pal_jl',()=>palStep('cc')>=20],['pal_gs',()=>palStep('jl')>=20],['pal_half',()=>palStep('gs')>=20]];
  for(const [k,f] of T)if(!S.seen[k]&&f()){setTimeout(()=>{if(!SQ&&!S.seen[k])playStory(k)},500);return}}
 // ---------- 특별 아이템 ----------
 function itemAct(a,k){S.items=S.items||{};S.buff=S.buff||{};
  if(a==='ibuy'){const c=itemCost(k);if(S.pop<c)return;if(k==='orn'&&(S.orn||0)>=20)return;S.pop-=c;if(k==='orn'){S.orn=(S.orn||0)+1;toast('유기 별 조각 장식을 걸었어요')}else{S.items[k]=(S.items[k]||0)+1;toast('장터에서 샀어요')}sfx('trade')}
- if(a==='iuse'){if(!(S.items[k]>0))return;S.items[k]--;if(LEDH[k]){S.buff.led=Math.max(Date.now(),S.buff.led||0)+LEDH[k]*3600e3;sfx('trade');toast(`대리 장부를 맡겼어요. ${LEDH[k]}시간 동안은 꺼 두어도 장사가 돌아가요. 번 돈의 절반은 조정에 세금으로 내요`)}else{const dur=k==='coffee'?1800e3:600e3;S.buff[k]=Math.max(Date.now(),S.buff[k]||0)+dur;sfx('trade');toast(k==='coffee'?'각성 가배를 마셨어요. 30분 동안 저절로 연타해요':'합격 부적을 붙였어요. 10분 동안 수입이 두 배예요')}}
+ if(a==='iuse'){if(!(S.items[k]>0))return;S.items[k]--;if(LEDH[k]){S.buff.led=Math.max(Date.now(),S.buff.led||0)+LEDH[k]*3600e3*(mu('led')?1.5:1);sfx('trade');toast(`대리 장부를 맡겼어요. ${LEDH[k]}시간 동안은 꺼 두어도 장사가 돌아가요. 번 돈의 절반은 조정에 세금으로 내요`)}else{const dur=k==='coffee'?1800e3:600e3;S.buff[k]=Math.max(Date.now(),S.buff[k]||0)+dur;sfx('trade');toast(k==='coffee'?'각성 가배를 마셨어요. 30분 동안 저절로 연타해요':'합격 부적을 붙였어요. 10분 동안 수입이 두 배예요')}}
  hud();drawPanel();save()}
 const bufLeft=k=>{const r=(S.buff&&S.buff[k]||0)-Date.now();if(r<=0)return'';const h=Math.floor(r/3600000),m=Math.floor(r/60000)%60,s2=Math.floor(r/1000)%60;return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(s2).padStart(2,'0')};
 let buffT=0;function buffDraw(){const n=performance.now();if(n-buffT<500)return;buffT=n;document.querySelectorAll('.itime').forEach(x=>{const t=bufLeft(x.dataset.k);x.textContent=t?'쓰는 중 '+t:''});$('app').classList.toggle('on-coffee',buffOn('coffee')&&!S.crisis);const e=$('buffs');if(S.crisis){e.hidden=true;return}const L3=[];[['coffee','각성 가배'],['tal','합격 부적'],['led','대리 장부']].forEach(([k,nm])=>{const r=(S.buff&&S.buff[k]||0)-Date.now();if(r>0){const h=Math.floor(r/3600000),m=Math.floor(r/60000)%60,s2=Math.floor(r/1000)%60;L3.push(`${nm} ${h?h+':'+String(m).padStart(2,'0'):m}:${String(s2).padStart(2,'0')}`)}});if(beanOn())L3.push('커피콩 ×1.5');if(S.stage===2){if(ready()>0)L3.push('별 조각 +30%');if(S.ice>0)L3.push('얼음 +30%')}e.hidden=!L3.length;e.textContent=L3.join(' · ')}
@@ -645,7 +658,7 @@ function floorsDraw(){const fb=$('floors');fb.hidden=S.stage!==2;if(fb.hidden)re
 $('floors').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const f=b.dataset.f;sfx('menu');if(f==='b'){tab==='binggo'?closePanel():openPanel('binggo');floorsDraw();return}if(+f===(S.floor||0)){floorsDraw();return}S.floor=+f;setStage();hud();save()};
 // ---------- 설정 ----------
 function setDraw(){accDraw();$('sv-vol').value=SET.vol;$('sv-mvol').value=SET.mvol;$('sv-bgm').checked=!!SET.bgm;$('sv-vib').checked=!!SET.vib;$('sv-pop').checked=!!SET.pop;$('sv-story').value=SET.story;$('sv-name').textContent=S.name}
-$('set-btn').onclick=()=>{setDraw();$('setwin').classList.add('on');sfx('open')};
+$('set-btn').onclick=()=>{setDraw();rebDraw();$('setwin').classList.add('on');sfx('open')};
 $('sv-x').onclick=()=>$('setwin').classList.remove('on');
 $('setwin').onclick=e=>{if(e.target.id==='setwin')$('setwin').classList.remove('on')};
 $('sv-vol').oninput=e=>{SET.vol=+e.target.value;saveSet()};$('sv-vol').onchange=()=>sfx('act');
@@ -659,12 +672,24 @@ let cfOk=null,cfNo=null;function confirmBox(t,m,f,ok,no,fno){$('cf-t').textConte
 $('cf-no').onclick=()=>{$('confirm').classList.remove('on');cfOk=null;const f=cfNo;cfNo=null;if(f)f()};$('cf-ok').onclick=()=>{$('confirm').classList.remove('on');const f=cfOk;cfOk=null;if(f)f()};
 // 비밀 버튼: 판 표시를 빠르게 일곱 번 누르면 시험용 단추가 열려요
 const ADMIN_EMAIL='koreantch@gmail.com';let ADMIN=false;
+function rebDraw(){const e=$('sv-reb');if(!e)return;const g=memGain(),have=S.memHave||0;
+ let h=`<div class="rh"><img src="a/mem.webp" alt=""><div><b>다시 눈을 뜨다</b><small>${rebOpen()?'처음부터 다시 시작하는 대신 기억 조각을 받아요. 조각 하나마다 모든 수입이 영원히 5%씩 늘어요.':'석방 이야기를 본 뒤에 열려요.'}</small></div></div>`;
+ h+=`<div class="rg"><img src="a/mem_s.webp" alt=""><span>모은 조각 ${S.mem||0}개 (수입 ×${(+memMul().toFixed(2))}) · 쓸 수 있는 조각 ${have}개</span></div>`;
+ if(rebOpen())h+=`<button type="button" class="rb" id="reb-go" ${g<1?'disabled':''}>지금 환생하면 기억 조각 ${g}개</button>`;
+ h+=MEMUP.map(([k,n,d,c])=>{const lv=mu(k),mx=c.length,cost=c[lv];return`<div class="mu"><div><b>${n}${mx>1?` ${lv}/${mx}`:''}</b><br>${d}</div>${lv>=mx?'<button disabled>배웠어요</button>':`<button type="button" data-mu="${k}" ${have<cost?'disabled':''}><img src="a/mem_s.webp" alt=""> ${cost}</button>`}</div>`}).join('');
+ e.innerHTML=h}
+function rebGo(){const g=memGain();if(!rebOpen()||g<1)return;
+ confirmBox('다시 눈을 뜰까요?',`기억 조각 ${g}개를 받고 처음 가게부터 다시 시작해요.\n\n사라지는 것: 엽전, 메뉴, 일손, 가게, 커피콩·얼음·별 조각, 팔도 점유율\n남는 것: 기억 조각과 배운 능력, 특별 아이템, 인기, 본 이야기`,()=>{
+  S.mem=(S.mem||0)+g;S.memHave=(S.memHave||0)+g;S.reb=(S.reb||0)+1;
+  Object.assign(S,{money:mu('start')?1000*Math.pow(S.mem,3):0,earned:0,bean:60,stage:0,floor:0,menu:{sikhye:1},staff:mu('samwol')?{samwol:1}:{},shop:{},pal:{},ice:0,star:0,warm:0,crisis:null,ev:null,evUntil:0,beanP:[]});
+  for(let i=0;i<10;i++)rollBean();RESET=true;S.lastTs=Date.now();try{localStorage.setItem(SAVE,JSON.stringify(S))}catch(_){}lsS('cih-msg',`기억 조각 ${g}개를 안고 다시 눈을 떴어요`);location.reload()},'다시 눈뜨기')}
+$('sv-reb').onclick=e=>{if(e.target.closest('#reb-go')){rebGo();return}const b=e.target.closest('button[data-mu]');if(!b||b.disabled)return;const k=b.dataset.mu,m=MEMUP.find(x=>x[0]===k),lv=mu(k),c=m[3][lv];if(c==null||(S.memHave||0)<c)return;S.memHave-=c;S.memUp=S.memUp||{};S.memUp[k]=lv+1;sfx('trade');toast(`${m[1]}${josa2b(m[1])} 익혔어요`);if(k==='samwol'&&!L(S.staff,'samwol')){S.staff.samwol=1;helpers()}rebDraw();hud();save()};
 function admSet(){ADMIN=!!(SY.user&&SY.user.email===ADMIN_EMAIL&&SY.user.emailVerified);$('sv-test').hidden=!ADMIN;if(ADMIN)$('adm-it').innerHTML=ITEMS.map(([k,n,ic])=>`<button type="button" data-t="it" data-k="${k}"><img src="a/${ic}.webp" alt="">${n.replace('대리 장부 · ','장부 ')} +${k==='orn'?1:10}</button>`).join('')+'<button type="button" data-t="itall">전부 +10</button>'}
 async function admUsers(){const e=$('adm-us');e.textContent='불러오는 중이에요';try{const q=await firebase.firestore().collection('cafe').get();const L=q.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.ts||0)-(a.ts||0));const today=new Date().toDateString();
  e.innerHTML=`<p style="margin:4px 0">${L.length}명 · 오늘 들어온 사람 ${L.filter(u=>new Date(u.ts||0).toDateString()===today).length}명</p>`+L.map(u=>`<div><b>${esc(u.name||'이름 없음')}</b> · ${stName(u.stage||0)}<br>${esc(u.email||u.id.slice(0,8))}<br>번 돈 ${won(u.earned||0)} · ${u.ts?new Date(u.ts).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'}):'-'}</div>`).join('')}catch(err){e.textContent='불러오지 못했어요: '+(err.code||err.message)}}
 $('sv-test').onclick=e=>{const b=e.target.closest('button[data-t]');if(!b||!ADMIN)return;const t=b.dataset.t;if(t==='users'){admUsers();return}
  if(t==='it'||t==='itall'){(t==='it'?[b.dataset.k]:ITEMS.map(x=>x[0])).forEach(k=>{if(k==='orn')S.orn=Math.min(20,(S.orn||0)+(t==='it'?1:10));else giveItem(k,10)});if(tab==='market')drawPanel()}
- if(t==='pop')S.pop=(S.pop||0)+5000;if(t==='pal'){S.stage=2;S.relDone=1;S.prDone=1;MENU.filter(m=>m[7]===2).forEach(m=>{if(!L(S.menu,m[0]))S.menu[m[0]]=1});S.shop.floor2=1;S.shop.geum=1;setStage();floorsDraw()}if(t==='cr'){$('setwin').classList.remove('on');S.crisisT=0;const L2=crStage();crisisStart(L2[Math.floor(Math.random()*L2.length)]);return}if(t==='m3')S.money+=1e14;
+ if(t==='pop')S.pop=(S.pop||0)+5000;if(t==='mem'){S.mem=(S.mem||0)+20;S.memHave=(S.memHave||0)+20;rebDraw()}if(t==='pal'){S.stage=2;S.relDone=1;S.prDone=1;MENU.filter(m=>m[7]===2).forEach(m=>{if(!L(S.menu,m[0]))S.menu[m[0]]=1});S.shop.floor2=1;S.shop.geum=1;setStage();floorsDraw()}if(t==='cr'){$('setwin').classList.remove('on');S.crisisT=0;const L2=crStage();crisisStart(L2[Math.floor(Math.random()*L2.length)]);return}if(t==='m3')S.money+=1e14;
  if(t==='m1')S.money+=8e10;if(t==='m2')S.money+=1e12;if(t==='bean')S.bean+=1000;if(t==='ice')S.ice=iceCap();if(t==='star')S.star=(S.star||0)+10;
  if(t==='day'){S.day++;rollBean();dailyIce()}if(t==='sum')S.day=SEASONDAY+1;if(t==='win')S.day=SEASONDAY*3+1;
  sfx('trade');toast(b.textContent+' 했어요');hud();save();checkStory()};
