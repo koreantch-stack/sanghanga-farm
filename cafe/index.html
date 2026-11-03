@@ -191,7 +191,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div id="sv-reb"></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.3.0</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.3.1</p>
   <div id="sv-test" hidden><div class="sr"><span>운영자 모드<small>운영자 계정에만 보여요</small></span></div><b class="adh">엽전·재료·날짜</b>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
@@ -476,7 +476,7 @@ const rebOpen=()=>!!S.relDone;
 const FASTK=['dawooga','murung','floor2','geum'];const shopCost=(s,lv)=>s[5](lv)*(mu('fast')&&FASTK.includes(s[0])?.5:1);
 function baseMul(){return (1+L(S.shop,'hand'))*(L(S.shop,'pot')?1.5:1)*(1+0.1*L(S.staff,'maehwa'))*[1,1.3,1.8][S.stage]}
 function mupCost(k){const m=MENU[MI[k]],lv=L(S.menu,k);return Math.round(Math.max(15,m[4]*0.06)*Math.pow(1.15,lv-1))}
-function menuReq(k){const i=MI[k];let j=i-1;while(j>=0&&grp(MENU[j])!==grp(MENU[i]))j--;if(j<0)return null;const pm=MENU[j];return {pk:pm[0],pn:pm[1],need:MENU[i][8],have:L(S.menu,pm[0])}}
+function menuReq(k){const i=MI[k];let j=i-1;while(j>=0&&grp(MENU[j])!==grp(MENU[i]))j--;if(j<0)return null;const pm=MENU[j];return {pk:pm[0],pn:pm[1],need:MMAX,have:L(S.menu,pm[0])}}
 const seats=()=>Math.min(cur().seats.length,cur().base+L(S.shop,'seat'));
 const tapPow=()=>1+0.15*L(S.shop,'hand');
 // 일손이 대신 누르는 횟수(초당). 뒤 단계로 갈수록 일손 몫이 커져요
@@ -618,6 +618,13 @@ $('palwin').addEventListener('click',e=>{if(e.target.closest('#pclose')){closePa
  const m=e.target.closest('.pmk[data-k]');if(m){palSel=m.dataset.k;sfx('menu');popDraw();return}
  if(!e.target.closest('#ppop')&&palSel){palSel=null;popDraw()}});
 addEventListener('resize',()=>{if($('palwin').classList.contains('on'))palFit()});
+// 올리기 단추 꾹 누르면 계속 올리기
+{let hT=null,hRep=0,hSel='',hFired=false;const HOLD='button[data-a=mup],button[data-a=staff],button[data-a=shop]';
+ const stop=()=>{clearTimeout(hT);hT=null};
+ $('plist').addEventListener('pointerdown',e=>{const b=e.target.closest(HOLD);if(!b||b.disabled)return;hFired=false;hSel=`#plist button[data-a="${b.dataset.a}"][data-k="${b.dataset.k}"]`;hRep=0;
+  const step=()=>{const x=document.querySelector(hSel);if(!x||x.disabled){stop();return}hFired=true;x.click();hRep++;hT=setTimeout(step,Math.max(40,140-hRep*8))};hT=setTimeout(step,380)});
+ ['pointerup','pointercancel','pointerleave'].forEach(t=>$('plist').addEventListener(t,stop));
+ $('plist').addEventListener('click',e=>{if(hFired&&e.isTrusted){hFired=false;e.stopImmediatePropagation();e.preventDefault()}},true)}
 const josa2b=w=>{const c=w.charCodeAt(w.length-1)-0xac00;return c>=0&&c%28?'을':'를'};
 const josa=w=>{const c=w.charCodeAt(w.length-1)-0xac00;return c>=0&&c%28?'을':'를'};
 const josa2=w=>{const c=w.charCodeAt(w.length-1)-0xac00;return c>=0&&c%28?'이':'가'};
