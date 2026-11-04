@@ -192,7 +192,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div id="sv-reb"></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.3.7</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.3.8</p>
   <div id="sv-test" hidden><div class="sr"><span>운영자 모드<small>운영자 계정에만 보여요</small></span></div><b class="adh">엽전·재료·날짜</b>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
@@ -414,7 +414,7 @@ const ST={
   {p:'seonwoo',w:'박선우',s:'…졌소. 남쪽 길은 이제 당신 것이오.'},
   {p:'gayoung',w:'{name}',s:'아직 반이에요. 강원, 황해, 함경까지 잇고 나면, 그다음은 바다 건너예요.'},
   {n:'(팔도로의 다음 이야기는 다음 업데이트에서 이어져요.)'}]}};
-const ITEMS=[['coffee','각성 가배','x0','30분 동안 저절로 초당 5번 연타, 콤보 ×3'],['tal','합격 부적','x1','10분 동안 모든 수입 2배'],['orn','유기 별 조각 장식','x2','영원히 초당 1번 대신 누르기 (최대 20개)'],['l2','대리 장부 · 소','x3','2시간 동안 꺼 두어도 장사가 돌아가요 (번 돈 절반은 세금)'],['l6','대리 장부 · 중','x4','6시간 동안 꺼 두어도 장사가 돌아가요 (번 돈 절반은 세금)'],['l12','대리 장부 · 대','x5','12시간 동안 꺼 두어도 장사가 돌아가요 (번 돈 절반은 세금)']];
+const ITEMS=[['coffee','각성 가배','x0','30분 동안 저절로 초당 5번 연타, 콤보 ×3'],['tal','합격 부적','x1','10분 동안 모든 수입 2배'],['orn','유기 별 조각 장식','x2','영원히 초당 1번 대신 누르기 (최대 20개)'],['l2','대리 장부 · 소','x3','꺼 둔 동안 2시간 장사가 돌아가요 (켜 둔 동안은 줄지 않아요 · 번 돈 절반은 세금)'],['l6','대리 장부 · 중','x4','꺼 둔 동안 6시간 장사가 돌아가요 (켜 둔 동안은 줄지 않아요 · 번 돈 절반은 세금)'],['l12','대리 장부 · 대','x5','꺼 둔 동안 12시간 장사가 돌아가요 (켜 둔 동안은 줄지 않아요 · 번 돈 절반은 세금)']];
 const LEDH={l2:2,l6:6,l12:12};
 const itemCost=k=>k==='coffee'?100:k==='tal'?150:k==='l2'?800:k==='l6'?2000:k==='l12'?4000:Math.round(300*Math.pow(1.35,S.orn||0));
 const STORDER=['start','first','samwol','pot','dawooga','seyun','gwageo','tired','seonwoo','cheap','hajun','murung','murungopen','geumnam','prison','release','palstart','pal_cc','pal_jl','pal_gs','pal_half','reborn'];
@@ -423,7 +423,7 @@ const SAVE='cih-save-1',SETK='cih-set-1';let RESET=false;
 let SET={vol:55,mvol:40,bgm:1,vib:1,pop:1,story:'now'};try{Object.assign(SET,JSON.parse(localStorage.getItem(SETK)||'{}'))}catch(_){}
 function saveSet(){try{localStorage.setItem(SETK,JSON.stringify(SET))}catch(_){}}
 let S={money:0,bean:60,pop:0,stage:0,name:'한가영',menu:{sikhye:1},staff:{},shop:{},seen:{},served:0,earned:0,day:1,dayT:0,beanP:[],ev:null,evUntil:0,lastTs:Date.now()};
-function load(){try{const d=JSON.parse(localStorage.getItem(SAVE)||'null');if(d)S=Object.assign(S,d)}catch(_){}if(S.ev==='prison'&&S.prDone&&!S.relDone&&!S.crisis)S.crisis={k:'prison',g:0}}
+function load(){try{const d=JSON.parse(localStorage.getItem(SAVE)||'null');if(d)S=Object.assign(S,d)}catch(_){}if(S.ev==='prison'&&S.prDone&&!S.relDone&&!S.crisis)S.crisis={k:'prison',g:0};if(S.buff&&S.buff.led){if(S.buff.led>(S.lastTs||Date.now()))S.ledBank=(S.ledBank||0)+(S.buff.led-(S.lastTs||Date.now()))/1000;S.buff.led=0}}
 function save(){if(RESET)return;S.lastTs=Date.now();try{localStorage.setItem(SAVE,JSON.stringify(S))}catch(_){}}
 const L=(o,k)=>o[k]||0;
 // ---------- 소리 ----------
@@ -658,10 +658,10 @@ function checkStory(){if(SQ)return;const T=[
 // ---------- 특별 아이템 ----------
 function itemAct(a,k){S.items=S.items||{};S.buff=S.buff||{};
  if(a==='ibuy'){const c=itemCost(k);if(S.pop<c)return;if(k==='orn'&&(S.orn||0)>=20)return;S.pop-=c;if(k==='orn'){S.orn=(S.orn||0)+1;toast('유기 별 조각 장식을 걸었어요')}else{S.items[k]=(S.items[k]||0)+1;toast('장터에서 샀어요')}sfx('trade')}
- if(a==='iuse'){if(!(S.items[k]>0))return;S.items[k]--;if(LEDH[k]){S.buff.led=Math.max(Date.now(),S.buff.led||0)+LEDH[k]*3600e3*(mu('led')?1.5:1);sfx('trade');toast(`대리 장부를 맡겼어요. ${LEDH[k]}시간 동안은 꺼 두어도 장사가 돌아가요. 번 돈의 절반은 조정에 세금으로 내요`)}else{const dur=k==='coffee'?1800e3:600e3;S.buff[k]=Math.max(Date.now(),S.buff[k]||0)+dur;sfx('trade');toast(k==='coffee'?'각성 가배를 마셨어요. 30분 동안 저절로 연타해요':'합격 부적을 붙였어요. 10분 동안 수입이 두 배예요')}}
+ if(a==='iuse'){if(!(S.items[k]>0))return;S.items[k]--;if(LEDH[k]){S.ledBank=(S.ledBank||0)+LEDH[k]*3600*(mu('led')?1.5:1);sfx('trade');toast(`대리 장부를 맡겼어요. 대리 장부에 ${LEDH[k]}시간을 맡겼어요. 게임을 꺼 둔 동안에만 줄어들어요`)}else{const dur=k==='coffee'?1800e3:600e3;S.buff[k]=Math.max(Date.now(),S.buff[k]||0)+dur;sfx('trade');toast(k==='coffee'?'각성 가배를 마셨어요. 30분 동안 저절로 연타해요':'합격 부적을 붙였어요. 10분 동안 수입이 두 배예요')}}
  hud();drawPanel();save()}
-const bufLeft=k=>{const r=(S.buff&&S.buff[k]||0)-Date.now();if(r<=0)return'';const h=Math.floor(r/3600000),m=Math.floor(r/60000)%60,s2=Math.floor(r/1000)%60;return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(s2).padStart(2,'0')};
-let buffT=0;function buffDraw(){const n=performance.now();if(n-buffT<500)return;buffT=n;document.querySelectorAll('.itime').forEach(x=>{const t=bufLeft(x.dataset.k);x.textContent=t?'쓰는 중 '+t:''});$('app').classList.toggle('on-coffee',buffOn('coffee')&&!S.crisis);const e=$('buffs');if(S.crisis){e.hidden=true;return}const L3=[];[['coffee','각성 가배'],['tal','합격 부적'],['led','대리 장부']].forEach(([k,nm])=>{const r=(S.buff&&S.buff[k]||0)-Date.now();if(r>0){const h=Math.floor(r/3600000),m=Math.floor(r/60000)%60,s2=Math.floor(r/1000)%60;L3.push(`${nm} ${h?h+':'+String(m).padStart(2,'0'):m}:${String(s2).padStart(2,'0')}`)}});if(beanOn())L3.push('커피콩 ×1.5');if(S.stage===2){if(ready()>0)L3.push('별 조각 +30%');if(S.ice>0)L3.push('얼음 +30%')}e.hidden=!L3.length;e.textContent=L3.join(' · ')}
+const bufLeft=k=>{const r=k==='led'?(S.ledBank||0)*1000:(S.buff&&S.buff[k]||0)-Date.now();if(r<=0)return'';const h=Math.floor(r/3600000),m=Math.floor(r/60000)%60,s2=Math.floor(r/1000)%60;return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(s2).padStart(2,'0')};
+let buffT=0;function buffDraw(){const n=performance.now();if(n-buffT<500)return;buffT=n;document.querySelectorAll('.itime').forEach(x=>{const t=bufLeft(x.dataset.k);x.textContent=t?(x.dataset.k==='led'?'꺼 두면 쓸 시간 '+t:'쓰는 중 '+t):''});$('app').classList.toggle('on-coffee',buffOn('coffee')&&!S.crisis);const e=$('buffs');if(S.crisis){e.hidden=true;return}const L3=[];[['coffee','각성 가배'],['tal','합격 부적'],['led','대리 장부']].forEach(([k,nm])=>{const r=k==='led'?(S.ledBank||0)*1000:(S.buff&&S.buff[k]||0)-Date.now();if(r>0){const h=Math.floor(r/3600000),m=Math.floor(r/60000)%60,s2=Math.floor(r/1000)%60;L3.push(`${nm} ${h?h+':'+String(m).padStart(2,'0'):m}:${String(s2).padStart(2,'0')}${k==='led'?' (꺼 두면 쓰여요)':''}`)}});if(beanOn())L3.push('커피콩 ×1.5');if(S.stage===2){if(ready()>0)L3.push('별 조각 +30%');if(S.ice>0)L3.push('얼음 +30%')}e.hidden=!L3.length;e.textContent=L3.join(' · ')}
 function dailyGift(){const d=new Date().toDateString();if(S.giftDay===d)return;S.giftDay=d;const r=Math.random(),k=r<.2?'l2':r<.6?'coffee':'tal';giveItem(k,1);setTimeout(()=>toast(`오늘의 선물로 ${{coffee:'각성 가배',tal:'합격 부적',l2:'대리 장부 · 소'}[k]}를 받았어요. 장터에서 쓸 수 있어요`),2600)}
 // ---------- 무릉도원 층 ----------
 function floorsDraw(){const fb=$('floors');fb.hidden=S.stage!==2;if(fb.hidden)return;fb.querySelectorAll('button').forEach(b=>{const f=b.dataset.f;b.classList.toggle('on',f===String(S.floor||0)&&tab!=='binggo'||f==='b'&&tab==='binggo');if(f==='1')b.disabled=!L(S.shop,'floor2');if(f==='2')b.disabled=!L(S.shop,'geum')})}
@@ -708,7 +708,7 @@ $('sv-reset').onclick=()=>confirmBox('처음부터 할까요?','엽전, 메뉴, 
 let cofT=0,useT=0,starT=0,iceT=0,coolT=0,last=performance.now(),autoAcc=0,saveT=0;
 function tick(now){const dt=Math.min(.2,(now-last)/1000);last=now;
  const paused=!!SQ||$('title').style.display!=='none';
- if((paused||S.crisis)&&S.buff)for(const k of ['coffee','tal','led'])if(S.buff[k]>Date.now())S.buff[k]+=dt*1000;
+ if((paused||S.crisis)&&S.buff)for(const k of ['coffee','tal'])if(S.buff[k]>Date.now())S.buff[k]+=dt*1000;
  if(!paused){S.dayT+=dt;if(S.dayT>=DAYSEC){S.dayT-=DAYSEC;S.day++;rollBean();dailyIce();hud();if(tab==='market'&&performance.now()-lastPanelDown>1500)drawPanel();checkStory()}
   spawnT-=dt;if(spawnT<=0&&!S.crisis){spawn();spawnT=spawnGap()*(.7+Math.random()*.6)}
   CU.forEach(c=>{if(!c.arr||c.done)return;c.pat-=dt;const b=c.el.querySelector('.bub i b');if(b){b.style.width=Math.max(0,c.pat/c.max*100)+'%';b.style.background=c.pat/c.max<.3?'#c0452f':''}
@@ -731,12 +731,13 @@ $('app').addEventListener('pointerdown',e=>{if(e.button>0)return;if(e.target.clo
 // ---------- 자리 비운 동안 ----------
 function offline(t0){t0=t0||S.lastTs||Date.now();const raw=(Date.now()-t0)/1000;if(raw<30)return;
  S.buff=S.buff||{};for(const k of ['coffee','tal'])if((S.buff[k]||0)>t0)S.buff[k]+=raw*1000;
- const lu=S.buff.led||0,ledSec=Math.max(0,Math.min(Date.now(),lu)-t0)/1000;
- if(S.crisis){S.lastTs=Date.now();setTimeout(()=>toast(ledSec>30?'위기를 넘기지 못한 채 자리를 비워서 대리 장부도 손을 놓았어요':'위기를 넘기지 못한 채 자리를 비웠어요'),800);return}
+ const ledSec=Math.min(raw,S.ledBank||0);
+ if(S.crisis&&S.crisis.k==='prison'){S.lastTs=Date.now();setTimeout(()=>toast('가영이 갇혀 있어서 자리를 비운 동안 장사를 못 했어요'),800);return}
+ if(S.crisis){S.crisis=null;S.crisisT=Date.now();crisisDraw()}
  if(ledSec<30){if(raw>600)setTimeout(()=>toast('자리를 비운 동안 가게 문을 닫아 두었어요. 대리 장부를 맡기면 꺼 둔 동안에도 장사가 돌아가요'),800);return}
  const days=Math.floor(ledSec/DAYSEC);for(let i=0;i<Math.min(days,20);i++){rollBean();S.day++;dailyIce()}S.day+=Math.max(0,days-20);
  S.bean=Math.max(0,S.bean-Math.floor(ledSec*beanUse()));
- const ar0=staffRate()+(S.orn||0),gl=Math.round(ledSec*ar0*tapVal()),tax=Math.round(gl/2),g2=gl-tax;
+ S.ledBank=Math.max(0,(S.ledBank||0)-ledSec);const ar0=staffRate()+(S.orn||0),gl=Math.round(ledSec*ar0*tapVal()),tax=Math.round(gl/2),g2=gl-tax;
  if(g2>0){S.money+=g2;S.earned+=g2;S.taxPaid=(S.taxPaid||0)+tax;setTimeout(()=>toast(`대리 장부 덕분에 자리를 비운 동안 ${won(gl)}을 벌었는데, 절반 ${won(tax)}은 조정에 세금으로 내고 ${won(g2)}이 남았어요`),800)}
  else setTimeout(()=>toast('일손이 없어서 대리 장부가 할 일이 없었어요. 일손 탭에서 사람을 들이세요'),800)}
 // ---------- 시작 ----------
