@@ -92,6 +92,12 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
 .row button:disabled{background:#c9b99a;color:#f4ecdc}
 .row.lock{opacity:.6}
 .row.pal>div{flex:1;min-width:0}.row.pal span{display:block}.row.pal .pg{display:block;height:10px;background:#eadbbd;border-radius:5px;overflow:hidden;margin:6px 0 2px}.row.pal .pg u{display:block;height:100%;background:linear-gradient(90deg,#e0a23a,#c0452f)}.row.pal small{font-size:12px;color:#7b6247}.row.pal.won{border-color:#d4a64a;background:#fff8e6}
+#pgate{position:absolute;inset:0;z-index:90;background:rgba(15,9,4,.6);display:none;align-items:center;justify-content:center}#pgate.on{display:flex}
+#pgate .pgw{position:relative;width:min(350px,92%);aspect-ratio:473/700;background:url(a/pw.webp) center/100% 100% no-repeat;filter:drop-shadow(0 8px 18px rgba(0,0,0,.5))}
+#pgate .pc{position:absolute;left:17%;right:17%;top:17%;bottom:15%;display:flex;flex-direction:column;align-items:center;text-align:center;color:#4a2a0c}
+#pgate h3{margin:4px 0 2px;font:400 26px 'Do Hyeon'}#pgate .pl{font:400 14px 'Do Hyeon';color:#8a5a2c}#pgate .pd{font:400 13px/1.5 'Gowun Dodum';margin:10px 0;word-break:keep-all}
+#pgate ul{list-style:none;padding:0;margin:4px 0 0;width:100%;text-align:left}#pgate li{display:flex;gap:6px;align-items:flex-start;font:400 13px/1.4 'Gowun Dodum';padding:6px 0;border-bottom:1px dashed #d8c3a0;word-break:keep-all}#pgate li b{flex:none;font:400 12px 'Do Hyeon';border-radius:8px;padding:1px 6px;color:#fff;background:#b9a27c}#pgate li.ok b{background:#4f7d45}
+#pgate .px2{position:absolute;right:2%;top:-2%;width:44px;border:0;background:none;padding:0}#pgate .px2 img{width:100%}
 #palwin{position:absolute;left:0;right:0;top:0;bottom:calc(68px + env(safe-area-inset-bottom));z-index:45;background:#c9b48a;overflow:hidden;display:none}#palwin.on{display:block}
 #pmi{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:url(a/pmap.webp) center/100% 100% no-repeat}
 #phd{position:absolute;left:10px;right:64px;top:calc(8px + env(safe-area-inset-top));background:rgba(60,35,18,.82);border:1px solid #c79a5a;border-radius:16px;padding:6px 12px;color:#fff3d6}#phd b{font:400 22px 'Do Hyeon';margin-right:8px}#phd span{font:400 13px 'Do Hyeon';color:#f2d48a}#phd small{display:block;font:400 13px 'Gowun Dodum';color:#f5e6c8;margin-top:2px}
@@ -179,6 +185,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
    <button type="button" data-t="world"><img src="a/u3.webp" alt=""><i class="dot"></i>팔도로</button>
   </div>
  </div>
+ <div id="pgate"><div class="pgw"><div class="pc" id="pg-c"></div><button type="button" class="px2" id="pg-x" aria-label="닫기"><img src="a/px.webp" alt=""></button></div></div>
  <div id="palwin"><div id="pmi"></div><div id="phd"><b>팔도로</b><span id="phs"></span><small id="phm"></small></div><button type="button" id="pclose" aria-label="닫기"><img src="a/px.webp" alt=""></button><button type="button" id="pship" aria-label="세계로"><img src="a/pship.webp" alt=""><span>세계로</span></button><div id="ppop"></div></div>
  <div id="panel"><header><span id="p-title"></span><small id="p-sub"></small><button type="button" id="p-x" aria-label="닫기">✕</button></header><div id="plist"></div></div>
  <div id="setwin"><div class="sw"><h3>설정</h3>
@@ -192,7 +199,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div id="sv-reb"></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.4.0</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.4.1</p>
   <div id="sv-test" hidden><div class="sr"><span>운영자 모드<small>운영자 계정에만 보여요</small></span></div><b class="adh">엽전·재료·날짜</b>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
@@ -474,6 +481,11 @@ const PAL=[['gy','경기','한양','무릉도원이 있지만 송상 다방에 �
 const PALNEXT=[];
 const PALXY={gy:[41,50],ks:[29,44],cc:[34,60],jl:[26,71],gs:[76,77],gw:[62,43],hh:[13,41],py:[25,33],hg:[66,29],hr:[78,19]};let palSel=null;
 function palFit(){const w=$('palwin'),e=$('pmi'),W=w.clientWidth,H=w.clientHeight;if(!W)return;const sc=Math.max(W/941,H/1672);e.style.width=941*sc+'px';e.style.height=1672*sc+'px'}
+function palGate(){const left=MENU.filter(m=>m[7]<=2&&L(S.menu,m[0])<MMAX).length;
+ const it=[[!!S.relDone,'석방 이야기까지 보기'],[S.stage>=2,'무릉도원 짓기'],[S.stage>=2&&L(S.shop,'floor2')>0&&L(S.shop,'geum')>0,'2층과 금남당 열기'],[S.stage>=2&&left===0,`모든 메뉴를 최고 레벨(${MMAX})로 올리기${S.stage>=2&&left?` · ${left}개 남음`:''}`]];
+ $('pg-c').innerHTML=`<h3>팔도로</h3><div class="pl">아직 나설 때가 아니에요</div><p class="pd">한양의 무릉도원을 단단히 다진 뒤에야 팔도로 나설 수 있어요.</p><ul>${it.map(([ok,t])=>`<li class="${ok?'ok':''}"><b>${ok?'완료':'남음'}</b><span>${t}</span></li>`).join('')}</ul>`;
+ $('pgate').classList.add('on');sfx('open')}
+$('pgate').onclick=e=>{if(e.target.closest('#pg-x')||e.target.id==='pgate')$('pgate').classList.remove('on')};
 function palOpenWin(){tab='world';$('palwin').classList.add('on');$('app').classList.add('pan');document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('cur',b.dataset.t==='world'));palSel=null;sfx('open');palFit();palDraw()}
 function palDraw(){const op=palOpen();$('phs').textContent=op?`차지한 고을 ${palOwned()+1} / ${PAL.length+1} · 모든 수입 ×${+palMul().toFixed(2)}`:'아직 닫혀 있어요';$('phm').textContent=`엽전 ${won(S.money)}`;
  let h='<button type="button" class="pmk won" data-k="pa" style="left:30%;top:22%"><img src="a/pm3.webp" alt=""><span>의주 본점</span></button>';
@@ -581,7 +593,7 @@ function hud(){if(tab==='world'&&$('palwin').classList.contains('on')){$('phm').
  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',any(b.dataset.t)))}
 // ---------- 창 ----------
 let mTab='',tab=null,lastPanelDown=0;
-function openPanel(t){if(t==='world'){$('panel').classList.remove('on');palOpenWin();return}$('palwin').classList.remove('on');tab=t;if(t==='menu')mTab=S.stage===2?['','f2','gm'][S.floor||0]:'';$('panel').classList.add('on');$('app').classList.add('pan');document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('cur',b.dataset.t===t));sfx('open');drawPanel()}
+function openPanel(t){if(t==='world'&&!palOpen()){palGate();return}if(t==='world'){$('panel').classList.remove('on');palOpenWin();return}$('palwin').classList.remove('on');tab=t;if(t==='menu')mTab=S.stage===2?['','f2','gm'][S.floor||0]:'';$('panel').classList.add('on');$('app').classList.add('pan');document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('cur',b.dataset.t===t));sfx('open');drawPanel()}
 function closePanel(){tab=null;$('palwin').classList.remove('on');setTimeout(floorsDraw,0);$('panel').classList.remove('on');$('app').classList.remove('pan');document.querySelectorAll('#tabs button').forEach(b=>b.classList.remove('cur'))}
 function staffOpen(k){if(k==='samwol')return!!S.seen.samwol;if(k==='servers'||k==='binggo')return S.stage>=2;return S.stage>=1}
 const shopVis=s=>s[6]<0||(s[7]?S.stage>=s[6]:S.stage===s[6]);
@@ -751,7 +763,7 @@ function tick(now){const dt=Math.min(.2,(now-last)/1000);last=now;
   saveT+=dt;if(saveT>5){saveT=0;save()}drawBrew()}
  requestAnimationFrame(tick)}
 // 화면 어디를 눌러도 가비 내리기 (창·메뉴·위 표시줄은 빼고). 손가락이 닿는 순간 셈
-const NOTAP='#palwin,#floors,#top,#tabs,#panel,#story,#namebox,#setwin,#confirm,#title';
+const NOTAP='#pgate,#palwin,#floors,#top,#tabs,#panel,#story,#namebox,#setwin,#confirm,#title';
 $('app').addEventListener('pointerdown',e=>{if(e.button>0)return;if(e.target.closest(NOTAP))return;if(SQ)return;e.preventDefault();brewTap();if(e.target.closest('#brew')){const b=$('brew');b.classList.add('down');setTimeout(()=>b.classList.remove('down'),90)}},{passive:false});
 // ---------- 자리 비운 동안 ----------
 function offline(t0){t0=t0||S.lastTs||Date.now();const raw=(Date.now()-t0)/1000;if(raw<30)return;
