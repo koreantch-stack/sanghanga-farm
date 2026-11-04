@@ -192,7 +192,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div id="sv-reb"></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.3.8</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.4.0</p>
   <div id="sv-test" hidden><div class="sr"><span>운영자 모드<small>운영자 계정에만 보여요</small></span></div><b class="adh">엽전·재료·날짜</b>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
@@ -396,9 +396,14 @@ const ST={
   {p:'gayoung',w:'{name}',s:'한양부터 제대로 잡아야겠네요. 한양을 못 잡으면 팔도는 꿈도 못 꿔요.'},
   {p:'seonwoo',w:'박선우',s:'한양은 송상의 땅이오. 찻집 하나로 뒤집을 수 있을 것 같소?'},
   {n:'(팔도로 탭의 지도에서 한양을 눌러 점유율을 올려요.\n100%가 되면 그때부터 모든 수입이 1.5배가 돼요.)'}]},
- pal_cc:{t:'강경 포구',c:[
+ pal_ks:{t:'개성',c:[
   {n:'한양 사람들이 송상 다방보다 무릉도원을 먼저 찾기 시작했다.'},
-  {p:'seonwoo',w:'박선우',s:'한양을 내준 건 인정하지. 하지만 물길은 아니오. 강경 포구 객주들은 송상 편이니.'},
+  {p:'seonwoo',w:'박선우',s:'한양을 내준 건 인정하지. 하지만 개성은 송상의 심장이오. 발 들일 생각은 마시오.'},
+  {p:'gayoung',w:'{name}',s:'심장을 잡으면 나머지는 따라오겠죠.'},
+  {n:'(지도에서 개성이 열렸어요.)'}]},
+ pal_cc:{t:'강경 포구',c:[
+  {n:'개성 송상마저 무릉도원의 가배를 들여놓기 시작했다.'},
+  {p:'seonwoo',w:'박선우',s:'개성은 내줬소. 하지만 물길은 아니오. 강경 포구 객주들은 아직 송상 편이니.'},
   {p:'dojin',w:'임도진',s:'강경은 금강 물길이 모이는 곳이오. 그곳을 잡으면 삼남의 물산이 우리 손에 들어오오.'},
   {p:'gayoung',w:'{name}',s:'그럼 다음은 강경 포구예요.'},
   {n:'(지도에서 강경 포구가 열렸어요.)'}]},
@@ -410,14 +415,34 @@ const ST={
   {p:'dojin',w:'임도진',s:'동래 왜관 상인들이 말차와 왜 과자로 부산포를 쥐고 있소. 박선우가 그들과 손을 잡았다는 소문이오.'},
   {p:'gayoung',w:'{name}',s:'바다 건너 물건과 맞서야 하는 거네요. 우리 가배로 정면 승부해요.'},
   {n:'(지도에서 동래가 열렸어요.)'}]},
- pal_half:{t:'남쪽을 잇다',c:[
-  {p:'seonwoo',w:'박선우',s:'…졌소. 남쪽 길은 이제 당신 것이오.'},
-  {p:'gayoung',w:'{name}',s:'아직 반이에요. 강원, 황해, 함경까지 잇고 나면, 그다음은 바다 건너예요.'},
-  {n:'(팔도로의 다음 이야기는 다음 업데이트에서 이어져요.)'}]}};
+ pal_gw:{t:'원주',c:[
+  {p:'seyun',w:'김세윤',s:'강원 감영이 있는 원주요. 산골 사람들은 가배라는 걸 처음 볼 것이오.'},
+  {p:'gayoung',w:'{name}',s:'메밀차랑 감자떡을 같이 내면 낯설지 않을 거예요.'},
+  {n:'(지도에서 원주가 열렸어요.)'}]},
+ pal_hh:{t:'해주',c:[
+  {p:'dojin',w:'임도진',s:'해주는 황해 감영 고을이오. 조기 철이면 뱃사람들로 포구가 넘치지.'},
+  {p:'gayoung',w:'{name}',s:'새벽 뱃일 나가기 전엔 따뜻한 가배 한 잔이 최고죠.'},
+  {n:'(지도에서 해주가 열렸어요.)'}]},
+ pal_py:{t:'평양',c:[
+  {p:'maehwa',w:'매화',s:'평양은 대동강 물길의 큰 고을입니다. 손님들 입맛이 한양보다 까다롭지요.'},
+  {p:'gayoung',w:'{name}',s:'까다로운 입맛일수록 한 번 잡으면 평생 단골이에요.'},
+  {n:'(지도에서 평양이 열렸어요.)'}]},
+ pal_hg:{t:'함흥',c:[
+  {p:'samwol',w:'삼월이',s:'아씨, 함흥은 너무 멀어요! 겨울엔 바다가 꽁꽁 언대요!'},
+  {p:'gayoung',w:'{name}',s:'그럼 뜨거운 가배가 더 잘 팔리겠네.'},
+  {n:'(지도에서 함흥이 열렸어요.)'}]},
+ pal_hr:{t:'회령',c:[
+  {p:'dojin',w:'임도진',s:'두만강 가 회령에서는 청나라 상인들과 국경 시장이 열리오.'},
+  {p:'gayoung',w:'{name}',s:'거기서 거래를 트면, 그다음은 국경 너머예요.'},
+  {n:'(지도에서 회령이 열렸어요.)'}]},
+ pal_all:{t:'팔도를 잇다',c:[
+  {p:'seonwoo',w:'박선우',s:'…졌소. 팔도 어디를 가도 당신 가배 냄새가 나는구려.'},
+  {p:'gayoung',w:'{name}',s:'이제 바다 건너, 국경 너머로 가 볼 차례예요.'},
+  {n:'(세계로 가는 뱃길이 열렸어요.\n세계로 이야기는 다음 업데이트에서 이어져요.)'}]}};
 const ITEMS=[['coffee','각성 가배','x0','30분 동안 저절로 초당 5번 연타, 콤보 ×3'],['tal','합격 부적','x1','10분 동안 모든 수입 2배'],['orn','유기 별 조각 장식','x2','영원히 초당 1번 대신 누르기 (최대 20개)'],['l2','대리 장부 · 소','x3','꺼 둔 동안 2시간 장사가 돌아가요 (켜 둔 동안은 줄지 않아요 · 번 돈 절반은 세금)'],['l6','대리 장부 · 중','x4','꺼 둔 동안 6시간 장사가 돌아가요 (켜 둔 동안은 줄지 않아요 · 번 돈 절반은 세금)'],['l12','대리 장부 · 대','x5','꺼 둔 동안 12시간 장사가 돌아가요 (켜 둔 동안은 줄지 않아요 · 번 돈 절반은 세금)']];
 const LEDH={l2:2,l6:6,l12:12};
 const itemCost=k=>k==='coffee'?100:k==='tal'?150:k==='l2'?800:k==='l6'?2000:k==='l12'?4000:Math.round(300*Math.pow(1.35,S.orn||0));
-const STORDER=['start','first','samwol','pot','dawooga','seyun','gwageo','tired','seonwoo','cheap','hajun','murung','murungopen','geumnam','prison','release','palstart','pal_cc','pal_jl','pal_gs','pal_half','reborn'];
+const STORDER=['start','first','samwol','pot','dawooga','seyun','gwageo','tired','seonwoo','cheap','hajun','murung','murungopen','geumnam','prison','release','palstart','pal_ks','pal_cc','pal_jl','pal_gs','pal_gw','pal_hh','pal_py','pal_hg','pal_hr','pal_all','reborn'];
 // ---------- 상태 ----------
 const SAVE='cih-save-1',SETK='cih-set-1';let RESET=false;
 let SET={vol:55,mvol:40,bgm:1,vib:1,pop:1,story:'now'};try{Object.assign(SET,JSON.parse(localStorage.getItem(SETK)||'{}'))}catch(_){}
@@ -434,8 +459,8 @@ function bgmSync(){const w=bgmWant(),tv=SET.mvol/100;if(w!==bgmCur){const old=bg
 const SND={};['trade','menu','open','act','water'].forEach(k=>{const a=new Audio(`a/s_${k}.mp3`);a.preload='auto';SND[k]=a});
 function sfx(k){const a=SND[k];if(!a||!SET.vol)return;try{const c=a.cloneNode();c.volume=SET.vol/100;c.play().catch(()=>{})}catch(_){}}
 // ---------- 숫자 ----------
-const fmtH=n=>{n=Math.floor(n);for(const [u,k] of [[1e12,'조'],[1e8,'억'],[1e4,'만']])if(n>=u){const v=n/u;return(v>=1000?Math.floor(v):(Math.floor(v*10)/10).toFixed(1))+k}return String(n)};
-const fmt=n=>{n=Math.floor(n);if(n>=1e12)return(Math.floor(n/1e11)/10)+'조';if(n>=1e8)return(Math.floor(n/1e7)/10)+'억';if(n>=1e4)return(Math.floor(n/1e3)/10)+'만';return n.toLocaleString('ko-KR')};
+const fmtH=n=>{n=Math.floor(n);for(const [u,k] of [[1e16,'경'],[1e12,'조'],[1e8,'억'],[1e4,'만']])if(n>=u){const v=n/u;return(v>=1000?Math.floor(v):(Math.floor(v*10)/10).toFixed(1))+k}return String(n)};
+const fmt=n=>{n=Math.floor(n);if(n>=1e16)return(Math.floor(n/1e15)/10)+'경';if(n>=1e12)return(Math.floor(n/1e11)/10)+'조';if(n>=1e8)return(Math.floor(n/1e7)/10)+'억';if(n>=1e4)return(Math.floor(n/1e3)/10)+'만';return n.toLocaleString('ko-KR')};
 const won=n=>fmt(n)+'냥';
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove('on'),2000)}
 // ---------- 계산 ----------
@@ -445,17 +470,17 @@ const market=()=>S.day%5===0;
 function mulOf(k){const m=MENU[MI[k]],lv=L(S.menu,k);return lv?m[9]*(1+0.05*(lv-1)):0}
 const lvSum=()=>MENU.reduce((a,m)=>a+Math.max(0,L(S.menu,m[0])-1),0);
 function bestMul(){return Math.max(1,...MENU.filter(m=>L(S.menu,m[0])).map(m=>m[9]))*(1+0.03*lvSum())}
-const PAL=[['gy','경기','한양','무릉도원이 있지만 송상 다방에 손님을 빼앗기고 있어요. 한양부터 되찾아요',1.7e11],['cc','충청','강경 포구','포구 객주들이 물길을 쥐고 있어요. 대추차와 주먹밥으로 파고들어요',6.8e11],['jl','전라','전주','전주 상단이 차와 한과를 쥐고 있어요. 유자차로 승부해요',2.7e12],['gs','경상','동래','동래 왜관 상인들이 바닷길을 쥐고 있어요. 말차와 왜 과자로 맞서요',1.1e13]];
-const PALNEXT=[['gw','강원','원주',62,41],['hh','황해','해주',14,41],['hg','함경','함흥',74,18]];
-const PALXY={gy:[41,50],cc:[34,60],jl:[26,71],gs:[76,77]};let palSel=null;
+const PAL=[['gy','경기','한양','무릉도원이 있지만 송상 다방에 손님을 빼앗기고 있어요. 한양부터 되찾아요',1.7e+11],['ks','경기','개성','송상 박선우의 본거지예요. 인삼과 홍삼으로 이름난 고을이에요',4.42e+11],['cc','충청','강경 포구','포구 객주들이 물길을 쥐고 있어요. 대추차와 주먹밥으로 파고들어요',1.15e+12],['jl','전라','전주','전주 상단이 차와 한과를 쥐고 있어요. 유자차로 승부해요',2.99e+12],['gs','경상','동래','동래 왜관 상인들이 바닷길을 쥐고 있어요. 말차와 왜 과자로 맞서요',7.77e+12],['gw','강원','원주','강원 감영이 있는 산골 고을이에요. 메밀차와 감자떡으로 다가가요',2.02e+13],['hh','황해','해주','황해 감영 고을이에요. 조기 철이면 뱃사람들로 북적여요',5.25e+13],['py','평안','평양','대동강 물길의 큰 고을이에요. 입맛 까다로운 손님이 많아요',1.37e+14],['hg','함경','함흥','북쪽 바닷가 큰 고을이에요. 겨울이 길어 뜨거운 차가 귀해요',3.55e+14],['hr','함경','회령','두만강 가 국경 시장이 열리는 곳이에요. 청나라 상인과 거래를 터요',9.23e+14]];
+const PALNEXT=[];
+const PALXY={gy:[41,50],ks:[29,44],cc:[34,60],jl:[26,71],gs:[76,77],gw:[62,43],hh:[13,41],py:[25,33],hg:[66,29],hr:[78,19]};let palSel=null;
 function palFit(){const w=$('palwin'),e=$('pmi'),W=w.clientWidth,H=w.clientHeight;if(!W)return;const sc=Math.max(W/941,H/1672);e.style.width=941*sc+'px';e.style.height=1672*sc+'px'}
 function palOpenWin(){tab='world';$('palwin').classList.add('on');$('app').classList.add('pan');document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('cur',b.dataset.t==='world'));palSel=null;sfx('open');palFit();palDraw()}
-function palDraw(){const op=palOpen();$('phs').textContent=op?`차지한 도 ${palOwned()+1} / 8 · 모든 수입 ×${+palMul().toFixed(2)}`:'아직 닫혀 있어요';$('phm').textContent=`엽전 ${won(S.money)}`;
+function palDraw(){const op=palOpen();$('phs').textContent=op?`차지한 고을 ${palOwned()+1} / ${PAL.length+1} · 모든 수입 ×${+palMul().toFixed(2)}`:'아직 닫혀 있어요';$('phm').textContent=`엽전 ${won(S.money)}`;
  let h='<button type="button" class="pmk won" data-k="pa" style="left:30%;top:22%"><img src="a/pm3.webp" alt=""><span>의주 본점</span></button>';
  PAL.forEach((p,i)=>{const st=palStep(p[0]),[x,y]=PALXY[p[0]];let ic,cl='';if(!op||!palAvail(i)){ic='pm0';cl='lk'}else if(st>=20){ic='pm3';cl='won'}else if(st>0)ic='pm2';else{ic='pm1';cl='go'}
   h+=`<button type="button" class="pmk ${cl}" data-k="${p[0]}" style="left:${x}%;top:${y}%"><img src="a/${ic}.webp" alt=""><span>${p[2]}${st>0&&st<20?' '+st*5+'%':''}</span></button>`});
  h+=PALNEXT.map(([k,n,pl,x,y])=>`<button type="button" class="pmk lk" data-k="${k}" style="left:${x}%;top:${y}%"><img src="a/pm0.webp" alt=""><span>${pl}</span></button>`).join('');
- $('pmi').innerHTML=h;$('pship').classList.toggle('lock',palOwned()<8);popDraw()}
+ $('pmi').innerHTML=h;$('pship').classList.toggle('lock',palOwned()<PAL.length);popDraw()}
 function popDraw(){const e=$('ppop');if(!palSel){e.classList.remove('on');return}e.classList.add('on');const op=palOpen(),i=PAL.findIndex(x=>x[0]===palSel);let c='';
  if(palSel==='pa')c=`<h3>평안</h3><div class="pl">의주 본점</div><p class="pd">만상의 터전, 의주 본점이에요.<br>처음부터 우리 편인 곳이에요.</p><div class="pg"><i><u style="width:100%"></u></i></div><div class="pp">점유율 100%</div>`;else if(i<0){const f=PALNEXT.find(x=>x[0]===palSel);c=`<h3>${f[1]}</h3><div class="pl">${f[2]}</div><p class="pd">아직 길이 닿지 않은 곳이에요.<br>다음 업데이트에서 열려요.</p>`}
  else{const p=PAL[i],st=palStep(p[0]);c=`<h3>${p[1]}</h3><div class="pl">${p[2]}</div><p class="pd">${p[3]}</p><div class="pg"><i><u style="width:${st*5}%"></u></i></div><div class="pp">점유율 ${st*5}%</div>`;
@@ -588,7 +613,7 @@ function drawPanel(){if(!tab)return;const P=$('plist');let h='';
   const I=S.items||{};h+=`<h4 class="ih">특별 아이템 <small>인기 ${fmt(S.pop)} · 그림을 누르면 바로 써요</small></h4><div class="items">`+ITEMS.map(([k,n,ic,d])=>{const c=itemCost(k),own=k==='orn'?(S.orn||0):(I[k]||0);return`<div class="it"><button type="button" class="ib" data-a="iuse" data-k="${k}" ${k==='orn'||!own?'disabled':''}><img src="a/${ic}.webp" alt=""><i>${own}</i></button><b>${n}</b><em class="itime" data-k="${k==='l2'||k==='l6'||k==='l12'?'led':k}"></em><span>${d}</span><button type="button" data-a="ibuy" data-k="${k}" ${S.pop<c||(k==='orn'&&(S.orn||0)>=20)?'disabled':''}>인기 ${c}</button></div>`}).join('')+'</div>'}
  if(tab==='bak'){$('p-title').textContent='백업에서 되살리기';$('p-sub').textContent='가장 최근 것이 위에 있어요';h+=BAKS.length?BAKS.map((b,i)=>`<div class="row"><img src="a/u7.webp" alt=""><div><b>${stName(b.stage)} · ${won(b.money||0)}</b><span>${new Date(+b.id).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'})} · ${b.why||''}</span></div><button type="button" data-a="bakgo" data-i="${i}">되살리기</button></div>`).join(''):'<p class="note">아직 계정에 남은 백업이 없어요.</p>'}
  if(tab==='world'){$('p-title').textContent='팔도로';if(!palOpen()){$('p-sub').textContent='';h+=`<img class="bghead" src="a/bg2.webp" alt=""><p class="note" style="font-size:15px;text-align:center;margin-top:14px">무릉도원까지 모든 메뉴를 최고 레벨로 올리면 팔도로 나서요.</p><p class="note" style="text-align:center">개성의 송상, 강경 포구 객주, 전주 상단, 동래 왜관 상인과 겨루며<br>조선 팔도에 가맹점을 내요.</p><p class="note" style="text-align:center;opacity:.7">팔도를 모두 차지하면 세계로 가는 뱃길이 열려요.</p>`}
-  else{$('p-sub').textContent=`차지한 도 ${palOwned()+1} / 8 · 모든 수입 ×${(+palMul().toFixed(2))}`;h+=`<p class="note">돈을 들여 점유율을 5%씩 올려요. 높아질수록 값이 비싸지고, 100%가 되어 그 도를 차지해야 그때부터 모든 수입이 1.5배가 돼요.</p>`;
+  else{$('p-sub').textContent=`차지한 고을 ${palOwned()+1} / ${PAL.length+1} · 모든 수입 ×${(+palMul().toFixed(2))}`;h+=`<p class="note">돈을 들여 점유율을 5%씩 올려요. 높아질수록 값이 비싸지고, 100%가 되어 그 도를 차지해야 그때부터 모든 수입이 1.5배가 돼요.</p>`;
    PAL.forEach((p,i)=>{const st=palStep(p[0]),pct=st*5;let btn;
     if(st>=20)btn='<button disabled>차지했어요</button>';else if(!palAvail(i))btn='<button disabled>앞 도를 먼저</button>';else{const c=palCost(p,st);btn=`<button type="button" data-a="pal" data-k="${p[0]}" data-c="${c}" ${S.money<c?'disabled':''}>${st?'투자 +5%':'가맹점 내기'}<small>${won(c)}</small></button>`}
     h+=`<div class="row pal${st>=20?' won':''}${!palAvail(i)?' lock':''}"><div><b>${p[1]} · ${p[2]}</b><span>${p[3]}</span><i class="pg"><u style="width:${pct}%"></u></i><small>점유율 ${pct}%${st>=20?' · 수입 ×1.5':''}</small></div>${btn}</div>`});
@@ -614,7 +639,7 @@ $('plist').onclick=e=>{{const bb=e.target.closest('button[data-a=bakgo]');if(bb)
  if(a==='replay'){playStory(k,true);return}
  hud();drawPanel();save()};
 $('palwin').addEventListener('click',e=>{if(e.target.closest('#pclose')){closePanel();return}
- if(e.target.closest('#pship')){sfx('menu');toast(palOwned()<8?'팔도를 모두 차지하면 세계로 가는 뱃길이 열려요. 다음 업데이트에서 만나요':'세계로 가는 뱃길은 다음 업데이트에서 열려요');return}
+ if(e.target.closest('#pship')){sfx('menu');toast(palOwned()<PAL.length?`회령까지 모든 고을을 차지하면 세계로 가는 뱃길이 열려요 (${palOwned()} / ${PAL.length})`:'세계로 가는 뱃길이 열렸어요. 세계로 이야기는 다음 업데이트에서 만나요');return}
  if(e.target.closest('.px2')){palSel=null;popDraw();return}
  if(e.target.closest('#pp-go')){const b=$('pp-go');if(!b.disabled){palInvest(palSel);palDraw()}return}
  const m=e.target.closest('.pmk[data-k]');if(m){palSel=m.dataset.k;sfx('menu');popDraw();return}
@@ -653,7 +678,7 @@ $('st-skip').onclick=e=>{e.stopPropagation();if(!SQ)return;if(!SQ.replay&&ST[SQ.
 $('nm-ok').onclick=()=>{const v=$('nm').value.replace(/[<>&]/g,'').trim();if(v.length<2){$('nm-err').textContent='두 글자 이상으로 지어 주세요';return}if(/[ㄱ-ㅎㅏ-ㅣ]/.test(v)){$('nm-err').textContent='자음이나 모음만 쓴 글자는 쓸 수 없어요';return}S.name=v;$('namebox').classList.remove('on');$('nm-err').textContent='';if(SQ){SQ.i++;showCut()}else{toast(`이름을 ${v}(으)로 바꿨어요`);setDraw()}save()};
 function checkStory(){if(SQ)return;const T=[
  ['first',()=>S.served>=1],['samwol',()=>S.served>=12],['seyun',()=>S.stage>=1&&S.served>=90],['gwageo',()=>gwageo()&&S.served>=20],['tired',()=>S.stage>=1&&S.served>=160],
- ['seonwoo',()=>S.stage>=1&&S.earned>=5e6],['cheap',()=>S.evDone&&Date.now()>S.evUntil],['hajun',()=>S.stage>=1&&S.served>=260],['murung',()=>S.stage>=1&&S.earned>=3e8],['prison',()=>S.stage===2&&L(S.menu,'icesujeong')>0],['release',()=>S.prDone&&!S.crisis],['reborn',()=>(S.reb||0)>=1],['palstart',()=>palOpen()],['pal_cc',()=>palStep('gy')>=20],['pal_jl',()=>palStep('cc')>=20],['pal_gs',()=>palStep('jl')>=20],['pal_half',()=>palStep('gs')>=20]];
+ ['seonwoo',()=>S.stage>=1&&S.earned>=5e6],['cheap',()=>S.evDone&&Date.now()>S.evUntil],['hajun',()=>S.stage>=1&&S.served>=260],['murung',()=>S.stage>=1&&S.earned>=3e8],['prison',()=>S.stage===2&&L(S.menu,'icesujeong')>0],['release',()=>S.prDone&&!S.crisis],['reborn',()=>(S.reb||0)>=1],['palstart',()=>palOpen()],['pal_ks',()=>palStep('gy')>=20],['pal_cc',()=>palStep('ks')>=20],['pal_jl',()=>palStep('cc')>=20],['pal_gs',()=>palStep('jl')>=20],['pal_gw',()=>palStep('gs')>=20],['pal_hh',()=>palStep('gw')>=20],['pal_py',()=>palStep('hh')>=20],['pal_hg',()=>palStep('py')>=20],['pal_hr',()=>palStep('hg')>=20],['pal_all',()=>palStep('hr')>=20]];
  for(const [k,f] of T)if(!S.seen[k]&&f()){setTimeout(()=>{if(!SQ&&!S.seen[k])playStory(k)},500);return}}
 // ---------- 특별 아이템 ----------
 function itemAct(a,k){S.items=S.items||{};S.buff=S.buff||{};
