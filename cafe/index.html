@@ -99,7 +99,8 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
 #pgate ul{list-style:none;padding:0;margin:4px 0 0;width:100%;text-align:left}#pgate li{display:flex;gap:6px;align-items:flex-start;font:400 13px/1.4 'Gowun Dodum';padding:6px 0;border-bottom:1px dashed #d8c3a0;word-break:keep-all}#pgate li b{flex:none;font:400 12px 'Do Hyeon';border-radius:8px;padding:1px 6px;color:#fff;background:#b9a27c}#pgate li.ok b{background:#4f7d45}
 #pgate .px2{position:absolute;right:2%;top:-2%;width:44px;border:0;background:none;padding:0}#pgate .px2 img{width:100%}
 #palwin{position:absolute;left:0;right:0;top:0;bottom:calc(68px + env(safe-area-inset-bottom));z-index:45;background:#c9b48a;overflow:hidden;display:none}#palwin.on{display:block}
-#pmi{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:url(a/pmap.webp) center/100% 100% no-repeat}
+#pmbg{position:absolute;inset:-6%;background:url(a/pmap.webp) center/cover no-repeat;filter:blur(14px) brightness(.66) saturate(.8)}
+#pmi{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:url(a/pmap.webp) center/100% 100% no-repeat;box-shadow:0 0 0 1px rgba(90,60,25,.45),0 6px 26px rgba(0,0,0,.45)}
 #phd{position:absolute;left:10px;right:64px;top:calc(8px + env(safe-area-inset-top));background:rgba(60,35,18,.82);border:1px solid #c79a5a;border-radius:16px;padding:6px 12px;color:#fff3d6}#phd b{font:400 22px 'Do Hyeon';margin-right:8px}#phd span{font:400 13px 'Do Hyeon';color:#f2d48a}#phd small{display:block;font:400 13px 'Gowun Dodum';color:#f5e6c8;margin-top:2px}
 #pclose{position:absolute;right:6px;top:calc(4px + env(safe-area-inset-top));width:48px;height:auto;border:0;background:none;padding:0}#pclose img{width:100%}
 #pship{position:absolute;right:8px;bottom:12px;width:76px;border:0;background:none;padding:0;text-align:center}#pship img{width:100%;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))}#pship span{display:block;margin-top:-6px;font:400 15px 'Do Hyeon';color:#fff;text-shadow:0 1px 0 #000,0 0 6px #000}#pship.lock img{filter:grayscale(.6) brightness(.85) drop-shadow(0 4px 6px rgba(0,0,0,.4))}
@@ -187,7 +188,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   </div>
  </div>
  <div id="pgate"><div class="pgw"><div class="pc" id="pg-c"></div><button type="button" class="px2" id="pg-x" aria-label="닫기"><img src="a/px.webp" alt=""></button></div></div>
- <div id="palwin"><div id="pmi"></div><div id="phd"><b>팔도로</b><span id="phs"></span><small id="phm"></small></div><button type="button" id="pclose" aria-label="닫기"><img src="a/px.webp" alt=""></button><button type="button" id="pship" aria-label="세계로"><img src="a/pship.webp" alt=""><span>세계로</span></button><div id="ppop"></div></div>
+ <div id="palwin"><div id="pmbg"></div><div id="pmi"></div><div id="phd"><b>팔도로</b><span id="phs"></span><small id="phm"></small></div><button type="button" id="pclose" aria-label="닫기"><img src="a/px.webp" alt=""></button><button type="button" id="pship" aria-label="세계로"><img src="a/pship.webp" alt=""><span>세계로</span></button><div id="ppop"></div></div>
  <div id="panel"><header><span id="p-title"></span><small id="p-sub"></small><button type="button" id="p-x" aria-label="닫기">✕</button></header><div id="plist"></div></div>
  <div id="setwin"><div class="sw"><h3>설정</h3>
   <div id="sv-acc"></div>
@@ -200,7 +201,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div id="sv-reb"></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.5.1</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.5.2</p>
   <div id="sv-test" hidden><div class="sr"><span>운영자 모드<small>운영자 계정에만 보여요</small></span></div><b class="adh">엽전·재료·날짜</b>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
@@ -502,13 +503,13 @@ function bestMul(){return Math.max(1,...MENU.filter(m=>L(S.menu,m[0])).map(m=>m[
 const PAL=[['gy','경기','한양','무릉도원이 있지만 송상 다방에 손님을 빼앗기고 있어요. 한양부터 되찾아요',1.7e+11],['ks','경기','개성','송상 박선우의 본거지예요. 인삼과 홍삼으로 이름난 고을이에요',4.42e+11],['cc','충청','강경 포구','포구 객주들이 물길을 쥐고 있어요. 대추차와 주먹밥으로 파고들어요',1.15e+12],['jl','전라','전주','전주 상단이 차와 한과를 쥐고 있어요. 유자차로 승부해요',2.99e+12],['gs','경상','동래','동래 왜관 상인들이 바닷길을 쥐고 있어요. 말차와 왜 과자로 맞서요',7.77e+12],['gw','강원','원주','강원 감영이 있는 산골 고을이에요. 메밀차와 감자떡으로 다가가요',2.02e+13],['hh','황해','해주','황해 감영 고을이에요. 조기 철이면 뱃사람들로 북적여요',5.25e+13],['py','평안','평양','대동강 물길의 큰 고을이에요. 입맛 까다로운 손님이 많아요',1.37e+14],['hg','함경','함흥','북쪽 바닷가 큰 고을이에요. 겨울이 길어 뜨거운 차가 귀해요',3.55e+14],['hr','함경','회령','두만강 가 국경 시장이 열리는 곳이에요. 청나라 상인과 거래를 터요',9.23e+14]];
 const PALNEXT=[];
 const PALXY={gy:[41,50],ks:[29,44],cc:[34,60],jl:[26,71],gs:[76,77],gw:[62,43],hh:[13,41],py:[25,33],hg:[66,29],hr:[78,19]};let palSel=null,mapMode='pal';
-function palFit(){const w=$('palwin'),e=$('pmi'),W=w.clientWidth,H=w.clientHeight;if(!W)return;const sc=Math.max(W/941,H/1672);e.style.width=941*sc+'px';e.style.height=1672*sc+'px'}
+function palFit(){const w=$('palwin'),e=$('pmi'),W=w.clientWidth,H=w.clientHeight;if(!W)return;const hr=$('phd').getBoundingClientRect(),wr=w.getBoundingClientRect();const pad=hr.height?Math.max(0,hr.bottom-wr.top+6):76;const sc=Math.min(W/941,(H-pad)/1672),mh=1672*sc;e.style.width=941*sc+'px';e.style.height=mh+'px';e.style.top=Math.round(pad+(H-pad-mh)/2)+'px';e.style.transform='translate(-50%,0)'}
 function palGate(){const left=MENU.filter(m=>m[7]<=2&&L(S.menu,m[0])<MMAX).length;
  const it=[[!!S.relDone,'석방 이야기까지 보기'],[S.stage>=2,'무릉도원 짓기'],[S.stage>=2&&L(S.shop,'floor2')>0&&L(S.shop,'geum')>0,'2층과 금남당 열기'],[S.stage>=2&&left===0,`모든 메뉴를 최고 레벨(${MMAX})로 올리기${S.stage>=2&&left?` · ${left}개 남음`:''}`]];
  $('pg-c').innerHTML=`<h3>팔도로</h3><div class="pl">아직 나설 때가 아니에요</div><p class="pd">한양의 무릉도원을 단단히 다진 뒤에야 팔도로 나설 수 있어요.</p><ul>${it.map(([ok,t])=>`<li class="${ok?'ok':''}"><b>${ok?'완료':'남음'}</b><span>${t}</span></li>`).join('')}</ul>`;
  $('pgate').classList.add('on');sfx('open')}
 $('pgate').onclick=e=>{if(e.target.closest('#pg-x')||e.target.id==='pgate')$('pgate').classList.remove('on')};
-function palOpenWin(){tab='world';mapMode='pal';$('pmi').style.backgroundImage='';$('phd').querySelector('b').textContent='팔도로';$('palwin').classList.add('on');$('app').classList.add('pan');document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('cur',b.dataset.t==='world'));palSel=null;sfx('open');palFit();palDraw()}
+function palOpenWin(){tab='world';mapMode='pal';$('pmi').style.backgroundImage='';$('pmbg').style.backgroundImage='';$('phd').querySelector('b').textContent='팔도로';$('palwin').classList.add('on');$('app').classList.add('pan');document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('cur',b.dataset.t==='world'));palSel=null;sfx('open');palFit();palDraw()}
 function palDraw(){if(mapMode!=='pal')return worldDraw();const op=palOpen();$('phs').textContent=op?`차지한 고을 ${palOwned()+1} / ${PAL.length+1} · 모든 수입 ×${+palMul().toFixed(2)}`:'아직 닫혀 있어요';$('phm').textContent=`엽전 ${won(S.money)}`;
  let h='<button type="button" class="pmk won" data-k="pa" style="left:30%;top:22%"><img src="a/pm3.webp" alt=""><span>의주 본점</span></button>';
  PAL.forEach((p,i)=>{const st=palStep(p[0]),[x,y]=PALXY[p[0]];let ic,cl='';if(!op||!palAvail(i)){ic='pm0';cl='lk'}else if(st>=20){ic='pm3';cl='won'}else if(st>0)ic='pm2';else{ic='pm1';cl='go'}
@@ -562,7 +563,7 @@ const wMul=()=>Math.pow(1.5,wCityOwned())*WRL.reduce((a,c,ci)=>a*(cDone(ci)?c[4]
 const xfmt=v=>v>=1000?fmt(Math.round(v)):(+v.toFixed(2))+'';
 function worldDraw(){
  const wv=mapMode==='world',ci=wv?-1:WRL.findIndex(c=>c[0]===mapMode);
- $('pmi').style.backgroundImage=`url(a/${wv?'wmap':WRL[ci][3]}.webp)`;
+ const mi=`url(a/${wv?'wmap':WRL[ci][3]}.webp)`;$('pmi').style.backgroundImage=mi;$('pmbg').style.backgroundImage=mi;
  $('phd').querySelector('b').textContent=wv?'세계로':WRL[ci][1];
  $('phs').textContent=wv?`차지한 도시 ${wCityOwned()} / ${WALL.length} · 모든 수입 ×${xfmt(wMul())}`:`차지한 도시 ${cOwnedN(ci)} / ${WRL[ci][7].length} · ${cDone(ci)?'다 차지해서':'다 차지하면'} ×${WRL[ci][4]}`;
  $('phm').textContent=`엽전 ${won(S.money)}`;
@@ -735,7 +736,7 @@ $('plist').onclick=e=>{{const bb=e.target.closest('button[data-a=bakgo]');if(bb)
 $('palwin').addEventListener('click',e=>{if(e.target.closest('#pclose')){closePanel();return}
  if(e.target.closest('#pship')){sfx('menu');palSel=null;
   if(mapMode==='pal'){if(!wOpen()){toast(`회령까지 모든 고을을 차지하면 세계로 가는 뱃길이 열려요 (${palOwned()} / ${PAL.length})`);return}mapMode='world';worldDraw();return}
-  if(mapMode==='world'){mapMode='pal';$('pmi').style.backgroundImage='';$('phd').querySelector('b').textContent='팔도로';$('pship').querySelector('span').textContent='세계로';palDraw();return}
+  if(mapMode==='world'){mapMode='pal';$('pmi').style.backgroundImage='';$('pmbg').style.backgroundImage='';$('phd').querySelector('b').textContent='팔도로';$('pship').querySelector('span').textContent='세계로';palDraw();return}
   mapMode='world';worldDraw();return}
  if(e.target.closest('.px2')){palSel=null;popDraw();return}
  if(e.target.closest('#pp-in')){mapMode=$('pp-in').dataset.k;palSel=null;sfx('open');worldDraw();return}
