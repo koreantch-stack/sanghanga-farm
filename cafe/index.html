@@ -200,7 +200,7 @@ html,body{touch-action:manipulation;margin:0;height:100%;background:#2a1d13;colo
   <div class="sr"><span>이름<small id="sv-name"></small></span><button type="button" id="sv-rename">바꾸기</button></div>
   <div id="sv-reb"></div>
   <div class="sr"><span>처음부터 다시<small>모든 진행이 지워져요</small></span><button type="button" id="sv-reset" class="danger">다시 하기</button></div>
-  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.5.0</p>
+  <button type="button" id="sv-x" class="close">닫기</button><p id="sv-ver" style="text-align:center;font-size:12px;color:#9a8466;margin:8px 0 0;user-select:none">Ver. 1.5.1</p>
   <div id="sv-test" hidden><div class="sr"><span>운영자 모드<small>운영자 계정에만 보여요</small></span></div><b class="adh">엽전·재료·날짜</b>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
     <button type="button" data-t="m1">엽전 +800억</button><button type="button" data-t="m2">엽전 +1조</button>
@@ -446,11 +446,32 @@ const ST={
  pal_all:{t:'팔도를 잇다',c:[
   {p:'seonwoo',w:'박선우',s:'…졌소. 팔도 어디를 가도 당신 가배 냄새가 나는구려.'},
   {p:'gayoung',w:'{name}',s:'이제 바다 건너, 국경 너머로 가 볼 차례예요.'},
-  {n:'(세계로 가는 뱃길이 열렸어요.\n세계로 이야기는 다음 업데이트에서 이어져요.)'}]}};
+  {n:'(세계로 가는 뱃길이 열렸어요.\n팔도로 지도 오른쪽 아래 배를 눌러 보세요.)'}]},
+ w_jp:{t:'나가사키',c:[
+  {n:'배 밑창에서 사흘을 잤다. 혀에 소금이 끼어 가배가 쇠 맛으로 넘어갔다.'},
+  {p:'dojin',w:'임도진',s:'여기선 조선말이 안 통하오. 네덜란드 상인이 쓰는 셈법만 통하지.'},
+  {p:'gayoung',w:'{name}',s:'셈은 제가 할게요. 잔은 제가 내고요.'},
+  {n:'(일본 지도에서 도시를 눌러 점유율을 올려요.\n네 도시를 다 차지하면 모든 수입에 ×2가 더 붙어요.)'}]},
+ w_cn:{t:'압록강 건너',c:[
+  {p:'dojin',w:'임도진',s:'섬을 다 돌았다는 말이 의주까지 왔소. 아버지가 들으셨으면 무슨 낯을 하셨을지.'},
+  {p:'gayoung',w:'{name}',s:'다음은 아버님이 평생 넘나드신 길이에요.'},
+  {p:'seonwoo',w:'박선우',s:'청은 다르오. 거기선 값을 깎는 게 아니라 사람을 깎소.'},
+  {n:'(청 지도가 열렸어요.\n네 도시를 다 차지하면 모든 수입에 ×3이 더 붙어요.)'}]},
+ w_ru:{t:'차 길',c:[
+  {n:'광주에서 실은 차가 북쪽으로 갔다. 낙타가 받고, 썰매가 받고, 그다음은 아무도 몰랐다.'},
+  {p:'gayoung',w:'{name}',s:'끝까지 가 보고 싶어요. 누가 마지막으로 그 차를 마시는지.'},
+  {p:'dojin',w:'임도진',s:'겨울에 길이 막히면 반년이오.'},
+  {p:'gayoung',w:'{name}',s:'그럼 겨울에 떠나죠.'},
+  {n:'(아라사 지도가 열렸어요.\n네 도시를 다 차지하면 모든 수입에 ×4가 더 붙어요.)'}]},
+ w_all:{t:'모스크바',c:[
+  {n:'첫 손님은 장갑을 벗지 않고 잔을 들었다. 손끝이 데일 때까지 내려놓지 않았다.'},
+  {p:'gayoung',w:'{name}',s:'…여기까지 왔네요.'},
+  {p:'dojin',w:'임도진',s:'의주에서 여기까지, 길마다 당신 가배 냄새요.'},
+  {n:'(세계의 모든 도시를 차지했어요.\n설정에서 환생하면 기억 조각을 훨씬 많이 받아요.)'}]}};
 const ITEMS=[['coffee','각성 가배','x0','30분 동안 저절로 초당 5번 연타, 콤보 ×3'],['tal','합격 부적','x1','10분 동안 모든 수입 2배'],['orn','유기 별 조각 장식','x2','영원히 초당 1번 대신 누르기 (최대 20개)'],['l2','대리 장부 · 소','x3','꺼 둔 동안 2시간 장사가 돌아가요 (켜 둔 동안은 줄지 않아요 · 번 돈 절반은 세금)'],['l6','대리 장부 · 중','x4','꺼 둔 동안 6시간 장사가 돌아가요 (켜 둔 동안은 줄지 않아요 · 번 돈 절반은 세금)'],['l12','대리 장부 · 대','x5','꺼 둔 동안 12시간 장사가 돌아가요 (켜 둔 동안은 줄지 않아요 · 번 돈 절반은 세금)']];
 const LEDH={l2:2,l6:6,l12:12};
 const itemCost=k=>k==='coffee'?100:k==='tal'?150:k==='l2'?800:k==='l6'?2000:k==='l12'?4000:Math.round(300*Math.pow(1.35,S.orn||0));
-const STORDER=['start','first','samwol','pot','dawooga','seyun','gwageo','tired','seonwoo','cheap','hajun','murung','murungopen','geumnam','prison','release','palstart','pal_ks','pal_cc','pal_jl','pal_gs','pal_gw','pal_hh','pal_py','pal_hg','pal_hr','pal_all','reborn'];
+const STORDER=['start','first','samwol','pot','dawooga','seyun','gwageo','tired','seonwoo','cheap','hajun','murung','murungopen','geumnam','prison','release','palstart','pal_ks','pal_cc','pal_jl','pal_gs','pal_gw','pal_hh','pal_py','pal_hg','pal_hr','pal_all','w_jp','w_cn','w_ru','w_all','reborn'];
 // ---------- 상태 ----------
 const SAVE='cih-save-1',SETK='cih-set-1';let RESET=false;
 let SET={vol:55,mvol:40,bgm:1,vib:1,pop:1,story:'now'};try{Object.assign(SET,JSON.parse(localStorage.getItem(SETK)||'{}'))}catch(_){}
@@ -504,7 +525,7 @@ function popDraw(){if(mapMode!=='pal')return wpopDraw();const e=$('ppop');if(!pa
  e.innerHTML=`<div class="pc">${c}</div><button type="button" class="px2" aria-label="닫기"><img src="a/px.webp" alt=""></button>`}
 function palInvest(k){const i=PAL.findIndex(x=>x[0]===k),p=PAL[i],st=palStep(k);if(i<0||!palAvail(i)||st>=20||!palOpen())return;const c=palCost(p,st);if(S.money<c)return;S.money-=c;S.pal=S.pal||{};S.pal[k]=st+1;sfx('trade');if(st===0)toast(`${p[2]}에 가맹점을 냈어요`);if(st+1>=20){sfx('menu');toast(`${p[2]}${josa2b(p[2])} 차지했어요. 이제 모든 수입이 ×${+palMul().toFixed(2)}예요`);setTimeout(()=>{checkStory()},900)}hud();save()}
 
-const palStep=k=>(S.pal&&S.pal[k]!=null)?S.pal[k]:(k==='gy'?3:0),palCost=(p,st)=>Math.round(p[4]*Math.pow(1.15,st));
+const palStep=k=>(S.pal&&S.pal[k]!=null)?S.pal[k]:Math.max(mu('pal8')?10:0,k==='gy'?3:0),palCost=(p,st)=>Math.round(p[4]*Math.pow(1.15,st));
 const palOwned=()=>PAL.filter(p=>palStep(p[0])>=20).length,palMul=()=>Math.pow(1.5,palOwned());
 const palOpen=()=>S.stage===2&&!!S.relDone&&allMax(2);
 const palAvail=i=>i===0||palStep(PAL[i-1][0])>=20;
@@ -530,7 +551,7 @@ const WRL=[
 const WALL=[];WRL.forEach((c,ci)=>c[7].forEach((t,ti)=>WALL.push({k:t[0],n:t[1],d:t[2],xy:t[3],ci:ci,ti:ti,base:2.4e15*Math.pow(2.6,WALL.length)})));
 const wCity=k=>WALL.find(t=>t.k===k);
 const wStep=k=>(S.wrl&&S.wrl[k])||0;
-const wCost=(t,st)=>Math.round(t.base*Math.pow(1.15,st));
+const wCost=(t,st)=>Math.round(t.base*Math.pow(1.15,st)*Math.pow(.8,mu('sea')));
 const wCityOwned=()=>WALL.filter(t=>wStep(t.k)>=20).length;
 const cDone=ci=>WRL[ci][7].every(t=>wStep(t[0])>=20);
 const cOwnedN=ci=>WRL[ci][7].filter(t=>wStep(t[0])>=20).length;
@@ -565,11 +586,12 @@ function wpopDraw(){const e=$('ppop');if(!palSel){e.classList.remove('on');retur
  e.innerHTML=`<div class="pc">${c}</div><button type="button" class="px2" aria-label="닫기"><img src="a/px.webp" alt=""></button>`}
 function wInvest(k){const t=wCity(k),st=wStep(k);if(!t||!wAvail(t)||st>=20||!wOpen())return;const c=wCost(t,st);if(S.money<c)return;
  S.money-=c;S.wrl=S.wrl||{};S.wrl[k]=st+1;sfx('trade');if(st===0)toast(`${t.n}에 가맹점을 냈어요`);
- if(st+1>=20){sfx('menu');toast(cDone(t.ci)?`${WRL[t.ci][1]}${josa2b(WRL[t.ci][1])} 다 차지했어요. 모든 수입에 ×${WRL[t.ci][4]}가 더 붙어요`:`${t.n}${josa2b(t.n)} 차지했어요`);setTimeout(()=>{checkStory()},900)}
+ setTimeout(()=>{checkStory()},900);
+ if(st+1>=20){sfx('menu');toast(cDone(t.ci)?`${WRL[t.ci][1]}${josa2b(WRL[t.ci][1])} 다 차지했어요. 모든 수입에 ×${WRL[t.ci][4]}가 더 붙어요`:`${t.n}${josa2b(t.n)} 차지했어요`)}
  hud();save()}
-const MEMUP=[['hand','손에 익은 솜씨','두드리는 돈 ×2',[3,6,12,24,48]],['samwol','낯익은 얼굴들','삼월이를 데리고 시작',[5]],['cust','단골의 기억','손님이 더 자주 와요',[5]],['bean','먼저 아는 시세','커피콩 값 절반',[8]],['start','빠른 출발','조각 수만큼 시작 자금',[10]],['fast','빠른 소문','다우가·무릉도원 여는 값 절반',[15]],['led','미리 쓴 장부','대리 장부 시간 1.5배',[20]]];
+const MEMUP=[['hand','손에 익은 솜씨','두드리는 돈 ×2',[3,6,12,24,48]],['samwol','낯익은 얼굴들','삼월이를 데리고 시작',[5]],['cust','단골의 기억','손님이 더 자주 와요',[5]],['bean','먼저 아는 시세','커피콩 값 절반',[8]],['start','빠른 출발','조각 수만큼 시작 자금',[10]],['fast','빠른 소문','다우가·무릉도원 여는 값 절반',[15]],['led','미리 쓴 장부','대리 장부 시간 1.5배',[20]],['pal8','팔도의 기억','팔도 점유율이 절반에서 시작',[40]],['sea','뱃길의 기억','세계 도시 투자 값 20%씩 싸게',[30,70]]];
 const mu=k=>(S.memUp&&S.memUp[k])||0,memMul=()=>1+0.05*(S.mem||0);
-const memGain=()=>Math.floor(Math.cbrt((S.earned||0)/1e9))+5*(typeof palOwned==='function'?palOwned():0);
+const memGain=()=>Math.floor(Math.cbrt((S.earned||0)/1e9))+5*palOwned()+10*wCityOwned()+30*WRL.filter((c,i)=>cDone(i)).length;
 const rebOpen=()=>!!S.relDone;
 const FASTK=['dawooga','murung','floor2','geum'];const shopCost=(s,lv)=>s[5](lv)*(mu('fast')&&FASTK.includes(s[0])?.5:1);
 function baseMul(){return (1+L(S.shop,'hand'))*(L(S.shop,'pot')?1.5:1)*(1+0.1*L(S.staff,'maehwa'))*[1,1.3,1.8][S.stage]}
@@ -755,7 +777,7 @@ $('st-skip').onclick=e=>{e.stopPropagation();if(!SQ)return;if(!SQ.replay&&ST[SQ.
 $('nm-ok').onclick=()=>{const v=$('nm').value.replace(/[<>&]/g,'').trim();if(v.length<2){$('nm-err').textContent='두 글자 이상으로 지어 주세요';return}if(/[ㄱ-ㅎㅏ-ㅣ]/.test(v)){$('nm-err').textContent='자음이나 모음만 쓴 글자는 쓸 수 없어요';return}S.name=v;$('namebox').classList.remove('on');$('nm-err').textContent='';if(SQ){SQ.i++;showCut()}else{toast(`이름을 ${v}(으)로 바꿨어요`);setDraw()}save()};
 function checkStory(){if(SQ)return;const T=[
  ['first',()=>S.served>=1],['samwol',()=>S.served>=12],['seyun',()=>S.stage>=1&&S.served>=90],['gwageo',()=>gwageo()&&S.served>=20],['tired',()=>S.stage>=1&&S.served>=160],
- ['seonwoo',()=>S.stage>=1&&S.earned>=5e6],['cheap',()=>S.evDone&&Date.now()>S.evUntil],['hajun',()=>S.stage>=1&&S.served>=260],['murung',()=>S.stage>=1&&S.earned>=3e8],['prison',()=>S.stage===2&&L(S.menu,'icesujeong')>0],['release',()=>S.prDone&&!S.crisis],['reborn',()=>(S.reb||0)>=1],['palstart',()=>palOpen()],['pal_ks',()=>palStep('gy')>=20],['pal_cc',()=>palStep('ks')>=20],['pal_jl',()=>palStep('cc')>=20],['pal_gs',()=>palStep('jl')>=20],['pal_gw',()=>palStep('gs')>=20],['pal_hh',()=>palStep('gw')>=20],['pal_py',()=>palStep('hh')>=20],['pal_hg',()=>palStep('py')>=20],['pal_hr',()=>palStep('hg')>=20],['pal_all',()=>palStep('hr')>=20]];
+ ['seonwoo',()=>S.stage>=1&&S.earned>=5e6],['cheap',()=>S.evDone&&Date.now()>S.evUntil],['hajun',()=>S.stage>=1&&S.served>=260],['murung',()=>S.stage>=1&&S.earned>=3e8],['prison',()=>S.stage===2&&L(S.menu,'icesujeong')>0],['release',()=>S.prDone&&!S.crisis],['reborn',()=>(S.reb||0)>=1],['palstart',()=>palOpen()],['pal_ks',()=>palStep('gy')>=20],['pal_cc',()=>palStep('ks')>=20],['pal_jl',()=>palStep('cc')>=20],['pal_gs',()=>palStep('jl')>=20],['pal_gw',()=>palStep('gs')>=20],['pal_hh',()=>palStep('gw')>=20],['pal_py',()=>palStep('hh')>=20],['pal_hg',()=>palStep('py')>=20],['pal_hr',()=>palStep('hg')>=20],['pal_all',()=>palStep('hr')>=20],['w_jp',()=>wStep('na')>0],['w_cn',()=>cDone(0)],['w_ru',()=>cDone(1)],['w_all',()=>cDone(2)]];
  for(const [k,f] of T)if(!S.seen[k]&&f()){setTimeout(()=>{if(!SQ&&!S.seen[k])playStory(k)},500);return}}
 // ---------- 특별 아이템 ----------
 function itemAct(a,k){S.items=S.items||{};S.buff=S.buff||{};
